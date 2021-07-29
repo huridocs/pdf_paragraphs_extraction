@@ -1,0 +1,9 @@
+version: '3'
+services:
+  pdf_to_paragraphs:
+    build: .
+    ports:
+      - "5050:5050"
+    volumes:
+      - .:/developer
+      - ./docker_volume:/developer/docker_volume

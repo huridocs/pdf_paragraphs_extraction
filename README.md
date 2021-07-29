@@ -25,12 +25,16 @@ To stop the server:
 
 ### Configuring external graylog server 
 
-Set graylog ip in the ./config.py file:
+Set graylog ip in the ./graylog.yml file:
 
-   `GRAYLOG_IP = "GRAYLOG IP"`
+   `graylog_ip:[ip]`
 
 
 ### Check service graylog's logs in local
+
+Set graylog ip in the ./graylog.yml file:
+
+   `graylog_ip:graylog`
 
 Execute the service in dev mode
 
