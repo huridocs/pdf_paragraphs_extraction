@@ -22,12 +22,23 @@ class SegmentBox:
 
 
 class SegmentsBoxes:
-    def __init__(self, segment_boxes: List[SegmentBox]):
+    def __init__(self, page_width, page_height, segment_boxes: List[SegmentBox], ):
+        self.page_width = page_width
+        self.page_height = page_height
         self.segment_boxes = segment_boxes
 
     def to_json(self):
-        return json.dumps([segment_box.to_dictionary() for segment_box in self.segment_boxes])
+        segments = [segment_box.to_dictionary() for segment_box in self.segment_boxes]
+        segments_boxes_json = {"pageWidth": self.page_width, "pageHeight": self.page_height, "segments": segments}
+        return json.dumps(segments_boxes_json)
 
     @staticmethod
     def from_information_extraction(information_extraction: InformationExtraction) -> 'SegmentsBoxes':
-        return SegmentsBoxes([SegmentBox.from_segment(segment) for segment in information_extraction.segments])
+        if not len(information_extraction.segments):
+            raise IOError
+
+        page_width = information_extraction.segments[0].page_width
+        page_height = information_extraction.segments[0].page_height
+        segment_boxes = [SegmentBox.from_segment(segment) for segment in information_extraction.segments]
+
+        return SegmentsBoxes(page_width, page_height, segment_boxes)

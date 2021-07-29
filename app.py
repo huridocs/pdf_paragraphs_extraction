@@ -7,8 +7,9 @@ import logging
 import graypy
 
 from information_extraction.InformationExtraction import InformationExtraction
-from information_extraction.SegmentsBoxes import SegmentsBoxes
 import yaml
+
+from segments_boxes.SegmentsBoxes import SegmentsBoxes
 
 graylog = logging.getLogger('graylog')
 graylog.setLevel(logging.INFO)

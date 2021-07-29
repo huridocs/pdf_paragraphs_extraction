@@ -26,6 +26,5 @@ COPY . .
 RUN pip3 install -r requirements.txt
 
 ENV FLASK_APP app.py
-RUN python3 download_punkt.py
 
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "app:app", "--bind", "0.0.0.0:5050"]

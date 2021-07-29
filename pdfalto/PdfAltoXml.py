@@ -317,7 +317,8 @@ class PdfAltoXml:
 
         PdfAltoXml.create_xml_from_pdf(file_path_pdf, file_path_xml)
 
-        xml_tags = BeautifulSoup(open(file_path_xml).read(), "lxml-xml")
+        with open(file_path_xml) as stream:
+            xml_tags = BeautifulSoup(stream.read(), "lxml-xml")
 
         os.remove(file_path_pdf)
         os.remove(file_path_xml)
