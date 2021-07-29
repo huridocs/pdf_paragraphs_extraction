@@ -1,0 +1,13 @@
+*.pyc
+*.pyo
+.DS_Store
+.idea
+.vscode
+*.log
+nohup.out
+config.py
+/venv/
+*.cache
+.env
+*_config.py
+docker_volume/*
