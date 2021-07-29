@@ -6,7 +6,7 @@ PyYAML
 nltk~=3.6.2
 sklearn
 python-multipart
-lxml==4.5.0
+lxml==4.6.3
 pydantic~=1.8.2
 uvicorn
 gunicorn
