@@ -2,8 +2,11 @@ fastapi~=0.67.0
 numpy~=1.21.1
 beautifulsoup4~=4.9.3
 graypy~=2.1.0
-PyYAML~=5.4.1
+PyYAML
 nltk~=3.6.2
 sklearn
 python-multipart
 lxml==4.5.0
+pydantic~=1.8.2
+uvicorn
+gunicorn
