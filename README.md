@@ -1,8 +1,8 @@
-# Get PDF paragraphs
+## Get PDF paragraphs
 
 This service uses machine learning to segment a PDF in paragraphs.
 
-# How to use it
+### How to use it
 
 Start service:
 
@@ -17,20 +17,20 @@ To stop the server:
   `docker-compose down`
 
 
-## Dependencies
+### Dependencies
  * Docker [install] (https://runnable.com/docker/getting-started/)
  * Docker-compose [install] (https://docs.docker.com/compose/install/)
     * Note: On mac Docker-compose is installed with Docker
 
 
-## Configuring external graylog server 
+### Configuring external graylog server 
 
 Set graylog ip in the ./config.py file:
 
    `GRAYLOG_IP = "GRAYLOG IP"`
 
 
-## Check service graylog's logs in local
+### Check service graylog's logs in local
 
 Execute the service in dev mode
 
