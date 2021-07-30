@@ -10,6 +10,9 @@ class Tasks:
         self.tenant = tenant
 
     def add(self, filename, file):
+        if not os.path.exists(f'{self.root_folder}/docker_volume/to_segment'):
+            os.mkdir(f'{self.root_folder}/docker_volume/to_segment')
+
         if self.tenant:
             if not os.path.exists(f'{self.root_folder}/docker_volume/to_segment/{self.tenant}'):
                 os.mkdir(f'{self.root_folder}/docker_volume/to_segment/{self.tenant}')

@@ -25,8 +25,8 @@ def error():
     raise HTTPException(status_code=500, detail='This is a test error from the error endpoint')
 
 
-@app.post('/')
-def segment(file: UploadFile = File(...)):
+@app.get('/')
+def get_paragraphs(file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename
@@ -38,8 +38,8 @@ def segment(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f'Error segmenting {filename}')
 
 
-@app.post('/add_segmentation_task')
-def add_segmentation_task(file: UploadFile = File(...)):
+@app.post('/add_task')
+def add_task(file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename
@@ -51,8 +51,8 @@ def add_segmentation_task(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f'Error adding task {filename}')
 
 
-@app.post('/add_segmentation_task/{tenant}')
-async def add_segmentation_task_with_tenant(tenant, file: UploadFile  = File(...)):
+@app.post('/add_task/{tenant}')
+async def add_task_with_tenant(tenant, file: UploadFile  = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename

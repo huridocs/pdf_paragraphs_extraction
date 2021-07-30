@@ -10,7 +10,7 @@ Start service:
 
 Get paragraphs from a PDF:
 
-   `curl -i -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5050`
+   `curl -X GET -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5050`
 
 To stop the server:
 
