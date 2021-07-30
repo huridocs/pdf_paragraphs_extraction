@@ -19,7 +19,7 @@ class TestApp(TestCase):
         self.assertEqual({'detail': 'This is a test error from the error endpoint'}, response.json())
 
     def test_segment(self):
-        with open('test_pdf/test_pdf.pdf', 'rb') as stream:
+        with open('test_pdf/test.pdf', 'rb') as stream:
             files = {'file': stream}
             response = client.post("/", files=files)
             segments_boxes = json.loads(response.json())
@@ -32,12 +32,21 @@ class TestApp(TestCase):
             self.assertEqual(1, min(pages))
             self.assertEqual(2, max(pages))
 
+    def test_blank_segment(self):
+        with open('test_pdf/blank.pdf', 'rb') as stream:
+            files = {'file': stream}
+            response = client.post("/", files=files)
+            segments_boxes = json.loads(response.json())
+
+            self.assertEqual(200, response.status_code)
+            self.assertEqual(0, len(segments_boxes['segments']))
+            self.assertEqual(612, segments_boxes['pageWidth'])
+            self.assertEqual(792, segments_boxes['pageHeight'])
+
     def test_add_segmentation_task(self):
-        files = {'file': open('test_pdf/test_pdf.pdf', 'rb')}
+        files = {'file': open('test_pdf/test.pdf', 'rb')}
         response = client.post("/add_segmentation_task", files=files)
         self.assertEqual(200, response.status_code)
         self.assertEqual('task registered', response.json())
-        self.assertTrue(os.path.exists('./docker_volume/to_segment/test_pdf.pdf'))
-        os.remove('./docker_volume/to_segment/test_pdf.pdf')
-
-# test pdf with no text
+        self.assertTrue(os.path.exists('./docker_volume/to_segment/test.pdf'))
+        os.remove('./docker_volume/to_segment/test.pdf')

@@ -18,7 +18,8 @@ class SegmentBox:
         return SegmentBox(segment.left, segment.top, segment.width, segment.height, segment.page_number)
 
     def to_dictionary(self):
-        return {"left": self.left, "top": self.top, "width": self.width, "height": self.height, "pageNumber": self.page_number}
+        return {"left": self.left, "top": self.top, "width": self.width, "height": self.height,
+                "pageNumber": self.page_number}
 
 
 class SegmentsBoxes:
@@ -35,10 +36,10 @@ class SegmentsBoxes:
     @staticmethod
     def from_information_extraction(information_extraction: InformationExtraction) -> 'SegmentsBoxes':
         if not len(information_extraction.segments):
-            raise IOError
+            return SegmentsBoxes(information_extraction.pdf_features.page_width,
+                                 information_extraction.pdf_features.page_height, [])
 
-        page_width = information_extraction.segments[0].page_width
-        page_height = information_extraction.segments[0].page_height
         segment_boxes = [SegmentBox.from_segment(segment) for segment in information_extraction.segments]
 
-        return SegmentsBoxes(page_width, page_height, segment_boxes)
+        return SegmentsBoxes(information_extraction.pdf_features.page_width,
+                             information_extraction.pdf_features.page_height, segment_boxes)

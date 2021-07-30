@@ -3,7 +3,7 @@ services:
   pdf-to-paragraphs:
     build: .
     ports:
-      - "5010:5010"
+      - "5050:5050"
     volumes:
       - .:/developer
     environment:
