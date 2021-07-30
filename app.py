@@ -14,19 +14,19 @@ graylog.info(f'Get PDF paragraphs service has started')
 
 
 @app.get('/info')
-def info():
+async def info():
     graylog.info('Get PDF paragraphs info endpoint')
     return sys.version
 
 
 @app.get('/error')
-def error():
+async def error():
     graylog.error("This is a test error from the error endpoint")
     raise HTTPException(status_code=500, detail='This is a test error from the error endpoint')
 
 
 @app.get('/')
-def get_paragraphs(file: UploadFile = File(...)):
+async def get_paragraphs(file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename
@@ -39,7 +39,7 @@ def get_paragraphs(file: UploadFile = File(...)):
 
 
 @app.post('/add_task')
-def add_task(file: UploadFile = File(...)):
+async def add_task(file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename
