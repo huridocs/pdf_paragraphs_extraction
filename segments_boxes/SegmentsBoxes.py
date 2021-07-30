@@ -6,7 +6,8 @@ from information_extraction.Segment import Segment
 
 
 class SegmentBox:
-    def __init__(self, left, top, width, height, page_number):
+    def __init__(self, text, left, top, width, height, page_number):
+        self.text = text
         self.left = left
         self.top = top
         self.width = width
@@ -15,10 +16,15 @@ class SegmentBox:
 
     @staticmethod
     def from_segment(segment: Segment) -> 'SegmentBox':
-        return SegmentBox(segment.left, segment.top, segment.width, segment.height, segment.page_number)
+        return SegmentBox(segment.text_content,
+                          segment.left,
+                          segment.top,
+                          segment.width,
+                          segment.height,
+                          segment.page_number)
 
     def to_dictionary(self):
-        return {"left": self.left, "top": self.top, "width": self.width, "height": self.height,
+        return {"text": self.text, "left": self.left, "top": self.top, "width": self.width, "height": self.height,
                 "pageNumber": self.page_number}
 
 

@@ -27,6 +27,7 @@ class TestApp(TestCase):
 
             self.assertEqual(200, response.status_code)
             self.assertLess(15, len(segments_boxes['segments']))
+            self.assertEqual('A/INF/76/1', segments_boxes['segments'][0]['text'])
             self.assertEqual(612, segments_boxes['pageWidth'])
             self.assertEqual(792, segments_boxes['pageHeight'])
             self.assertEqual(1, min(pages))
@@ -44,9 +45,20 @@ class TestApp(TestCase):
             self.assertEqual(792, segments_boxes['pageHeight'])
 
     def test_add_segmentation_task(self):
-        files = {'file': open('test_pdf/test.pdf', 'rb')}
-        response = client.post("/add_segmentation_task", files=files)
-        self.assertEqual(200, response.status_code)
-        self.assertEqual('task registered', response.json())
-        self.assertTrue(os.path.exists('./docker_volume/to_segment/test.pdf'))
-        os.remove('./docker_volume/to_segment/test.pdf')
+        with open('test_pdf/test.pdf', 'rb') as stream:
+            files = {'file': stream}
+            response = client.post("/add_segmentation_task", files=files)
+            self.assertEqual('task registered', response.json())
+            self.assertEqual(200, response.status_code)
+            self.assertTrue(os.path.exists('./docker_volume/to_segment/test.pdf'))
+            os.remove('./docker_volume/to_segment/test.pdf')
+
+    def test_add_segmentation_task_with_tenant(self):
+        with open('test_pdf/test.pdf', 'rb') as stream:
+            files = {'file': stream}
+            response = client.post("/add_segmentation_task/tenant_one", files=files)
+            self.assertEqual('task registered', response.json())
+            self.assertEqual(200, response.status_code)
+            self.assertTrue(os.path.exists('./docker_volume/to_segment/tenant_one/test.pdf'))
+            os.remove('./docker_volume/to_segment/tenant_one/test.pdf')
+            os.rmdir('./docker_volume/to_segment/tenant_one')

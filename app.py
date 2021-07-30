@@ -1,23 +1,12 @@
-import os
-import pathlib
-
 from fastapi import FastAPI, HTTPException, File, UploadFile
 import sys
-import logging
-import graypy
-
+from get_graylog import get_graylog
 from information_extraction.InformationExtraction import InformationExtraction
-import yaml
 
 from segments_boxes.SegmentsBoxes import SegmentsBoxes
+from tasks.Tasks import Tasks
 
-graylog = logging.getLogger('graylog')
-graylog.setLevel(logging.INFO)
-
-if os.path.exists('graylog.yml'):
-    graylog_ip = yaml.safe_load(open("graylog.yml", 'r'))['graylog_ip']
-    handler = graypy.GELFUDPHandler(graylog_ip, 12201, localname="get_pdf_paragraphs")
-    graylog.addHandler(handler)
+graylog = get_graylog()
 
 app = FastAPI()
 
@@ -54,22 +43,22 @@ def add_segmentation_task(file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename
-        if not os.path.exists('./docker_volume/to_segment'):
-            os.mkdir('./docker_volume/to_segment')
-
-        file_path_pdf = pathlib.Path(f'./docker_volume/to_segment/{filename}')
-        content = file.file.read()
-        file_path_pdf.write_bytes(content)
+        tasks = Tasks()
+        tasks.add(filename=filename, file=file.file.read())
         return 'task registered'
     except Exception:
-        graylog.error(f'Error segmenting {filename}', exc_info=1)
-        raise HTTPException(status_code=422, detail=f'Error segmenting {filename}')
+        graylog.error(f'Error adding task {filename}', exc_info=1)
+        raise HTTPException(status_code=422, detail=f'Error adding task {filename}')
 
 
-@app.post('/execute_segmentation_task')
-def execute_segmentation_task():
+@app.post('/add_segmentation_task/{tenant}')
+async def add_segmentation_task_with_tenant(tenant, file: UploadFile  = File(...)):
+    filename = '"No file name! Probably an error about the file in the request"'
     try:
-        raise HTTPException(status_code=500, detail='This is a test error from the execute_segmentation_task endpoint')
+        filename = file.filename
+        tasks = Tasks(tenant)
+        tasks.add(filename=filename, file=file.file.read())
+        return 'task registered'
     except Exception:
-        graylog.error('Error in segmentation task', exc_info=1)
-        raise HTTPException(status_code=422, detail='Error in segmentation task')
+        graylog.error(f'Error adding task {filename}', exc_info=1)
+        raise HTTPException(status_code=422, detail=f'Error adding task {filename}')

@@ -1,11 +1,10 @@
 from unittest import TestCase
 from bs4 import BeautifulSoup
-
 from information_extraction.InformationExtraction import InformationExtraction
 from segments_boxes.SegmentsBoxes import SegmentsBoxes, SegmentBox
 
 
-class TestDocument(TestCase):
+class TestSegmentsBoxes(TestCase):
     def test_from_information_extraction(self):
         xml_string = '<?xml version="1.0" encoding="utf-8"?>\
                         <alto ><Description><MeasurementUnit>pixel</MeasurementUnit><sourceImageInformation><fileName>\
@@ -32,12 +31,14 @@ class TestDocument(TestCase):
         self.assertEqual(segments_boxes.page_width, 2)
         self.assertEqual(segments_boxes.page_height, 1)
 
+        self.assertEqual(segments_boxes.segment_boxes[0].text, "first")
         self.assertEqual(segments_boxes.segment_boxes[0].left, 2)
         self.assertEqual(segments_boxes.segment_boxes[0].top, 3)
         self.assertEqual(segments_boxes.segment_boxes[0].width, 4)
         self.assertEqual(segments_boxes.segment_boxes[0].height, 1)
         self.assertEqual(segments_boxes.segment_boxes[0].page_number, 1)
 
+        self.assertEqual(segments_boxes.segment_boxes[1].text, "second")
         self.assertEqual(segments_boxes.segment_boxes[1].left, 3)
         self.assertEqual(segments_boxes.segment_boxes[1].top, 2)
         self.assertEqual(segments_boxes.segment_boxes[1].width, 1)
@@ -45,8 +46,8 @@ class TestDocument(TestCase):
         self.assertEqual(segments_boxes.segment_boxes[1].page_number, 2)
 
     def test_to_json(self):
-        segments_boxes = SegmentsBoxes(1, 2, [SegmentBox(1, 2, 3, 4, 1), SegmentBox(0.1, 0.2, 0.3, 0.4, 2)])
+        segments_boxes = SegmentsBoxes(1, 2, [SegmentBox('a', 1, 2, 3, 4, 1), SegmentBox('b', 0.1, 0.2, 0.3, 0.4, 2)])
         json_result = '{"pageWidth": 1, "pageHeight": 2, "segments": [' \
-                      '{"left": 1, "top": 2, "width": 3, "height": 4, "pageNumber": 1}, ' \
-                      '{"left": 0.1, "top": 0.2, "width": 0.3, "height": 0.4, "pageNumber": 2}]}'
+                      '{"text": "a", "left": 1, "top": 2, "width": 3, "height": 4, "pageNumber": 1}, ' \
+                      '{"text": "b", "left": 0.1, "top": 0.2, "width": 0.3, "height": 0.4, "pageNumber": 2}]}'
         self.assertEqual(segments_boxes.to_json(), json_result)
