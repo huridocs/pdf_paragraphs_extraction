@@ -38,21 +38,8 @@ async def get_paragraphs(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f'Error segmenting {filename}')
 
 
-@app.post('/add_task')
-async def add_task(file: UploadFile = File(...)):
-    filename = '"No file name! Probably an error about the file in the request"'
-    try:
-        filename = file.filename
-        tasks = Tasks()
-        tasks.add(filename=filename, file=file.file.read())
-        return 'task registered'
-    except Exception:
-        graylog.error(f'Error adding task {filename}', exc_info=1)
-        raise HTTPException(status_code=422, detail=f'Error adding task {filename}')
-
-
 @app.post('/add_task/{tenant}')
-async def add_task_with_tenant(tenant, file: UploadFile  = File(...)):
+async def add_task_with_tenant(tenant, file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename

@@ -47,15 +47,6 @@ class TestApp(TestCase):
     def test_add_task(self):
         with open('test_pdf/test.pdf', 'rb') as stream:
             files = {'file': stream}
-            response = client.post("/add_task", files=files)
-            self.assertEqual('task registered', response.json())
-            self.assertEqual(200, response.status_code)
-            self.assertTrue(os.path.exists('./docker_volume/to_segment/test.pdf'))
-            os.remove('./docker_volume/to_segment/test.pdf')
-
-    def test_add_task_with_tenant(self):
-        with open('test_pdf/test.pdf', 'rb') as stream:
-            files = {'file': stream}
             response = client.post("/add_task/tenant_one", files=files)
             self.assertEqual('task registered', response.json())
             self.assertEqual(200, response.status_code)
