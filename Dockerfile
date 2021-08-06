@@ -23,7 +23,9 @@ RUN pip3 install --upgrade pip
 
 COPY . .
 
-RUN pip3 install -r requirements.txt
+RUN pip3 install --ignore-installed -r requirements.txt
+
+RUN python3 download_punkt.py
 
 ENV FLASK_APP app.py
 
