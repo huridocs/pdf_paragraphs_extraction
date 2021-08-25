@@ -17,11 +17,9 @@ from pdfalto.PDFFeatures import PDFFeatures
 from pdfalto.get_tags_by_page_pdfalto import get_tags_by_page_pdfalto
 from information_extraction.reading_order import get_tuples_pdfalto_reading_order_next
 
-
 SegmentPdfalto = namedtuple('SegmentPdfalto', ['page_number', 'page_width', 'page_height', 'xml_tags'])
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
-
 
 MODEL = pickle.load(open(f'{THIS_SCRIPT_PATH}/segmentation_model.pkl', 'rb'))
 
@@ -178,7 +176,6 @@ class PdfAltoXml:
 
             same_font = tag_1.find_all('String')[-1]['STYLEREFS'] == tag_2.find_all('String')[0]['STYLEREFS']
 
-
             features = np.array([[self.pdf_features.font_size_mode,
                                   last_word,
                                   text_2_first_word,
@@ -295,6 +292,8 @@ class PdfAltoXml:
         else:
             pdfalto_executable = f'{THIS_SCRIPT_PATH}/pdfalto_linux'
 
+        print(pdf_path)
+        print(file_path_xml)
         subprocess.run([pdfalto_executable, '-readingOrder', pdf_path, file_path_xml])
 
     @staticmethod
@@ -328,19 +327,28 @@ class PdfAltoXml:
         return xml_tags
 
     @staticmethod
-    def from_pdf_path(pdf_path: str):
-        file_name = str(pdf_path).split('/')[-1].replace('.pdf', '')
+    def from_pdf_path(pdf_path: str, xml_file_path: str, failed_pdf_path: str):
+        try:
+            os.makedirs('/'.join(xml_file_path.split('/')[:-1]))
+        except FileExistsError:
+            pass
 
-        file_path_xml = PdfAltoXml.get_file_path(file_name, 'xml')
+        file_xml_metadata_path = xml_file_path.replace('.xml', '_metadata.xml')
+        file_xml_data_path = xml_file_path.replace('.xml', '.xml_data')
 
-        file_xml_metadata_path = file_path_xml.replace('.xml', '_metadata.xml')
-        file_xml_data_path = file_path_xml.replace('.xml', '.xml_data')
+        PdfAltoXml.create_xml_from_pdf(pdf_path, xml_file_path)
 
-        PdfAltoXml.create_xml_from_pdf(pdf_path, file_path_xml)
+        if not os.path.exists(xml_file_path):
+            try:
+                os.makedirs('/'.join(failed_pdf_path.split('/')[:-1]))
+            except FileExistsError:
+                pass
+            shutil.move(pdf_path, failed_pdf_path)
+            return
 
-        xml_elements = BeautifulSoup(open(file_path_xml).read(), 'lxml-xml')
+        with open(xml_file_path, 'r') as file:
+            xml_elements = BeautifulSoup(file.read(), 'lxml-xml')
 
-        os.remove(file_path_xml)
         os.remove(file_xml_metadata_path)
         shutil.rmtree(file_xml_data_path)
 

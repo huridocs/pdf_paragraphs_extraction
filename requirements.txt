@@ -10,3 +10,7 @@ uvicorn
 gunicorn
 nltk~=3.6.2
 PyYAML~=5.4.1
+requests
+nltk
+mongomock~=3.23.0
+pymongo~=3.12.0

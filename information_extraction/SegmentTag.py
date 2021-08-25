@@ -1,9 +1,6 @@
 import bs4
 import numpy as np
 
-from information_extraction.segmentation_config import *
-
-
 ML_CLASS_LABEL_PROPERTY = 'MLCLASSLABEL'
 GROUP = 'GROUP'
 
@@ -46,7 +43,6 @@ class SegmentTag:
         y4 = (y1 + height)
 
         result = np.array([x1, y1, x4, y4])
-        result = result / SCALE_FACTOR
         return result
 
     def get_id(self):

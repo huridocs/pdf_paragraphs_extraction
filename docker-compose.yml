@@ -7,3 +7,16 @@ services:
     volumes:
       - .:/developer
       - ./docker_volume:/developer/docker_volume
+  mongo_paragraphs:
+    image: "mongo:4.0.1"
+    volumes:
+      - ./db:/data/db
+    ports:
+      - '28017-28019:27017-27019'
+  redis_paragraphs:
+    image: "redis:alpine"
+    command: redis-server
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master

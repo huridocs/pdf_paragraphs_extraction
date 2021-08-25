@@ -10,6 +10,6 @@ config.py
 *.cache
 .env
 *_config.py
-docker_volume/*
 db/*
 graylog.yml
+docker_volume/*

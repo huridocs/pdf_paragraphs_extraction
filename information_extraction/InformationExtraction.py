@@ -8,8 +8,8 @@ from pdfalto.PdfAltoXml import PdfAltoXml
 
 
 class InformationExtraction:
-    def __init__(self, xml_tags, do_segment: bool = True):
-        self.do_segment = do_segment
+    def __init__(self, xml_tags, xml_file_path: str = ''):
+        self.xml_file_path = xml_file_path
         self.xml_tags = xml_tags
         self.segments: List[Segment] = list()
         self.fonts: List[Font] = list()
@@ -17,11 +17,7 @@ class InformationExtraction:
         self.set_segments()
 
     def set_segments(self):
-        if self.do_segment:
-            segments_pdfalto, fonts, self.pdf_features = PdfAltoXml(self.xml_tags).get_segments()
-        else:
-            segments_pdfalto, fonts, self.pdf_features = PdfAltoXml(self.xml_tags).get_one_tag_segments()
-
+        segments_pdfalto, fonts, self.pdf_features = PdfAltoXml(self.xml_tags).get_segments()
         self.fonts = Font.from_page_xml_tag(fonts)
 
         for segment_pdfalto in segments_pdfalto:
@@ -37,11 +33,13 @@ class InformationExtraction:
             self.segments.append(segment)
 
     @staticmethod
-    def from_file_content(file_content, do_segment: bool):
+    def from_file_content(file_content):
         xml_tags = PdfAltoXml.get_xml_tags_from_file_content(file_content)
-        return InformationExtraction(xml_tags=xml_tags, do_segment=do_segment)
+        return InformationExtraction(xml_tags=xml_tags)
 
     @staticmethod
-    def from_pdf_path(pdf_path):
-        xml_tags = PdfAltoXml.from_pdf_path(pdf_path)
+    def from_pdf_path(pdf_path: str, xml_file_path: str, failed_pdf_path:str):
+        xml_tags = PdfAltoXml.from_pdf_path(pdf_path, xml_file_path, failed_pdf_path)
+        if not xml_tags:
+            return None
         return InformationExtraction(xml_tags=xml_tags)
