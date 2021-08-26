@@ -1,8 +1,12 @@
 import asyncio
 import os
+import sys
+import typing
 
 import pymongo
 import yaml
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from data.ExtractionData import ExtractionData
 from data.ExtractionMessage import ExtractionMessage
@@ -24,13 +28,11 @@ def get_paths(tenant: str, pdf_file_name: str):
     return pdf_file_path, xml_file_path, failed_pdf_path
 
 
-def extract_paragraphs() -> ExtractionMessage:
-    client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
-
+def extract_paragraphs() -> typing.Optional[ExtractionMessage]:
     task = Tasks.get_next_task()
 
     if not task:
-        return
+        return None
 
     pdf_file_path, xml_file_path, failed_pdf_path = get_paths(task.tenant, task.pdf_file_name)
     information_extraction = InformationExtraction.from_pdf_path(pdf_path=pdf_file_path,
@@ -46,6 +48,7 @@ def extract_paragraphs() -> ExtractionMessage:
                                                    pdf_file_name=task.pdf_file_name,
                                                    segments=information_extraction.segments)
 
+    client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
     client['pdf_paragraph'].paragraphs.insert_one(extraction_data.dict())
     os.remove(pdf_file_path)
 
@@ -55,11 +58,14 @@ def extract_paragraphs() -> ExtractionMessage:
 
 
 async def extract_paragraphs_async(redis_server: str):
-    extraction_message = extract_paragraphs()
-    # if extraction_message:
-    #     queue = RedisSMQ(host=redis_server, qname="paragraphs_extraction")
-    #     queue.sendMessage(delay=0).message(extraction_message.json()).execute()
-    await asyncio.sleep(1)
+    try:
+        extract_paragraphs()
+        # if extraction_message:
+        #     queue = RedisSMQ(host=redis_server, qname="paragraphs_extraction")
+        #     queue.sendMessage(delay=0).message(extraction_message.json()).execute()
+    except:
+        pass
+    await asyncio.sleep(3)
 
 
 def loop_extract_paragraphs():

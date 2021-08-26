@@ -1,7 +1,9 @@
 import json
+import os
 
 import pymongo
 from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi.responses import PlainTextResponse
 import sys
 
 from data.ExtractionData import ExtractionData
@@ -74,13 +76,29 @@ async def get_paragraphs(tenant: str, pdf_file_name: str):
 
         extraction_data_dict = pdf_paragraph_db.paragraphs.find_one(suggestions_filter)
 
-        print('dict')
-        print(extraction_data_dict)
         extraction_data = ExtractionData(**extraction_data_dict)
         pdf_paragraph_db.paragraphs.delete_many(suggestions_filter)
         return extraction_data.json()
     except TypeError:
         raise HTTPException(status_code=404, detail='No paragraphs')
+    except Exception:
+        graylog.error('Error', exc_info=1)
+        raise HTTPException(status_code=422, detail='An error has occurred. Check graylog for more info')
+
+
+@app.get('/get_xml/{tenant}/{pdf_file_name}', response_class=PlainTextResponse)
+async def get_xml(tenant: str, pdf_file_name: str):
+    tenant = sanitize_name(tenant)
+
+    try:
+        xml_file_name = '.'.join(pdf_file_name.split('.')[:-1]) + '.xml'
+
+        with open(f'./docker_volume/xml/{tenant}/{xml_file_name}', mode='r') as file:
+            content = file.read()
+            os.remove(f'./docker_volume/xml/{tenant}/{xml_file_name}')
+            return content
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail='No xml file')
     except Exception:
         graylog.error('Error', exc_info=1)
         raise HTTPException(status_code=422, detail='An error has occurred. Check graylog for more info')

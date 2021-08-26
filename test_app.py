@@ -53,23 +53,24 @@ class TestApp(TestCase):
 
     @mongomock.patch(servers=['mongodb://mongo_paragraphs:27017'])
     def test_add_task(self):
+        tenant = 'tenant_add_task'
         mongo_client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
 
-        shutil.rmtree('./docker_volume/to_extract/tenant_one', ignore_errors=True)
+        shutil.rmtree(f'./docker_volume/to_extract/{tenant}', ignore_errors=True)
 
         with open('test_files/test.pdf', 'rb') as stream:
             files = {'file': stream}
-            response = client.post("/async_extraction/tenant%20one", files=files)
+            response = client.post(f'/async_extraction/{tenant}', files=files)
 
-        document = mongo_client.pdf_paragraph.tasks.find_one({'tenant': 'tenant_one', 'pdf_file_name': 'test.pdf'})
+        document = mongo_client.pdf_paragraph.tasks.find_one({'tenant': tenant})
         task = Task(**document)
 
         self.assertEqual(200, response.status_code)
-        self.assertEqual('tenant_one', task.tenant)
+        self.assertEqual(tenant, task.tenant)
         self.assertEqual('test.pdf', task.pdf_file_name)
-        self.assertTrue(os.path.exists('./docker_volume/to_extract/tenant_one/test.pdf'))
+        self.assertTrue(os.path.exists(f'./docker_volume/to_extract/{tenant}/test.pdf'))
 
-        shutil.rmtree('./docker_volume/to_extract/tenant_one', ignore_errors=True)
+        shutil.rmtree(f'./docker_volume/to_extract/{tenant}', ignore_errors=True)
 
     @mongomock.patch(servers=['mongodb://mongo_paragraphs:27017'])
     def test_get_paragraphs_from_db(self):
@@ -107,8 +108,34 @@ class TestApp(TestCase):
     @mongomock.patch(servers=['mongodb://mongo_paragraphs:27017'])
     def test_get_paragraphs_when_no_data(self):
         tenant = 'tenant_to_get_paragraphs'
-        xml_file_name = 'xml_file_name'
+        pdf_file_name = 'pdf_file_name'
 
-        response = client.get(f"/get_paragraphs/{tenant}/{xml_file_name}")
+        response = client.get(f"/get_paragraphs/{tenant}/{pdf_file_name}")
+
+        self.assertEqual(404, response.status_code)
+
+    def test_get_xml(self):
+        tenant = 'tenant_to_get_paragraphs'
+        xml_file_name = 'test.xml'
+        pdf_file_name = 'test.pdf'
+
+        shutil.rmtree(f'./docker_volume/xml/{tenant}', ignore_errors=True)
+        os.makedirs(f'./docker_volume/xml/{tenant}')
+        shutil.copyfile('test_files/test.xml', f'./docker_volume/xml/{tenant}/{xml_file_name}')
+
+        response = client.get(f"/get_xml/{tenant}/{pdf_file_name}")
+
+        self.assertEqual(200, response.status_code)
+        self.assertIsNotNone(response.content)
+        self.assertEqual('text/plain; charset=utf-8', response.headers.get('content-type'))
+        self.assertFalse(os.path.exists(f'./docker_volume/xml/{tenant}/{xml_file_name}'))
+
+        shutil.rmtree(f'./docker_volume/xml/{tenant}', ignore_errors=True)
+
+    def test_get_xml_when_no_xml(self):
+        tenant = 'tenant_to_get_paragraphs'
+        pdf_file_name = 'test.pdf'
+
+        response = client.get(f"/get_xml/{tenant}/{pdf_file_name}")
 
         self.assertEqual(404, response.status_code)

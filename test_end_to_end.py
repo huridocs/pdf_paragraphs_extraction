@@ -15,18 +15,15 @@ class TestEndToEnd(TestCase):
         host = 'http://localhost:5051'
 
         subprocess.run('docker-compose -f docker-compose-redis.yml up -d', shell=True)
-        sleep(10)
-
+        sleep(5)
         with open(f'test_files/{pdf_file_name}', 'rb') as stream:
             files = {'file': stream}
             requests.post(f"{host}/async_extraction/{tenant}", files=files)
 
-        sleep(10)
+        sleep(5)
 
         response = requests.get(f"{host}/get_paragraphs/{tenant}/{pdf_file_name}")
-        print('response.json()')
-        print(response.json())
-        print(type(response.json()))
+
         extraction_data_dict = json.loads(response.json())
         extraction_data = ExtractionData(**extraction_data_dict)
 
