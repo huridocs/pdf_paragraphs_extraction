@@ -10,7 +10,6 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 from data.ExtractionData import ExtractionData
 from data.ExtractionMessage import ExtractionMessage
-from data.Task import Task
 from information_extraction.InformationExtraction import InformationExtraction
 from rsmq import RedisSMQ
 

@@ -27,7 +27,7 @@ class Tasks:
 
         file_path_pdf = pathlib.Path(path)
         file_path_pdf.write_bytes(file)
-        task = Task(tenant=self.tenant, pdf_file_name=pdf_file_name, datetime=datetime.datetime.utcnow())
+        task = Task(tenant=self.tenant, pdf_file_name=pdf_file_name)
 
         self.pdf_paragraph_db.tasks.delete_many({'tenant': task.tenant, 'pdf_file_name': pdf_file_name})
         self.pdf_paragraph_db.tasks.insert_one(task.dict())

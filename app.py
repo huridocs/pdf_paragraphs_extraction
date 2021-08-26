@@ -102,3 +102,5 @@ async def get_xml(tenant: str, pdf_file_name: str):
     except Exception:
         graylog.error('Error', exc_info=1)
         raise HTTPException(status_code=422, detail='An error has occurred. Check graylog for more info')
+
+

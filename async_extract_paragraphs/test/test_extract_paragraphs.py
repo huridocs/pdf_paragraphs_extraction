@@ -27,7 +27,7 @@ class TestGetParagraphs(TestCase):
         shutil.copyfile(f'{ROOT_FOLDER}/test_files/test.pdf',
                         f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')
 
-        task = Task(tenant=tenant, pdf_file_name=pdf_file_name, datetime=datetime.datetime.utcnow())
+        task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
         mongo_client.pdf_paragraph.tasks.insert_one(task.dict())
 
         extract_paragraphs()
@@ -65,7 +65,7 @@ class TestGetParagraphs(TestCase):
                             f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')
 
         for tenant in [tenant_1, tenant_2, tenant_3, tenant_4]:
-            task = Task(tenant=tenant, pdf_file_name=pdf_file_name, datetime=datetime.datetime.utcnow())
+            task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
             mongo_client.pdf_paragraph.tasks.insert_one(task.dict())
 
         extract_paragraphs()
@@ -110,7 +110,7 @@ class TestGetParagraphs(TestCase):
         shutil.rmtree(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}', ignore_errors=True)
 
         os.makedirs(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}')
-        task = Task(tenant=tenant, pdf_file_name='no_file', datetime=datetime.datetime.utcnow())
+        task = Task(tenant=tenant, pdf_file_name='no_file')
         mongo_client.pdf_paragraph.tasks.insert_one(task.dict())
 
         extract_paragraphs()
@@ -131,7 +131,7 @@ class TestGetParagraphs(TestCase):
         os.makedirs(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}')
         shutil.copyfile(f'{ROOT_FOLDER}/README.md', f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')
 
-        task = Task(tenant=tenant, pdf_file_name=pdf_file_name, datetime=datetime.datetime.utcnow())
+        task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
         mongo_client.pdf_paragraph.tasks.insert_one(task.dict())
 
         extract_paragraphs()
@@ -158,12 +158,12 @@ class TestGetParagraphs(TestCase):
         os.makedirs(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}')
         shutil.copyfile(f'{ROOT_FOLDER}/README.md', f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')
 
-        task = Task(tenant=tenant, pdf_file_name=pdf_file_name, datetime=datetime.datetime.utcnow())
+        task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
         mongo_client.pdf_paragraph.tasks.insert_one(task.dict())
 
         extract_paragraphs()
 
-        task = Task(tenant=tenant, pdf_file_name=pdf_file_name, datetime=datetime.datetime.utcnow())
+        task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
         mongo_client.pdf_paragraph.tasks.insert_one(task.dict())
 
         shutil.copyfile(f'{ROOT_FOLDER}/README.md', f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')

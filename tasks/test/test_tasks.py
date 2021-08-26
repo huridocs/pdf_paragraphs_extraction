@@ -62,7 +62,7 @@ class TestTasks(TestCase):
         pdf_file_name = 'pdf_file_name_tasks'
 
         for i in range(10):
-            task = Task(tenant=tenant+str(i), pdf_file_name=pdf_file_name+str(i), datetime=datetime.datetime.utcnow())
+            task = Task(tenant=tenant+str(i), pdf_file_name=pdf_file_name+str(i))
             mongo_client.pdf_paragraph.tasks.insert_one(task.dict())
 
         task = Tasks.get_next_task()
