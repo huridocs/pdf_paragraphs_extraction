@@ -27,8 +27,8 @@ Configure redis server:
 - Create file `redis_server.yml` inside the project root with the content
 
 ```
-server_ip: [server_ip]
-server_port: [port_number]
+host: [shost_ip]
+port: [port_number]
 ```
 
 Add asynchronous extraction task:

@@ -69,8 +69,8 @@ async def extract_paragraphs_async(queue: RedisSMQ):
 
 def loop_extract_paragraphs():
     if os.path.exists('redis_server.yml'):
-        redis_server = yaml.safe_load(open("redis_server.yml", 'r'))['server_ip']
-        port = int(yaml.safe_load(open("redis_server.yml", 'r'))['server_port'])
+        redis_server = yaml.safe_load(open("redis_server.yml", 'r'))['host']
+        port = int(yaml.safe_load(open("redis_server.yml", 'r'))['port'])
     else:
         redis_server = 'redis_paragraphs'
         port = 6379
