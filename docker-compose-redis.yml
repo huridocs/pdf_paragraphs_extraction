@@ -7,6 +7,9 @@ services:
     volumes:
       - .:/developer
       - ./docker_volume:/developer/docker_volume
+    depends_on:
+      - mongo_paragraphs
+      - redis_paragraphs
   mongo_paragraphs:
     image: "mongo:4.0.1"
     volumes:

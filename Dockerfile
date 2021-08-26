@@ -29,6 +29,5 @@ RUN python3 download_punkt.py
 
 ENV FLASK_APP app.py
 
-#CMD python3 async_extract_paragraphs/extract_paragraphs_subprocess.py ;  gunicorn -k uvicorn.workers.UvicornWorker app:app --bind 0.0.0.0:5050
-CMD python3 test_redis.py
+CMD python3 async_extract_paragraphs/extract_paragraphs_subprocess.py ;  gunicorn -k uvicorn.workers.UvicornWorker app:app --bind 0.0.0.0:5050
 

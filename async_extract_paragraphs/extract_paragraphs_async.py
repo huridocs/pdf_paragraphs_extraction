@@ -57,12 +57,11 @@ def extract_paragraphs() -> typing.Optional[ExtractionMessage]:
                              success=True)
 
 
-async def extract_paragraphs_async(redis_server: str):
+async def extract_paragraphs_async(queue: RedisSMQ):
     try:
-        extract_paragraphs()
-        # if extraction_message:
-        #     queue = RedisSMQ(host=redis_server, qname="paragraphs_extraction")
-        #     queue.sendMessage(delay=0).message(extraction_message.json()).execute()
+        extraction_message = extract_paragraphs()
+        if extraction_message:
+            queue.sendMessage().message(extraction_message.dict()).execute()
     except:
         pass
     await asyncio.sleep(3)
@@ -74,9 +73,12 @@ def loop_extract_paragraphs():
     else:
         redis_server = 'redis_paragraphs'
 
+    queue = RedisSMQ(host=redis_server, qname="paragraphs_extraction")
+    queue.createQueue().exceptions(False).execute()
+
     while True:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(extract_paragraphs_async(redis_server))
+        loop.run_until_complete(extract_paragraphs_async(queue))
 
 
 if __name__ == '__main__':
