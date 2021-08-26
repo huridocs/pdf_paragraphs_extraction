@@ -8,10 +8,12 @@ from information_extraction.Segment import Segment
 
 class ExtractionData(BaseModel):
     tenant: str
-    xml_file_name: str
-    paragraphs_boxes: List[SegmentBox]
+    pdf_file_name: str
+    paragraphs: List[SegmentBox]
 
     @staticmethod
-    def from_segments(tenant: str, xml_file_name: str, segments: List[Segment]):
+    def from_segments(tenant: str, pdf_file_name: str, segments: List[Segment]):
         paragraphs_boxes = [SegmentBox.from_segment(x) for x in segments]
-        return ExtractionData(tenant=tenant, xml_file_name=xml_file_name, paragraphs_boxes=paragraphs_boxes)
+        return ExtractionData(tenant=tenant,
+                              pdf_file_name=pdf_file_name,
+                              paragraphs=paragraphs_boxes)

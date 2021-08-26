@@ -35,7 +35,7 @@ async def error():
 
 
 @app.get('/')
-async def get_paragraphs(file: UploadFile = File(...)):
+async def extract_paragraphs(file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename
@@ -50,30 +50,32 @@ async def get_paragraphs(file: UploadFile = File(...)):
 
 
 @app.post('/async_extraction/{tenant}')
-async def add_async_extraction(tenant, file: UploadFile = File(...)):
+async def async_extraction(tenant, file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     tenant = sanitize_name(tenant)
     try:
         filename = file.filename
         tasks = Tasks(tenant)
-        tasks.add(filename=filename, file=file.file.read())
+        tasks.add(pdf_file_name=filename, file=file.file.read())
         return 'task registered'
     except Exception:
         graylog.error(f'Error adding task {filename}', exc_info=1)
         raise HTTPException(status_code=422, detail=f'Error adding task {filename}')
 
 
-@app.get('/get_paragraphs/{tenant}/{xml_file_name}')
-async def get_paragraphs(tenant: str, xml_file_name: str):
+@app.get('/get_paragraphs/{tenant}/{pdf_file_name}')
+async def get_paragraphs(tenant: str, pdf_file_name: str):
     tenant = sanitize_name(tenant)
-    xml_file_name = sanitize_name(xml_file_name)
+
     try:
         client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
         pdf_paragraph_db = client['pdf_paragraph']
-        suggestions_filter = {"tenant": tenant, "xml_file_name": xml_file_name}
+        suggestions_filter = {"tenant": tenant, "pdf_file_name": pdf_file_name}
 
         extraction_data_dict = pdf_paragraph_db.paragraphs.find_one(suggestions_filter)
 
+        print('dict')
+        print(extraction_data_dict)
         extraction_data = ExtractionData(**extraction_data_dict)
         pdf_paragraph_db.paragraphs.delete_many(suggestions_filter)
         return extraction_data.json()

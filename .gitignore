@@ -13,3 +13,4 @@ config.py
 db/*
 graylog.yml
 docker_volume/*
+!docker_volume

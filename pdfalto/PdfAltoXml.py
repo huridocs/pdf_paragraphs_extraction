@@ -343,7 +343,8 @@ class PdfAltoXml:
                 os.makedirs('/'.join(failed_pdf_path.split('/')[:-1]))
             except FileExistsError:
                 pass
-            shutil.move(pdf_path, failed_pdf_path)
+            if os.path.exists(pdf_path):
+                shutil.move(pdf_path, failed_pdf_path)
             return
 
         with open(xml_file_path, 'r') as file:

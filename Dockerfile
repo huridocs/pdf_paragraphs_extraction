@@ -23,10 +23,11 @@ RUN pip3 install --upgrade pip
 
 COPY . .
 
-RUN pip3 install --ignore-installed -r requirements.txt
+RUN pip3 install --default-timeout=200 --ignore-installed -r requirements.txt
 
 RUN python3 download_punkt.py
 
 ENV FLASK_APP app.py
 
-CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "app:app", "--bind", "0.0.0.0:5050"]
+CMD python3 async_get_paragraphs\/get_paragraphs_subprocess.py ;  gunicorn -k uvicorn.workers.UvicornWorker app:app --bind 0.0.0.0:5050
+

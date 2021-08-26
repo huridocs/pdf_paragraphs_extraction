@@ -13,3 +13,10 @@ services:
       - ./db:/data/db
     ports:
       - '29017-29019:27017-27019'
+  redis_paragraphs:
+    image: "redis:alpine"
+    command: redis-server
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master

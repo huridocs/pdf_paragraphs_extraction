@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from unittest import TestCase
 from app import app
 from data.ExtractionData import ExtractionData
+from data.Task import Task
 from download_punkt import download_punkt
 
 client = TestClient(app)
@@ -50,51 +51,58 @@ class TestApp(TestCase):
         self.assertEqual(612, extraction['page_width'])
         self.assertEqual(792, extraction['page_height'])
 
+    @mongomock.patch(servers=['mongodb://mongo_paragraphs:27017'])
     def test_add_task(self):
-        shutil.rmtree('./docker_volume/to_segment/tenant_one', ignore_errors=True)
+        mongo_client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
+
+        shutil.rmtree('./docker_volume/to_extract/tenant_one', ignore_errors=True)
 
         with open('test_files/test.pdf', 'rb') as stream:
             files = {'file': stream}
             response = client.post("/async_extraction/tenant%20one", files=files)
 
-        self.assertEqual('task registered', response.json())
-        self.assertEqual(200, response.status_code)
-        self.assertTrue(os.path.exists('./docker_volume/to_segment/tenant_one/test.pdf'))
+        document = mongo_client.pdf_paragraph.tasks.find_one({'tenant': 'tenant_one', 'pdf_file_name': 'test.pdf'})
+        task = Task(**document)
 
-        shutil.rmtree('./docker_volume/to_segment/tenant_one', ignore_errors=True)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual('tenant_one', task.tenant)
+        self.assertEqual('test.pdf', task.pdf_file_name)
+        self.assertTrue(os.path.exists('./docker_volume/to_extract/tenant_one/test.pdf'))
+
+        shutil.rmtree('./docker_volume/to_extract/tenant_one', ignore_errors=True)
 
     @mongomock.patch(servers=['mongodb://mongo_paragraphs:27017'])
     def test_get_paragraphs_from_db(self):
-        tenant = 'tenant_to_get_paragraphs'
-        xml_file_name = 'xml_file_name'
         mongo_client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
+        tenant = 'tenant_to_get_paragraphs'
+        pdf_file_name = 'pdf_file_name.pdf'
         json_data = [{'tenant': 'wrong tenant',
-                      'xml_file_name': "wrong tenant",
-                      'paragraphs_boxes': [],
+                      'pdf_file_name': "wrong tenant",
+                      'paragraphs': [],
                       }, {'tenant': tenant,
-                          'xml_file_name': xml_file_name,
-                          'paragraphs_boxes': [
+                          'pdf_file_name': pdf_file_name,
+                          'paragraphs': [
                               {"left": 1, "top": 2, "width": 3, "height": 4, "page_number": 5, 'text': '1'},
                               {"left": 6, "top": 7, "width": 8, "height": 9, "page_number": 10, 'text': '2'}],
                           }, {'tenant': 'wrong tenant_2',
-                              'xml_file_name': "wrong tenant",
-                              'paragraphs_boxes': [],
+                              'pdf_file_name': "wrong tenant",
+                              'paragraphs': [],
                               }]
 
         mongo_client.pdf_paragraph.paragraphs.insert_many(json_data)
 
-        response = client.get(f"/get_paragraphs/{tenant}/{xml_file_name}")
+        response = client.get(f"/get_paragraphs/{tenant}/{pdf_file_name}")
 
         extraction_data = ExtractionData(**json.loads(response.json()))
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(tenant, extraction_data.tenant)
-        self.assertEqual(xml_file_name, extraction_data.xml_file_name)
-        self.assertEqual(2, len(extraction_data.paragraphs_boxes))
-        self.assertEqual([1, 2, 3, 4, 5, '1'], list(extraction_data.paragraphs_boxes[0].dict().values()))
-        self.assertEqual([6, 7, 8, 9, 10, '2'], list(extraction_data.paragraphs_boxes[1].dict().values()))
-        self.assertIsNone(
-            mongo_client.pdf_paragraph.paragraphs.find_one({"tenant": tenant, "xml_file_name": xml_file_name}))
+        self.assertEqual(pdf_file_name, extraction_data.pdf_file_name)
+        self.assertEqual(2, len(extraction_data.paragraphs))
+        self.assertEqual([1, 2, 3, 4, 5, '1'], list(extraction_data.paragraphs[0].dict().values()))
+        self.assertEqual([6, 7, 8, 9, 10, '2'], list(extraction_data.paragraphs[1].dict().values()))
+        self.assertIsNone(mongo_client.pdf_paragraph.paragraphs.find_one(
+            {"tenant": tenant, "pdf_file_name": pdf_file_name}))
 
     @mongomock.patch(servers=['mongodb://mongo_paragraphs:27017'])
     def test_get_paragraphs_when_no_data(self):
