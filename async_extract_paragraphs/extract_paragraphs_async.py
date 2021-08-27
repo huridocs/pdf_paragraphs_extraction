@@ -41,7 +41,8 @@ def extract_paragraphs() -> typing.Optional[ExtractionMessage]:
     if not information_extraction:
         return ExtractionMessage(tenant=task.tenant,
                                  pdf_file_name=task.pdf_file_name,
-                                 success=False)
+                                 success=False,
+                                 error_message='Error getting the xml from the pdf')
 
     extraction_data = ExtractionData.from_segments(tenant=task.tenant,
                                                    pdf_file_name=task.pdf_file_name,
@@ -53,7 +54,8 @@ def extract_paragraphs() -> typing.Optional[ExtractionMessage]:
 
     return ExtractionMessage(tenant=task.tenant,
                              pdf_file_name=task.pdf_file_name,
-                             success=True)
+                             success=True,
+                             error_message='')
 
 
 async def extract_paragraphs_async(queue: RedisSMQ):
@@ -67,9 +69,9 @@ async def extract_paragraphs_async(queue: RedisSMQ):
 
 
 def loop_extract_paragraphs():
-    if os.path.exists('redis_server.yml'):
-        redis_server = yaml.safe_load(open("redis_server.yml", 'r'))['host']
-        port = int(yaml.safe_load(open("redis_server.yml", 'r'))['port'])
+    if os.path.exists(f'{ROOT_DIRECTORY}/redis_server.yml'):
+        redis_server = yaml.safe_load(open(f'{ROOT_DIRECTORY}/redis_server.yml', 'r'))['host']
+        port = int(yaml.safe_load(open(f'{ROOT_DIRECTORY}/redis_server.yml', 'r'))['port'])
     else:
         redis_server = 'redis_paragraphs'
         port = 6379

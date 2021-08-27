@@ -62,7 +62,7 @@ class TestEndToEnd(TestCase):
 
     @staticmethod
     def get_redis_message():
-        extraction_message = ExtractionMessage(tenant='', pdf_file_name='', success=False)
+        extraction_message = ExtractionMessage(tenant='', pdf_file_name='', success=False, error_message='')
         for i in range(10):
             time.sleep(1)
             queue = RedisSMQ(host='127.0.0.1', port='6479', qname="paragraphs_extraction", quiet=True)

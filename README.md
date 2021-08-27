@@ -70,27 +70,10 @@ To stop the server:
 * Docker-compose [install] (https://docs.docker.com/compose/install/)
     * Note: On mac Docker-compose is installed with Docker
 
-### Configuring external graylog server
+### Logs
 
-Set graylog ip in the ./graylog.yml file:
+The service logs are stored in the file `service.log`
 
-`graylog_ip:[ip]`
+To use a graylog server, create a file `./graylog.yml` in the project root folder with the following content:
 
-### Check service graylog's logs in local
-
-Set graylog ip in the ./graylog.yml file:
-
-`graylog_ip:graylog`
-
-Execute the service in dev mode
-
-`docker-compose -f docker-compose.dev.yml up`
-
-For the logging solution graylog is used.
-
-To check the logs in local go to the url:
-`localhost:9000`
-
-User: admin Password: admin
-
-And setup the input `GELF UDP Global` in settings/input
+`graylog_ip: [ip]`
