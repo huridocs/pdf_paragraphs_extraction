@@ -11,7 +11,8 @@ from data.SegmentBox import SegmentBox
 from get_logger import get_logger
 from information_extraction.InformationExtraction import InformationExtraction
 
-from tasks.Tasks import Tasks
+
+from pdf_file.PdfFile import PdfFile
 
 logger = get_logger()
 
@@ -57,12 +58,13 @@ async def async_extraction(tenant, file: UploadFile = File(...)):
     tenant = sanitize_name(tenant)
     try:
         filename = file.filename
-        tasks = Tasks(tenant)
-        tasks.add(pdf_file_name=filename, file=file.file.read())
+        pdf_file = PdfFile(tenant)
+        pdf_file.save(pdf_file_name=filename, file=file.file.read())
         return 'task registered'
     except Exception:
         logger.error(f'Error adding task {filename}', exc_info=1)
         raise HTTPException(status_code=422, detail=f'Error adding task {filename}')
+
 
 
 @app.get('/get_paragraphs/{tenant}/{pdf_file_name}')

@@ -8,7 +8,6 @@ from fastapi.testclient import TestClient
 from unittest import TestCase
 from app import app
 from data.ExtractionData import ExtractionData
-from data.Task import Task
 from download_punkt import download_punkt
 
 client = TestClient(app)
@@ -51,10 +50,8 @@ class TestApp(TestCase):
         self.assertEqual(612, extraction['page_width'])
         self.assertEqual(792, extraction['page_height'])
 
-    @mongomock.patch(servers=['mongodb://mongo_paragraphs:27017'])
-    def test_add_task(self):
+    def test_async_extraction(self):
         tenant = 'tenant_add_task'
-        mongo_client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
 
         shutil.rmtree(f'./docker_volume/to_extract/{tenant}', ignore_errors=True)
 
@@ -62,12 +59,7 @@ class TestApp(TestCase):
             files = {'file': stream}
             response = client.post(f'/async_extraction/{tenant}', files=files)
 
-        document = mongo_client.pdf_paragraph.tasks.find_one({'tenant': tenant})
-        task = Task(**document)
-
         self.assertEqual(200, response.status_code)
-        self.assertEqual(tenant, task.tenant)
-        self.assertEqual('test.pdf', task.pdf_file_name)
         self.assertTrue(os.path.exists(f'./docker_volume/to_extract/{tenant}/test.pdf'))
 
         shutil.rmtree(f'./docker_volume/to_extract/{tenant}', ignore_errors=True)

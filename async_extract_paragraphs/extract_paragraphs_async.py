@@ -1,10 +1,13 @@
-import asyncio
+import json
 import os
 import sys
 import typing
 
 import pymongo
 import yaml
+from rsmq.consumer import RedisSMQConsumerThread
+
+from data.Task import Task
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
@@ -13,10 +16,16 @@ from data.ExtractionMessage import ExtractionMessage
 from information_extraction.InformationExtraction import InformationExtraction
 from rsmq import RedisSMQ
 
-from tasks.Tasks import Tasks
 
 ROOT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 DOCKER_VOLUME = f'{ROOT_DIRECTORY}/docker_volume'
+
+if os.path.exists(f'{ROOT_DIRECTORY}/redis_server.yml'):
+    REDIS_SERVER = yaml.safe_load(open(f'{ROOT_DIRECTORY}/redis_server.yml', 'r'))['host']
+    REDIS_PORT = int(yaml.safe_load(open(f'{ROOT_DIRECTORY}/redis_server.yml', 'r'))['port'])
+else:
+    REDIS_SERVER = 'redis_paragraphs'
+    REDIS_PORT = 6379
 
 
 def get_paths(tenant: str, pdf_file_name: str):
@@ -27,12 +36,7 @@ def get_paths(tenant: str, pdf_file_name: str):
     return pdf_file_path, xml_file_path, failed_pdf_path
 
 
-def extract_paragraphs() -> typing.Optional[ExtractionMessage]:
-    task = Tasks.get_next_task()
-
-    if not task:
-        return None
-
+def extract_paragraphs(task: Task) -> typing.Optional[ExtractionMessage]:
     pdf_file_path, xml_file_path, failed_pdf_path = get_paths(task.tenant, task.pdf_file_name)
     information_extraction = InformationExtraction.from_pdf_path(pdf_path=pdf_file_path,
                                                                  xml_file_path=xml_file_path,
@@ -58,31 +62,21 @@ def extract_paragraphs() -> typing.Optional[ExtractionMessage]:
                              error_message='')
 
 
-async def extract_paragraphs_async(queue: RedisSMQ):
-    try:
-        extraction_message = extract_paragraphs()
-        if extraction_message:
-            queue.sendMessage().message(extraction_message.dict()).execute()
-    except:
-        pass
-    await asyncio.sleep(3)
+def process(id, message, rc, ts):
+    task_dict = json.loads(message)
+    task = Task(**task_dict)
+    extraction_message = extract_paragraphs(task)
+    if extraction_message:
+        queue = RedisSMQ(host=REDIS_SERVER, port=REDIS_PORT, qname="paragraphs_extraction")
+        queue.createQueue().exceptions(False).execute()
+        queue.sendMessage().message(extraction_message.dict()).execute()
 
-
-def loop_extract_paragraphs():
-    if os.path.exists(f'{ROOT_DIRECTORY}/redis_server.yml'):
-        redis_server = yaml.safe_load(open(f'{ROOT_DIRECTORY}/redis_server.yml', 'r'))['host']
-        port = int(yaml.safe_load(open(f'{ROOT_DIRECTORY}/redis_server.yml', 'r'))['port'])
-    else:
-        redis_server = 'redis_paragraphs'
-        port = 6379
-
-    queue = RedisSMQ(host=redis_server, port=port, qname="paragraphs_extraction")
-    queue.createQueue().exceptions(False).execute()
-
-    while True:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(extract_paragraphs_async(queue))
+    return True
 
 
 if __name__ == '__main__':
-    loop_extract_paragraphs()
+    redis_smq_consumer = RedisSMQConsumerThread(qname="load",
+                                                processor=process,
+                                                host="127.0.0.1",
+                                                port=6379)
+    redis_smq_consumer.start()

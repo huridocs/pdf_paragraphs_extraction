@@ -14,6 +14,9 @@ from data.ExtractionMessage import ExtractionMessage
 
 
 class TestEndToEnd(TestCase):
+
+    queue = RedisSMQ(host='127.0.0.1', port='6479', qname="paragraphs_extraction", quiet=True)
+
     def test_end_to_end(self):
         tenant = 'end_to_end_test'
         pdf_file_name = 'test.pdf'
@@ -23,7 +26,7 @@ class TestEndToEnd(TestCase):
         sleep(5)
 
         with open(f'test_files/{pdf_file_name}', 'rb') as stream:
-            files = {'file': stream}
+            files = {'pdf_file': stream}
             requests.post(f"{host}/async_extraction/{tenant}", files=files)
 
         extraction_message = self.get_redis_message()
@@ -47,7 +50,7 @@ class TestEndToEnd(TestCase):
 
         tenant = 'end_to_end_error'
         with open('README.md', 'rb') as stream:
-            files = {'file': stream}
+            files = {'pdf_file': stream}
             requests.post(f"{host}/async_extraction/{tenant}", files=files)
 
         extraction_message = self.get_redis_message()
@@ -60,13 +63,11 @@ class TestEndToEnd(TestCase):
         shutil.rmtree(f'./docker_volume/failed_pdf/{tenant}', ignore_errors=True)
         subprocess.run('docker-compose -f docker-compose-redis.yml down', shell=True)
 
-    @staticmethod
-    def get_redis_message():
+    def get_redis_message(self):
         extraction_message = ExtractionMessage(tenant='', pdf_file_name='', success=False, error_message='')
         for i in range(10):
             time.sleep(1)
-            queue = RedisSMQ(host='127.0.0.1', port='6479', qname="paragraphs_extraction", quiet=True)
-            message = queue.receiveMessage().exceptions(False).execute()
+            message = self.queue.receiveMessage().exceptions(False).execute()
             if message:
                 extraction_message = ExtractionMessage(**json.loads(message['message']))
         return extraction_message
