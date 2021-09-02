@@ -3,7 +3,7 @@ from typing import List
 from pydantic import BaseModel
 
 from data.SegmentBox import SegmentBox
-from information_extraction.Segment import Segment
+from extract_pdf_paragraphs.information_extraction.Segment import Segment
 
 
 class ExtractionData(BaseModel):

@@ -1,28 +1,25 @@
 import json
 import os
-import sys
 import typing
 
 import pymongo
 import yaml
-from rsmq.consumer import RedisSMQConsumerThread
-
-from data.Task import Task
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-
-from data.ExtractionData import ExtractionData
-from data.ExtractionMessage import ExtractionMessage
-from information_extraction.InformationExtraction import InformationExtraction
+from rsmq.consumer import RedisSMQConsumer
 from rsmq import RedisSMQ
 
+from data.ExtractionMessage import ExtractionMessage
+from extract_pdf_paragraphs.information_extraction.InformationExtraction import InformationExtraction
 
-ROOT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+from data.Task import Task
+from data.ExtractionData import ExtractionData
+
+
+ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 DOCKER_VOLUME = f'{ROOT_DIRECTORY}/docker_volume'
 
-if os.path.exists(f'{ROOT_DIRECTORY}/redis_server.yml'):
-    REDIS_SERVER = yaml.safe_load(open(f'{ROOT_DIRECTORY}/redis_server.yml', 'r'))['host']
-    REDIS_PORT = int(yaml.safe_load(open(f'{ROOT_DIRECTORY}/redis_server.yml', 'r'))['port'])
+if os.path.exists(f'{DOCKER_VOLUME}/redis_server.yml'):
+    REDIS_SERVER = yaml.safe_load(open(f'{DOCKER_VOLUME}/redis_server.yml', 'r'))['host']
+    REDIS_PORT = int(yaml.safe_load(open(f'{DOCKER_VOLUME}/redis_server.yml', 'r'))['port'])
 else:
     REDIS_SERVER = 'redis_paragraphs'
     REDIS_PORT = 6379
@@ -63,11 +60,15 @@ def extract_paragraphs(task: Task) -> typing.Optional[ExtractionMessage]:
 
 
 def process(id, message, rc, ts):
+    print('processsing :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
+    print(message)
     task_dict = json.loads(message)
     task = Task(**task_dict)
+    print('task created :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
+
     extraction_message = extract_paragraphs(task)
     if extraction_message:
-        queue = RedisSMQ(host=REDIS_SERVER, port=REDIS_PORT, qname="paragraphs_extraction")
+        queue = RedisSMQ(host=REDIS_SERVER, port=REDIS_PORT, qname="extractions")
         queue.createQueue().exceptions(False).execute()
         queue.sendMessage().message(extraction_message.dict()).execute()
 
@@ -75,8 +76,13 @@ def process(id, message, rc, ts):
 
 
 if __name__ == '__main__':
-    redis_smq_consumer = RedisSMQConsumerThread(qname="load",
+    print('starting RedisSMQConsumerThread')
+    queue = RedisSMQ(host=REDIS_SERVER, port=REDIS_PORT, qname="extractions_tasks")
+    queue.createQueue().exceptions(False).execute()
+    redis_smq_consumer = RedisSMQConsumer(qname="extractions_tasks",
                                                 processor=process,
-                                                host="127.0.0.1",
-                                                port=6379)
-    redis_smq_consumer.start()
+                                                host=REDIS_SERVER,
+                                                port=REDIS_PORT)
+    redis_smq_consumer.run()
+    print('started RedisSMQConsumerThread')
+

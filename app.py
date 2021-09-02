@@ -1,17 +1,11 @@
-import json
 import os
 
 import pymongo
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.responses import PlainTextResponse
 import sys
-
-from data.ExtractionData import ExtractionData
-from data.SegmentBox import SegmentBox
 from get_logger import get_logger
-from information_extraction.InformationExtraction import InformationExtraction
-
-
+from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
 
 logger = get_logger()
@@ -19,10 +13,6 @@ logger = get_logger()
 app = FastAPI()
 
 logger.info(f'Get PDF paragraphs service has started')
-
-
-def sanitize_name(name: str):
-    return ''.join(x if x.isalnum() else '_' for x in name)
 
 
 @app.get('/info')
@@ -37,25 +27,9 @@ async def error():
     raise HTTPException(status_code=500, detail='This is a test error from the error endpoint')
 
 
-@app.get('/')
-async def extract_paragraphs(file: UploadFile = File(...)):
-    filename = '"No file name! Probably an error about the file in the request"'
-    try:
-        filename = file.filename
-        information_extraction = InformationExtraction.from_file_content(file.file.read())
-        paragraphs = [SegmentBox.from_segment(x).dict() for x in information_extraction.segments]
-        return json.dumps({'page_width': information_extraction.pdf_features.page_width,
-                           'page_height': information_extraction.pdf_features.page_height,
-                           'paragraphs': paragraphs})
-    except Exception:
-        logger.error(f'Error segmenting {filename}', exc_info=1)
-        raise HTTPException(status_code=422, detail=f'Error segmenting {filename}')
-
-
 @app.post('/async_extraction/{tenant}')
 async def async_extraction(tenant, file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
-    tenant = sanitize_name(tenant)
     try:
         filename = file.filename
         pdf_file = PdfFile(tenant)
@@ -66,11 +40,8 @@ async def async_extraction(tenant, file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f'Error adding task {filename}')
 
 
-
 @app.get('/get_paragraphs/{tenant}/{pdf_file_name}')
 async def get_paragraphs(tenant: str, pdf_file_name: str):
-    tenant = sanitize_name(tenant)
-
     try:
         client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
         pdf_paragraph_db = client['pdf_paragraph']
@@ -90,8 +61,6 @@ async def get_paragraphs(tenant: str, pdf_file_name: str):
 
 @app.get('/get_xml/{tenant}/{pdf_file_name}', response_class=PlainTextResponse)
 async def get_xml(tenant: str, pdf_file_name: str):
-    tenant = sanitize_name(tenant)
-
     try:
         xml_file_name = '.'.join(pdf_file_name.split('.')[:-1]) + '.xml'
 

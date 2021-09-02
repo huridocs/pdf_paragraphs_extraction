@@ -5,7 +5,7 @@ import numpy as np
 
 from bs4 import Tag
 
-from pdfalto.get_tags_by_page_pdfalto import PageInfo
+from extract_pdf_paragraphs.pdfalto.get_tags_by_page_pdfalto import PageInfo
 
 
 class PDFFeatures:

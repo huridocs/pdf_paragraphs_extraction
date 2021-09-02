@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from information_extraction.Segment import Segment
+from extract_pdf_paragraphs.information_extraction.Segment import Segment
 
 
 class SegmentBox(BaseModel):

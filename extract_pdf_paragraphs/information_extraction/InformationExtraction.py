@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from information_extraction.Font import Font
-from information_extraction.Segment import Segment
-from information_extraction.SegmentTag import SegmentTag
-from pdfalto.PDFFeatures import PDFFeatures
-from pdfalto.PdfAltoXml import PdfAltoXml
+from extract_pdf_paragraphs.information_extraction.Font import Font
+from extract_pdf_paragraphs.information_extraction.Segment import Segment
+from extract_pdf_paragraphs.information_extraction.SegmentTag import SegmentTag
+from extract_pdf_paragraphs.pdfalto.PDFFeatures import PDFFeatures
+from extract_pdf_paragraphs.pdfalto.PdfAltoXml import PdfAltoXml
 
 
 class InformationExtraction:

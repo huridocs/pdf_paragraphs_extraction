@@ -1,16 +1,20 @@
-import datetime
 import os
 import shutil
+import sys
 from unittest import TestCase
 
 import mongomock
 import pymongo
 
-from async_extract_paragraphs.extract_paragraphs_async import extract_paragraphs
 from data.ExtractionData import ExtractionData
 from data.Task import Task
 
-ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+
+from extract_paragraphs import extract_paragraphs
+
+
+ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 DOCKER_VOLUME_PATH = f'{ROOT_FOLDER}/docker_volume'
 
 

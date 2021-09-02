@@ -13,9 +13,9 @@ import numpy as np
 
 from bs4 import BeautifulSoup, Tag
 
-from pdfalto.PDFFeatures import PDFFeatures
-from pdfalto.get_tags_by_page_pdfalto import get_tags_by_page_pdfalto
-from information_extraction.reading_order import get_tuples_pdfalto_reading_order_next
+from extract_pdf_paragraphs.pdfalto.PDFFeatures import PDFFeatures
+from extract_pdf_paragraphs.pdfalto.get_tags_by_page_pdfalto import get_tags_by_page_pdfalto
+from extract_pdf_paragraphs.information_extraction.reading_order import get_tuples_pdfalto_reading_order_next
 
 SegmentPdfalto = namedtuple('SegmentPdfalto', ['page_number', 'page_width', 'page_height', 'xml_tags'])
 

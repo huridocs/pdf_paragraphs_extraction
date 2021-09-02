@@ -8,11 +8,8 @@ from fastapi.testclient import TestClient
 from unittest import TestCase
 from app import app
 from data.ExtractionData import ExtractionData
-from download_punkt import download_punkt
 
 client = TestClient(app)
-
-download_punkt()
 
 
 class TestApp(TestCase):
@@ -25,37 +22,12 @@ class TestApp(TestCase):
         self.assertEqual(500, response.status_code)
         self.assertEqual({'detail': 'This is a test error from the error endpoint'}, response.json())
 
-    def test_get_paragraphs(self):
-        with open('test_files/test.pdf', 'rb') as stream:
-            files = {'file': stream}
-            response = client.get("/", files=files)
-        extraction = json.loads(response.json())
-
-        self.assertEqual(200, response.status_code)
-        self.assertLess(15, len(extraction['paragraphs']))
-        self.assertEqual('A/INF/76/1', extraction['paragraphs'][0]['text'])
-        self.assertEqual(612, extraction['page_width'])
-        self.assertEqual(792, extraction['page_height'])
-        self.assertEqual({1, 2}, {x['page_number'] for x in extraction['paragraphs']})
-
-    def test_get_blank_pdf_paragraphs(self):
-        with open('test_files/blank.pdf', 'rb') as stream:
-            files = {'file': stream}
-            response = client.get("/", files=files)
-        extraction = json.loads(response.json())
-        print(extraction)
-
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(0, len(extraction['paragraphs']))
-        self.assertEqual(612, extraction['page_width'])
-        self.assertEqual(792, extraction['page_height'])
-
     def test_async_extraction(self):
         tenant = 'tenant_add_task'
 
         shutil.rmtree(f'./docker_volume/to_extract/{tenant}', ignore_errors=True)
 
-        with open('test_files/test.pdf', 'rb') as stream:
+        with open('./test_files/test.pdf', 'rb') as stream:
             files = {'file': stream}
             response = client.post(f'/async_extraction/{tenant}', files=files)
 
@@ -113,7 +85,7 @@ class TestApp(TestCase):
 
         shutil.rmtree(f'./docker_volume/xml/{tenant}', ignore_errors=True)
         os.makedirs(f'./docker_volume/xml/{tenant}')
-        shutil.copyfile('test_files/test.xml', f'./docker_volume/xml/{tenant}/{xml_file_name}')
+        shutil.copyfile('./test_files/test.xml', f'./docker_volume/xml/{tenant}/{xml_file_name}')
 
         response = client.get(f"/get_xml/{tenant}/{pdf_file_name}")
 

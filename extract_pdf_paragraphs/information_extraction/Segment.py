@@ -1,7 +1,7 @@
 from typing import List
 
-from information_extraction.SegmentTag import SegmentTag
-from pdfalto.PDFFeatures import PDFFeatures
+from extract_pdf_paragraphs.information_extraction.SegmentTag import SegmentTag
+from extract_pdf_paragraphs.pdfalto.PDFFeatures import PDFFeatures
 
 
 class Segment:
