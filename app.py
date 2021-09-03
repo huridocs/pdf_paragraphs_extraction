@@ -1,9 +1,13 @@
+import json
 import os
 
 import pymongo
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.responses import PlainTextResponse
 import sys
+
+from data.SegmentBox import SegmentBox
+from extract_pdf_paragraphs.information_extraction.InformationExtraction import InformationExtraction
 from get_logger import get_logger
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
@@ -38,6 +42,21 @@ async def async_extraction(tenant, file: UploadFile = File(...)):
     except Exception:
         logger.error(f'Error adding task {filename}', exc_info=1)
         raise HTTPException(status_code=422, detail=f'Error adding task {filename}')
+
+
+@app.get('/')
+async def extract_paragraphs(file: UploadFile = File(...)):
+    filename = '"No file name! Probably an error about the file in the request"'
+    try:
+        filename = file.filename
+        information_extraction = InformationExtraction.from_file_content(file.file.read())
+        paragraphs = [SegmentBox.from_segment(x).dict() for x in information_extraction.segments]
+        return json.dumps({'page_width': information_extraction.pdf_features.page_width,
+                           'page_height': information_extraction.pdf_features.page_height,
+                           'paragraphs': paragraphs})
+    except Exception:
+        logger.error(f'Error segmenting {filename}', exc_info=1)
+        raise HTTPException(status_code=422, detail=f'Error segmenting {filename}')
 
 
 @app.get('/get_paragraphs/{tenant}/{pdf_file_name}')

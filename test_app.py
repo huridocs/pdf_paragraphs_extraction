@@ -36,6 +36,22 @@ class TestApp(TestCase):
 
         shutil.rmtree(f'./docker_volume/to_extract/{tenant}', ignore_errors=True)
 
+    def test_extract_paragraphs(self):
+        with open('./test_files/test.pdf', 'rb') as stream:
+            files = {'file': stream}
+            response = client.get("/", files=files)
+
+        segments_boxes = json.loads(response.json())
+        pages = [segment_box['page_number'] for segment_box in segments_boxes['paragraphs']]
+
+        self.assertEqual(200, response.status_code)
+        self.assertLess(15, len(segments_boxes['paragraphs']))
+        self.assertEqual('A/INF/76/1', segments_boxes['paragraphs'][0]['text'])
+        self.assertEqual(612, segments_boxes['page_width'])
+        self.assertEqual(792, segments_boxes['page_height'])
+        self.assertEqual(1, min(pages))
+        self.assertEqual(2, max(pages))
+
     @mongomock.patch(servers=['mongodb://mongo_paragraphs:27017'])
     def test_get_paragraphs_from_db(self):
         mongo_client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
