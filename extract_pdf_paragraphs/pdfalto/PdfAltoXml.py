@@ -292,8 +292,6 @@ class PdfAltoXml:
         else:
             pdfalto_executable = f'{THIS_SCRIPT_PATH}/pdfalto_linux'
 
-        print(pdf_path)
-        print(file_path_xml)
         subprocess.run([pdfalto_executable, '-readingOrder', pdf_path, file_path_xml])
 
     @staticmethod

@@ -23,8 +23,8 @@ class TestEndToEnd(TestCase):
         pdf_file_name = 'test.pdf'
         host = 'http://localhost:5051'
 
-        subprocess.run('docker-compose up --build -d', shell=True)
-        time.sleep(15)
+        subprocess.run('docker-compose up -d', shell=True)
+        time.sleep(60)
 
         with open(f'{root_path}/test_files/{pdf_file_name}', 'rb') as stream:
             files = {'file': stream}
