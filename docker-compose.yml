@@ -1,20 +1,24 @@
 version: '3'
 services:
   server:
-    build: Dockerfile_sever
+    build:
+      context: .
+      dockerfile: Dockerfile_sever
     ports:
       - "5051:5050"
     volumes:
       - .:/developer
-      - ./docker_volume:/app/docker_volume
+      - ./docker_volume:/home/appuser/docker_volume
     depends_on:
       - mongo_paragraphs
       - redis_paragraphs
   extract_pdf_paragraphs:
-    build: Dockerfile_extractor
+    build:
+      context: .
+      dockerfile: Dockerfile_extractor
     volumes:
       - .:/developer
-      - ./docker_volume:/app/docker_volume
+      - ./docker_volume:/home/appuser/docker_volume
     depends_on:
       - mongo_paragraphs
       - redis_paragraphs

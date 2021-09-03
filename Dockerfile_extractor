@@ -1,14 +1,14 @@
 FROM python:3.9-bullseye
 
-#RUN adduser -D myuser
-#USER myuser
-WORKDIR /app
-#COPY --chown=myuser:myuser . .
-COPY . .
-
+COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-RUN python3 download_punkt.py
-CMD python3 extract_paragraphs.py
+RUN adduser appuser
+USER appuser
+WORKDIR /home/appuser
+COPY --chown=appuser . .
+
+RUN python3 extract_pdf_paragraphs/download_punkt.py
+CMD python3 RedisTasksProcessor.py
 

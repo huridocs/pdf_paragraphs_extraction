@@ -6,8 +6,6 @@ from pdf_file.PdfFile import PdfFile
 ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 DOCKER_VOLUME_PATH = f'{ROOT_FOLDER}/docker_volume'
 
-print(ROOT_FOLDER)
-
 
 class TestPdfFile(TestCase):
     def test_save(self):

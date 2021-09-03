@@ -24,7 +24,7 @@ Start service:
 
 Configure redis server:
 
-- Create file `redis_server.yml` inside the project root with the content
+- Create file `docker_volume/redis_server.yml`
 
 ```
 host: [shost_ip]
@@ -72,8 +72,8 @@ To stop the server:
 
 ### Logs
 
-The service logs are stored in the file `service.log`
+The service logs are stored in the file `docker_volume/service.log`
 
-To use a graylog server, create a file `./graylog.yml` in the project root folder with the following content:
+To use a graylog server, create a file `docker_volume/graylog.yml` with the following content:
 
 `graylog_ip: [ip]`

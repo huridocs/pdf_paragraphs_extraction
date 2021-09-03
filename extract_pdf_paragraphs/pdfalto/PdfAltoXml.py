@@ -350,7 +350,8 @@ class PdfAltoXml:
         with open(xml_file_path, 'r') as file:
             xml_elements = BeautifulSoup(file.read(), 'lxml-xml')
 
-        os.remove(file_xml_metadata_path)
-        shutil.rmtree(file_xml_data_path)
+        if os.path.exists(file_xml_metadata_path):
+            os.remove(file_xml_metadata_path)
+        shutil.rmtree(file_xml_data_path, ignore_errors=True)
 
         return xml_elements
