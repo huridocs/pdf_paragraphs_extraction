@@ -7,6 +7,7 @@ import mongomock
 import pymongo
 
 from data.Task import Task
+from extract_pdf_paragraphs.download_punkt import download_punkt
 from extract_pdf_paragraphs.extract_paragraphs import extract_paragraphs
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
@@ -14,6 +15,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 DOCKER_VOLUME_PATH = f'{ROOT_FOLDER}/docker_volume'
+
+download_punkt()
 
 
 class TestGetParagraphs(TestCase):

@@ -8,8 +8,11 @@ from fastapi.testclient import TestClient
 from unittest import TestCase
 from app import app
 from data.ExtractionData import ExtractionData
+from extract_pdf_paragraphs.download_punkt import download_punkt
 
 client = TestClient(app)
+
+download_punkt()
 
 
 class TestApp(TestCase):
