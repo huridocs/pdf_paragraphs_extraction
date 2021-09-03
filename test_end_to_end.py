@@ -21,7 +21,7 @@ class TestEndToEnd(TestCase):
 
         tenant = 'end_to_end_test'
         pdf_file_name = 'test.pdf'
-        host = 'http://localhost:5051'
+        host = 'http://localhost:5050'
 
         subprocess.run('docker-compose up -d', shell=True)
         time.sleep(60)
