@@ -7,7 +7,6 @@ services:
     ports:
       - "5050:5050"
     volumes:
-      - .:/developer
       - ./docker_volume:/home/appuser/docker_volume
     depends_on:
       - mongo_paragraphs
@@ -17,7 +16,6 @@ services:
       context: .
       dockerfile: Dockerfile_extractor
     volumes:
-      - .:/developer
       - ./docker_volume:/home/appuser/docker_volume
     depends_on:
       - mongo_paragraphs
