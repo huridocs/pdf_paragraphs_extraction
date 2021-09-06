@@ -26,6 +26,9 @@ class TestEndToEnd(TestCase):
         subprocess.run('docker-compose up -d', shell=True)
         time.sleep(5)
 
+        result = requests.get(f"{host}/info")
+        self.assertEqual(200, result.status_code)
+
         with open(f'{root_path}/test_files/{pdf_file_name}', 'rb') as stream:
             files = {'file': stream}
             requests.post(f"{host}/async_extraction/{tenant}", files=files)
