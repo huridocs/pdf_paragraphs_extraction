@@ -20,6 +20,7 @@ services:
     depends_on:
       - mongo_paragraphs
       - redis_paragraphs
+      - server
   mongo_paragraphs:
     image: "mongo:4.0.1"
     volumes:
