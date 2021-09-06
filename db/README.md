@@ -1,0 +1,1 @@
+db is a folder where mongo store the dbs
