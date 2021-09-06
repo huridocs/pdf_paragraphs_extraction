@@ -24,7 +24,7 @@ class TestEndToEnd(TestCase):
         host = 'http://localhost:5050'
 
         subprocess.run('docker-compose up -d', shell=True)
-        time.sleep(5)
+        time.sleep(25)
 
         result = requests.get(f"{host}/info")
         self.assertEqual(200, result.status_code)
