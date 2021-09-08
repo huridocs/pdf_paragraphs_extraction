@@ -27,7 +27,7 @@ async def info():
 
 @app.get('/error')
 async def error():
-    logger.error("This is a test error from the error endpoint")
+    # logger.error("This is a test error from the error endpoint")
     raise HTTPException(status_code=500, detail='This is a test error from the error endpoint')
 
 
@@ -40,7 +40,7 @@ async def async_extraction(tenant, file: UploadFile = File(...)):
         pdf_file.save(pdf_file_name=filename, file=file.file.read())
         return 'task registered'
     except Exception:
-        logger.error(f'Error adding task {filename}', exc_info=1)
+        # logger.error(f'Error adding task {filename}', exc_info=1)
         raise HTTPException(status_code=422, detail=f'Error adding task {filename}')
 
 
@@ -55,7 +55,7 @@ async def extract_paragraphs(file: UploadFile = File(...)):
                            'page_height': information_extraction.pdf_features.page_height,
                            'paragraphs': paragraphs})
     except Exception:
-        logger.error(f'Error segmenting {filename}', exc_info=1)
+        # logger.error(f'Error segmenting {filename}', exc_info=1)
         raise HTTPException(status_code=422, detail=f'Error segmenting {filename}')
 
 
@@ -74,7 +74,7 @@ async def get_paragraphs(tenant: str, pdf_file_name: str):
     except TypeError:
         raise HTTPException(status_code=404, detail='No paragraphs')
     except Exception:
-        logger.error('Error', exc_info=1)
+        # logger.error('Error', exc_info=1)
         raise HTTPException(status_code=422, detail='An error has occurred. Check graylog for more info')
 
 
@@ -90,7 +90,7 @@ async def get_xml(tenant: str, pdf_file_name: str):
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail='No xml file')
     except Exception:
-        logger.error('Error', exc_info=1)
+        # logger.error('Error', exc_info=1)
         raise HTTPException(status_code=422, detail='An error has occurred. Check graylog for more info')
 
 
