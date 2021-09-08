@@ -12,16 +12,16 @@ from get_logger import get_logger
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
 
-logger = get_logger()
+# logger = get_logger()
 
 app = FastAPI()
 
-logger.info(f'Get PDF paragraphs service has started')
+# logger.info(f'Get PDF paragraphs service has started')
 
 
 @app.get('/info')
 async def info():
-    logger.info('Get PDF paragraphs info endpoint')
+    # logger.info('Get PDF paragraphs info endpoint')
     return sys.version
 
 
