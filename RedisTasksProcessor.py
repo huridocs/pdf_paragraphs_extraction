@@ -18,7 +18,7 @@ class RedisTasksProcessor:
     def __init__(self):
         root_directory = os.path.dirname(os.path.realpath(__file__))
         self.docker_volume_path = f'{root_directory}/docker_volume'
-        self.logger = get_logger()
+        self.logger = get_logger('redis_tasks')
         self.logger.info('RedisTasksProcessor')
         self.redis_host = 'redis_paragraphs'
         self.redis_port = 6379
