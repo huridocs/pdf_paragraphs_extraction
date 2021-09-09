@@ -37,7 +37,6 @@ class RedisTasksProcessor:
 
     def process(self, id, message, rc, ts):
         task = Task(**message)
-        self.logger.error(task.json())
 
         extraction_data = extract_paragraphs(task)
 

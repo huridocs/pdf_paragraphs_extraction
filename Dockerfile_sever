@@ -8,14 +8,10 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-RUN adduser appuser
-RUN mkdir /home/appuser/docker_volume
-RUN chown appuser:appuser /home/appuser/docker_volume
+RUN mkdir /app
+WORKDIR /app
 
-USER appuser
-WORKDIR /home/appuser
-
-COPY --chown=appuser . .
+COPY . .
 
 ENV FLASK_APP app.py
 

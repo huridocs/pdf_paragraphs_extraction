@@ -7,7 +7,7 @@ services:
     ports:
       - "5051:5050"
     volumes:
-      - ./docker_volume:/home/appuser/docker_volume
+      - ./docker_volume:/app/docker_volume
     depends_on:
       - mongo_paragraphs
       - redis_paragraphs
@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: Dockerfile_extractor
     volumes:
-      - ./docker_volume:/home/appuser/docker_volume
+      - ./docker_volume:/app/docker_volume
     depends_on:
       - mongo_paragraphs
       - redis_paragraphs
