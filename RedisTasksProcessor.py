@@ -27,7 +27,7 @@ class RedisTasksProcessor:
         client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
         self.pdf_paragraph_db = client['pdf_paragraph']
 
-        self.extractions_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname="extractions")
+        self.extractions_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname='segmentation_results')
         self.extractions_queue.createQueue().exceptions(False).execute()
 
     def set_redis_parameters_from_yml(self):
@@ -61,10 +61,10 @@ class RedisTasksProcessor:
         return True
 
     def subscribe_to_extractions_tasks_queue(self):
-        extractions_tasks_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname="extractions_tasks")
+        extractions_tasks_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname="segmentation_tasks")
         extractions_tasks_queue.createQueue().exceptions(False).execute()
 
-        redis_smq_consumer = RedisSMQConsumer(qname="extractions_tasks",
+        redis_smq_consumer = RedisSMQConsumer(qname="segmentation_tasks",
                                               processor=self.process,
                                               host=self.redis_host,
                                               port=self.redis_port)

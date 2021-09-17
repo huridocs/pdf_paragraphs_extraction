@@ -30,7 +30,7 @@ class TestEndToEnd(TestCase):
             files = {'file': stream}
             requests.post(f"{host}/async_extraction/{tenant}", files=files)
 
-        queue = RedisSMQ(host='127.0.0.1', port='6479', qname="extractions_tasks")
+        queue = RedisSMQ(host='127.0.0.1', port='6479', qname="segmentation_tasks")
         task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
         queue.sendMessage().message(str(task.json())).execute()
 
@@ -75,7 +75,7 @@ class TestEndToEnd(TestCase):
 
     @staticmethod
     def get_redis_message() -> ExtractionMessage:
-        queue = RedisSMQ(host='127.0.0.1', port='6479', qname='extractions', quiet=True)
+        queue = RedisSMQ(host='127.0.0.1', port='6479', qname='segmentation_results', quiet=True)
 
         for i in range(10):
             time.sleep(2)
