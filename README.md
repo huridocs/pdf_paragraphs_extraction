@@ -18,20 +18,20 @@ To stop the server:
 
 ### How to use it asynchronously
 
-Start service:
+<b>Configure the redis server</b>
 
-`docker-compose up`
+If the configuration is not changed, a dockerized redis server will be used.
 
-Configure redis server:
+To use a different redis server, create a file `docker_volume/redis_server.yml` with the following content:
 
-- Create file `docker_volume/redis_server.yml`
+    host: [shost_ip]
+    port: [port_number]
 
-```
-host: [shost_ip]
-port: [port_number]
-```
+<b>Start service</b>
 
-Add asynchronous extraction task:
+    docker-compose up
+
+<b>Add asynchronous extraction task</b>
 
 `curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost/async_extraction/[tenant_name]:5051`
 
@@ -56,13 +56,13 @@ rsmq.receiveMessage({ qname: "paragraphs_extraction" }, (err, resp) => {
 });
 ```
 
-Get paragraphs:
+<b>Get paragraphs</b>
 
-`curl -X GET localhost/get_paragraphs/[tenant_name]/[pdf_name]:5051`
+  curl -X GET localhost/get_paragraphs/[tenant_name]/[pdf_name]:5051
 
-To stop the server:
+<b>To stop the server</b>
 
-`docker-compose down`
+  docker-compose down
 
 ### Dependencies
 
