@@ -27,7 +27,7 @@ To use a different redis server, create a file `docker_volume/redis_server.yml` 
     host: [shost_ip]
     port: [port_number]
 
-<b>Start service</b>
+<b>Start the service</b>
 
     docker-compose up
 
@@ -60,7 +60,7 @@ rsmq.receiveMessage({ qname: "paragraphs_extraction" }, (err, resp) => {
 
   curl -X GET localhost/get_paragraphs/[tenant_name]/[pdf_name]:5051
 
-<b>To stop the server</b>
+<b>Stop the service</b>
 
   docker-compose down
 
