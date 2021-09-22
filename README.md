@@ -40,28 +40,28 @@ To use a different redis server, create a file `docker_volume/redis_server.yml` 
 
 <b>Add asynchronous extraction task</b>
 
-`curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost/async_extraction/[tenant_name]:5051`
+To add start a segmentation task, a message should be sent to a queue
+
+python
+  queue = RedisSMQ(host=[redis host], port=[redis port], qname='segmentation_tasks', quiet=True)
+  message = queue.sendMessage('{"tenant": "tenant_name", "task": "pdf_name.pdf"}').exceptions(False).execute()
 
 Get redis message when extraction is done:
 
 python
-```
-queue = RedisSMQ(host=[redis host], port=[redis port], qname='paragraphs_extraction', quiet=True)
-message = queue.receiveMessage().exceptions(False).execute()
-```
+  queue = RedisSMQ(host=[redis host], port=[redis port], qname='segmentation_results', quiet=True)
+  message = queue.receiveMessage().exceptions(False).execute()
 
 js
-```
-const rsmq = new RedisSMQ( {host: [redis host], port: [redis port], ns: "rsmq"} );
-
-rsmq.receiveMessage({ qname: "paragraphs_extraction" }, (err, resp) => {
-    if (resp.id) {
-        console.log("received message:", resp.message);
-    } else {
-        console.log("no available message in queue..");
-    }
-});
-```
+  const rsmq = new RedisSMQ( {host: [redis host], port: [redis port], ns: "rsmq"} );
+  
+  rsmq.receiveMessage({ qname: "segmentation_results" }, (err, resp) => {
+      if (resp.id) {
+          console.log("received message:", resp.message);
+      } else {
+          console.log("no available message in queue..");
+      }
+  });
 
 <b>Get paragraphs</b>
 
@@ -83,10 +83,10 @@ To use a graylog server, create a file `docker_volume/graylog.yml` with the foll
 
 It works with Python 3.9
 
-    pip install virtualenv
+    pip3 install virtualenv
     virtualenv venv
     source venv/bin/activate
-    pip intall -r requirements.txt
+    pip install -r requirements.txt
     
 ### Execute tests
 
