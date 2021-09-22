@@ -13,15 +13,15 @@ This service uses machine learning to segment a PDF in paragraphs.
 
 Start service:
 
-`docker-compose up`
+    docker-compose up
 
 Get paragraphs from a PDF:
 
-`curl -X GET -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051`
+    curl -X GET -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051
 
 To stop the server:
 
-`docker-compose down`
+    docker-compose down
 
 ### How to use it asynchronously
 
@@ -40,36 +40,26 @@ To use a different redis server, create a file `docker_volume/redis_server.yml` 
 
 <b>Add asynchronous extraction task</b>
 
-To add start a segmentation task, a message should be sent to a queue
+To add a segmentation task, a message should be sent to a queue
 
-python
-  queue = RedisSMQ(host=[redis host], port=[redis port], qname='segmentation_tasks', quiet=True)
-  message = queue.sendMessage('{"tenant": "tenant_name", "task": "pdf_name.pdf"}').exceptions(False).execute()
+    queue = RedisSMQ(host=[redis host], port=[redis port], qname='segmentation_tasks', quiet=True)
+    message = queue.sendMessage('{"tenant": "tenant_name", "task": "pdf_name.pdf"}').exceptions(False).execute()
 
-Get redis message when extraction is done:
+When the segmentation task is done, a message is placed in the results queue:
 
-python
-  queue = RedisSMQ(host=[redis host], port=[redis port], qname='segmentation_results', quiet=True)
-  message = queue.receiveMessage().exceptions(False).execute()
+    queue = RedisSMQ(host=[redis host], port=[redis port], qname='segmentation_results', quiet=True)
+    message = queue.receiveMessage().exceptions(False).execute()
 
-js
-  const rsmq = new RedisSMQ( {host: [redis host], port: [redis port], ns: "rsmq"} );
-  
-  rsmq.receiveMessage({ qname: "segmentation_results" }, (err, resp) => {
-      if (resp.id) {
-          console.log("received message:", resp.message);
-      } else {
-          console.log("no available message in queue..");
-      }
-  });
+    # The message.message contains the following information:
+    # {"tenant": "tenant_name", "task": "pdf_name.pdf", "success": true, "error_message": ""}
 
 <b>Get paragraphs</b>
 
-  curl -X GET localhost/get_paragraphs/[tenant_name]/[pdf_name]:5051
+    curl -X GET localhost/get_paragraphs/[tenant_name]/[pdf_name]:5051
 
 <b>Stop the service</b>
 
-  docker-compose down
+    docker-compose down
 
 ### Logs
 
@@ -77,7 +67,7 @@ The service logs are stored in the file `docker_volume/service.log`
 
 To use a graylog server, create a file `docker_volume/graylog.yml` with the following content:
 
-`graylog_ip: [ip]`
+    graylog_ip: [ip]
 
 ### Set up environment for development
 
