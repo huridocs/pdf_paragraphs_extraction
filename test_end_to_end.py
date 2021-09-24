@@ -14,6 +14,12 @@ from data.Task import Task
 
 
 class TestEndToEnd(TestCase):
+    def setUp(self):
+        subprocess.run('docker-compose up -d', shell=True)
+        time.sleep(5)
+
+    def tearDown(self):
+        subprocess.run('docker-compose down', shell=True)
 
     def test_end_to_end(self):
         root_path = '.'
@@ -22,9 +28,6 @@ class TestEndToEnd(TestCase):
         tenant = 'end_to_end_test'
         pdf_file_name = 'test.pdf'
         host = 'http://localhost:5051'
-
-        subprocess.run('docker-compose up -d', shell=True)
-        time.sleep(5)
 
         with open(f'{root_path}/test_files/{pdf_file_name}', 'rb') as stream:
             files = {'file': stream}
@@ -71,7 +74,6 @@ class TestEndToEnd(TestCase):
             f'{docker_volume_path}/failed_pdf/{extraction_message.tenant}/{extraction_message.pdf_file_name}'))
 
         shutil.rmtree(f'{docker_volume_path}/failed_pdf/{tenant}', ignore_errors=True)
-        subprocess.run('docker-compose down', shell=True)
 
     @staticmethod
     def get_redis_message() -> ExtractionMessage:

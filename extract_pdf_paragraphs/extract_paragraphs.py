@@ -1,8 +1,6 @@
 import os
-import shutil
 import typing
 
-from data.ExtractionMessage import ExtractionMessage
 from extract_pdf_paragraphs.information_extraction.InformationExtraction import InformationExtraction
 
 from data.Task import Task

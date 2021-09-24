@@ -71,7 +71,7 @@ To use a graylog server, create a file `docker_volume/graylog.yml` with the foll
 
 ### Set up environment for development
 
-It works with Python 3.9
+It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/)
 
     pip3 install virtualenv
     virtualenv venv
