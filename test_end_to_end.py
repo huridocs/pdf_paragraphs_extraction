@@ -16,7 +16,7 @@ from data.Task import Task
 class TestEndToEnd(TestCase):
     def setUp(self):
         subprocess.run('docker-compose up -d', shell=True)
-        time.sleep(5)
+        time.sleep(10)
 
     def tearDown(self):
         subprocess.run('docker-compose down', shell=True)
