@@ -14,5 +14,5 @@ WORKDIR /app
 COPY . .
 
 RUN python3 extract_pdf_paragraphs/download_punkt.py
-CMD python3 RedisTasksProcessor.py
+CMD python3 QueueProcessor.py
 
