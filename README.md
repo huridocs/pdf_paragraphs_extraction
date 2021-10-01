@@ -40,7 +40,7 @@ To use a different redis server, create a file `docker_volume/redis_server.yml` 
 
 <b>Send PDF to segment asynchronously</b>
 
-    curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost/async_extraction/[tenant_name]:5051
+    curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051/async_extraction/[tenant_name]
 
 <b>Add asynchronous extraction task</b>
 
@@ -59,7 +59,7 @@ When the segmentation task is done, a message is placed in the results queue:
 
 <b>Get paragraphs</b>
 
-    curl -X GET localhost/get_paragraphs/[tenant_name]/[pdf_name]:5051
+    curl -X GET localhost:5051/get_paragraphs/[tenant_name]/[pdf_name]
 
 <b>Stop the service</b>
 
