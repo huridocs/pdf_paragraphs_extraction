@@ -27,7 +27,7 @@ To stop the server:
 
 <b>Configure the redis server</b>
 
-If the configuration is not changed, a dockerized redis server will be used.
+If the configuration is not changed, a dockerized redis server will be used in port <b>6479</b>
 
 To use a different redis server, create a file `docker_volume/redis_server.yml` with the following content:
 
@@ -37,6 +37,10 @@ To use a different redis server, create a file `docker_volume/redis_server.yml` 
 <b>Start the service</b>
 
     docker-compose up
+
+<b>Send PDF to segment asynchronously</b>
+
+    curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost/async_extraction/[tenant_name]:5051
 
 <b>Add asynchronous extraction task</b>
 
