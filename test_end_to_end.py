@@ -8,7 +8,7 @@ from unittest import TestCase
 import requests
 from rsmq import RedisSMQ
 
-from create_config import create_configuration
+from config_creator import create_configuration
 from data.ExtractionData import ExtractionData
 from data.ExtractionMessage import ExtractionMessage
 from data.Task import Task
