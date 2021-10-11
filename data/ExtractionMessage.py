@@ -5,5 +5,6 @@ class ExtractionMessage(BaseModel):
     tenant: str
     pdf_file_name: str
     success: bool
-    error_message: str
+    error_message: str = None
+    results_url: str = None
 

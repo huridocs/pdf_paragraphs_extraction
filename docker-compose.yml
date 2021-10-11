@@ -10,7 +10,6 @@ services:
       - ./docker_volume:/app/docker_volume
     depends_on:
       - mongo_paragraphs
-      - redis_paragraphs
   extract_pdf_paragraphs:
     build:
       context: .
@@ -19,17 +18,9 @@ services:
       - ./docker_volume:/app/docker_volume
     depends_on:
       - mongo_paragraphs
-      - redis_paragraphs
   mongo_paragraphs:
     image: "mongo:4.0.1"
     volumes:
       - ./db:/data/db
     ports:
       - '29017-29019:27017-27019'
-  redis_paragraphs:
-    image: "redis:alpine"
-    command: redis-server
-    ports:
-      - "6479:6379"
-    environment:
-      - REDIS_REPLICATION_MODE=master

@@ -8,6 +8,7 @@ from unittest import TestCase
 import requests
 from rsmq import RedisSMQ
 
+from create_config import create_configuration
 from data.ExtractionData import ExtractionData
 from data.ExtractionMessage import ExtractionMessage
 from data.Task import Task
@@ -15,11 +16,12 @@ from data.Task import Task
 
 class TestEndToEnd(TestCase):
     def setUp(self):
-        subprocess.run('docker-compose up -d', shell=True)
+        create_configuration()
+        subprocess.run('docker-compose -f docker-compose-service-with-redis.yml up  -d', shell=True)
         time.sleep(5)
 
     def tearDown(self):
-        subprocess.run('docker-compose down', shell=True)
+        subprocess.run('docker-compose -f docker-compose-service-with-redis.yml down', shell=True)
 
     def test_end_to_end(self):
         root_path = '.'
@@ -39,8 +41,7 @@ class TestEndToEnd(TestCase):
 
         extraction_message = self.get_redis_message()
 
-        response = requests.get(
-            f"{host}/get_paragraphs/{extraction_message.tenant}/{extraction_message.pdf_file_name}")
+        response = requests.get(extraction_message.results_url)
 
         extraction_data_dict = json.loads(response.json())
         extraction_data = ExtractionData(**extraction_data_dict)

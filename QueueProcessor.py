@@ -14,12 +14,14 @@ from get_logger import get_logger
 
 class QueueProcessor:
     def __init__(self):
-        root_directory = os.path.dirname(os.path.realpath(__file__))
-        self.docker_volume_path = f'{root_directory}/docker_volume'
         self.logger = get_logger('redis_tasks')
         self.redis_host = 'redis_paragraphs'
         self.redis_port = 6379
         self.set_redis_parameters_from_yml()
+
+        self.service_host = None
+        self.service_port = None
+        self.set_server_parameters_from_yml()
 
         client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
         self.pdf_paragraph_db = client['pdf_paragraph']
@@ -28,9 +30,22 @@ class QueueProcessor:
         self.extractions_queue.createQueue().exceptions(False).execute()
 
     def set_redis_parameters_from_yml(self):
-        if os.path.exists(f'{self.docker_volume_path}/redis_server.yml'):
-            self.redis_host = yaml.safe_load(open(f'{self.docker_volume_path}/redis_server.yml', 'r'))['host']
-            self.redis_port = int(yaml.safe_load(open(f'{self.docker_volume_path}/redis_server.yml', 'r'))['port'])
+        if not os.path.exists(f'config.yml'):
+            return
+
+        with open(f'config.yml', 'r') as f:
+            config_dict = yaml.safe_load(f)
+            self.redis_host = config_dict['redis_host'] if 'redis_host' in config_dict else self.redis_host
+            self.redis_port = int(config_dict['redis_port']) if 'redis_port' in config_dict else self.redis_port
+
+    def set_server_parameters_from_yml(self):
+        if not os.path.exists(f'config.yml'):
+            return
+
+        with open(f'config.yml', 'r') as f:
+            config_dict = yaml.safe_load(f)
+            self.service_host = config_dict['service_host'] if 'service_host' in config_dict else self.service_host
+            self.service_port = int(config_dict['service_port']) if 'service_port' in config_dict else self.service_port
 
     def process(self, id, message, rc, ts):
         task = Task(**message)
@@ -39,19 +54,20 @@ class QueueProcessor:
 
         if not extraction_data:
             extraction_message = ExtractionMessage(tenant=task.tenant,
-                              pdf_file_name=task.pdf_file_name,
-                              success=False,
-                              error_message='Error getting the xml from the pdf')
+                                                   pdf_file_name=task.pdf_file_name,
+                                                   success=False,
+                                                   error_message='Error getting the xml from the pdf')
 
             self.extractions_queue.sendMessage().message(extraction_message.dict()).execute()
             self.logger.error(extraction_message.json())
             return True
 
+        results_url = f'http://{self.service_host}:{self.service_port}/get_paragraphs/{task.tenant}/{task.pdf_file_name}'
         extraction_message = ExtractionMessage(tenant=extraction_data.tenant,
                                                pdf_file_name=extraction_data.pdf_file_name,
                                                success=True,
-                                               error_message='')
-        self.logger.error(str(extraction_data.dict()))
+                                               results_url=results_url)
+
         self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
         self.extractions_queue.sendMessage(delay=2).message(extraction_message.dict()).execute()
         return True

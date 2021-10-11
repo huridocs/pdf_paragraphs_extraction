@@ -29,10 +29,10 @@ To stop the server:
 
 If the configuration is not changed, a dockerized redis server will be used in port <b>6479</b>
 
-To use a different redis server, create a file `docker_volume/redis_server.yml` with the following content:
+To use a different redis server, create a file `config.yml` with the following content:
 
-    host: [shost_ip]
-    port: [port_number]
+    redis_host: [shost_ip]
+    redis_port: [port_number]
 
 <b>Start the service</b>
 
@@ -55,11 +55,11 @@ When the segmentation task is done, a message is placed in the results queue:
     message = queue.receiveMessage().exceptions(False).execute()
 
     # The message.message contains the following information:
-    # {"tenant": "tenant_name", "task": "pdf_name.pdf", "success": true, "error_message": ""}
+    # {"tenant": "tenant_name", "task": "pdf_name.pdf", "success": true, "error_message": "", "results_url":""}
 
 <b>Get paragraphs</b>
 
-    curl -X GET localhost:5051/get_paragraphs/[tenant_name]/[pdf_name]
+    curl -X GET http://localhost:5051/get_paragraphs/[tenant_name]/[pdf_name]
 
 <b>Stop the service</b>
 
@@ -69,7 +69,7 @@ When the segmentation task is done, a message is placed in the results queue:
 
 The service logs are stored in the file `docker_volume/service.log`
 
-To use a graylog server, create a file `docker_volume/graylog.yml` with the following content:
+To use a graylog server, create a file `config.yml` with the following content:
 
     graylog_ip: [ip]
 
