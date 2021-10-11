@@ -10,8 +10,7 @@ config.py
 *.cache
 .env
 *_config.py
-graylog.yml
-redis_server.yml
+config.yml
 docker_volume/*
 !docker_volume/README.md
 db/*
