@@ -8,7 +8,6 @@ from PdfFeatures.PdfFeatures import PdfFeatures
 from data.ExtractionData import ExtractionData
 from data.SegmentBox import SegmentBox
 from data.Task import Task
-from segmentator.LightGBM24Features import LightGBM24Features
 from segmentator.predict import predict
 
 ROOT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))

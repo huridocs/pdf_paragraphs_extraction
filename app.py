@@ -6,11 +6,13 @@ from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.responses import PlainTextResponse
 import sys
 
+from PdfFeatures.PdfFeatures import PdfFeatures
 from data.SegmentBox import SegmentBox
-from extract_pdf_paragraphs.information_extraction.InformationExtraction import InformationExtraction
+from extract_pdf_paragraphs.pdfalto.PdfAltoXml import get_xml_tags_from_file_content
 from get_logger import get_logger
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
+from segmentator.predict import predict
 
 logger = get_logger('app')
 
@@ -49,10 +51,12 @@ async def extract_paragraphs(file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename
-        information_extraction = InformationExtraction.from_file_content(file.file.read())
-        paragraphs = [SegmentBox.from_segment(x).dict() for x in information_extraction.segments]
-        return json.dumps({'page_width': information_extraction.pdf_features.page_width,
-                           'page_height': information_extraction.pdf_features.page_height,
+        xml_tags = get_xml_tags_from_file_content(file.file.read())
+        pdf_features = PdfFeatures.from_xml_content(xml_tags)
+        pdf_segments = predict(pdf_features)
+        paragraphs = [SegmentBox.from_pdf_segment(x).dict() for x in pdf_segments]
+        return json.dumps({'page_width': pdf_features.pages[0].page_width,
+                           'page_height': pdf_features.pages[0].page_height,
                            'paragraphs': paragraphs})
     except Exception:
         logger.error(f'Error segmenting {filename}', exc_info=1)

@@ -37,6 +37,9 @@ class TestEndToEnd(TestCase):
 
         queue = RedisSMQ(host='127.0.0.1', port='6479', qname="segmentation_tasks")
         task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
+
+        queue.sendMessage().message('{"message_to_avoid":"to_write_in_log"}').execute()
+
         queue.sendMessage().message(str(task.json())).execute()
 
         extraction_message = self.get_redis_message()

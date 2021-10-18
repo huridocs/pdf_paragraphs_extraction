@@ -15,6 +15,5 @@ COPY . .
 
 ENV FLASK_APP app.py
 
-RUN python extract_pdf_paragraphs/download_punkt.py
 CMD gunicorn -k uvicorn.workers.UvicornWorker app:app --bind 0.0.0.0:5050
 

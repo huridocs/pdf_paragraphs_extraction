@@ -2,13 +2,14 @@ import os
 
 import pymongo
 import yaml
+from pydantic import ValidationError
 from rsmq.consumer import RedisSMQConsumer
 from rsmq import RedisSMQ
 
 from data.ExtractionMessage import ExtractionMessage
-from extract_pdf_paragraphs.extract_paragraphs import extract_paragraphs
 
 from data.Task import Task
+from extract_pdf_paragraphs.extract_paragraphs_v2 import extract_paragraphs_v2
 from get_logger import get_logger
 
 
@@ -48,9 +49,13 @@ class QueueProcessor:
             self.service_port = int(config_dict['service_port']) if 'service_port' in config_dict else self.service_port
 
     def process(self, id, message, rc, ts):
-        task = Task(**message)
+        try:
+            task = Task(**message)
+        except ValidationError:
+            self.logger.error(f'Not a valid message: {message}')
+            return True
 
-        extraction_data = extract_paragraphs(task)
+        extraction_data = extract_paragraphs_v2(task)
 
         if not extraction_data:
             extraction_message = ExtractionMessage(tenant=task.tenant,

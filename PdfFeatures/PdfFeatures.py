@@ -1,3 +1,6 @@
+import pathlib
+import uuid
+
 from bs4 import BeautifulSoup
 
 from typing import List
@@ -8,7 +11,7 @@ from PdfFeatures.PdfTag import PdfTag
 
 
 class PdfFeatures:
-    def __init__(self, pages: List[PdfPage], fonts: List[PdfFont], file_name, file_type: str):
+    def __init__(self, pages: List[PdfPage], fonts: List[PdfFont], file_name='', file_type: str = ''):
         self.pages = pages
         self.fonts = fonts
         self.file_name = file_name
@@ -18,16 +21,18 @@ class PdfFeatures:
     def from_pdfalto(file_path) -> 'PdfFeatures':
         with open(file_path, mode='r') as xml_file:
             xml_content = BeautifulSoup(xml_file.read(), "lxml-xml")
+
+        return PdfFeatures.from_xml_content(xml_content)
+
+    @staticmethod
+    def from_xml_content(xml_content):
         pages = list()
         fonts = [PdfFont.from_text_style_pdfalto(xml_tag) for xml_tag in xml_content.find_all('TextStyle')]
 
         for xml_page in xml_content.find_all('Page'):
             pages.append(PdfPage.from_pdfalto(xml_page, fonts))
 
-        file_type: str = file_path.split('/')[1]
-        file_name: str = file_path.split('/')[-1]
-
-        return PdfFeatures(pages, fonts, file_name, file_type)
+        return PdfFeatures(pages, fonts)
 
     @staticmethod
     def get_tags_from_pdf_features(pdf_features: 'PdfFeatures') -> List[PdfTag]:
@@ -43,6 +48,3 @@ class PdfFeatures:
             for tag in page.tags:
                 tags.append(tag)
         return tags
-
-
-
