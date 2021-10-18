@@ -8,7 +8,6 @@ from unittest import TestCase
 import requests
 from rsmq import RedisSMQ
 
-from config_creator import create_configuration
 from data.ExtractionData import ExtractionData
 from data.ExtractionMessage import ExtractionMessage
 from data.Task import Task
@@ -55,6 +54,11 @@ class TestEndToEnd(TestCase):
         self.assertLess(15, len(extraction_data.paragraphs))
         self.assertEqual('A/INF/76/1', extraction_data.paragraphs[0].text)
         self.assertEqual({1, 2}, {x.page_number for x in extraction_data.paragraphs})
+
+        response = requests.get(extraction_message.file_results_url)
+        self.assertEqual(200, response.status_code)
+        self.assertTrue('<?xml version="1.0" encoding="UTF-8"?>' in str(response.content))
+        self.assertFalse(os.path.exists(f'{docker_volume_path}/xml/{tenant}/{pdf_file_name}'))
 
         shutil.rmtree(f'{docker_volume_path}/xml/{tenant}', ignore_errors=True)
 

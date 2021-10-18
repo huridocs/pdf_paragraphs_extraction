@@ -7,4 +7,5 @@ class ExtractionMessage(BaseModel):
     success: bool
     error_message: str = None
     results_url: str = None
+    file_results_url: str = None
 

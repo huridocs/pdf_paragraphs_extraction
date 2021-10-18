@@ -22,8 +22,7 @@ class QueueProcessor:
         self.redis_port = 6379
         self.set_redis_parameters_from_yml()
 
-        self.service_host = 'localhost'
-        self.service_port = 5051
+        self.service_url = 'http://localhost:5051'
         self.set_server_parameters_from_yml()
 
         client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
@@ -52,8 +51,9 @@ class QueueProcessor:
             if not config_dict:
                 return
 
-            self.service_host = config_dict['service_host'] if 'service_host' in config_dict else self.service_host
-            self.service_port = int(config_dict['service_port']) if 'service_port' in config_dict else self.service_port
+            service_host = config_dict['service_host'] if 'service_host' in config_dict else 'localhost'
+            service_port = int(config_dict['service_port']) if 'service_port' in config_dict else 5051
+            self.service_url = f'http://{service_host}:{service_port}'
 
     def process(self, id, message, rc, ts):
         try:
@@ -74,11 +74,13 @@ class QueueProcessor:
             self.logger.error(extraction_message.json())
             return True
 
-        results_url = f'http://{self.service_host}:{self.service_port}/get_paragraphs/{task.tenant}/{task.pdf_file_name}'
+        results_url = f'{self.service_url}/get_paragraphs/{task.tenant}/{task.pdf_file_name}'
+        file_results_url = f'{self.service_url}/get_xml/{task.tenant}/{task.pdf_file_name}'
         extraction_message = ExtractionMessage(tenant=extraction_data.tenant,
                                                pdf_file_name=extraction_data.pdf_file_name,
                                                success=True,
-                                               results_url=results_url)
+                                               results_url=results_url,
+                                               file_results_url=file_results_url)
 
         self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
         self.extractions_queue.sendMessage(delay=2).message(extraction_message.dict()).execute()
