@@ -1,6 +1,8 @@
 import os
+from time import sleep
 
 import pymongo
+import redis
 import yaml
 from pydantic import ValidationError
 from rsmq.consumer import RedisSMQConsumer
@@ -28,7 +30,6 @@ class QueueProcessor:
         self.pdf_paragraph_db = client['pdf_paragraph']
 
         self.extractions_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname='segmentation_results')
-        self.extractions_queue.createQueue().exceptions(False).execute()
 
     def set_redis_parameters_from_yml(self):
         if not os.path.exists(f'config.yml'):
@@ -78,14 +79,22 @@ class QueueProcessor:
         return True
 
     def subscribe_to_extractions_tasks_queue(self):
-        extractions_tasks_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname="segmentation_tasks")
-        extractions_tasks_queue.createQueue().exceptions(False).execute()
+        while True:
+            try:
+                self.extractions_queue.createQueue().exceptions(False).execute()
+                extractions_tasks_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname="segmentation_tasks")
+                extractions_tasks_queue.createQueue().exceptions(False).execute()
 
-        redis_smq_consumer = RedisSMQConsumer(qname="segmentation_tasks",
-                                              processor=self.process,
-                                              host=self.redis_host,
-                                              port=self.redis_port)
-        redis_smq_consumer.run()
+                self.logger.info(f'Connecting to redis: {self.redis_host}:{self.redis_port}')
+
+                redis_smq_consumer = RedisSMQConsumer(qname="segmentation_tasks",
+                                                      processor=self.process,
+                                                      host=self.redis_host,
+                                                      port=self.redis_port)
+                redis_smq_consumer.run()
+            except redis.exceptions.ConnectionError:
+                self.logger.error(f'Error connecting to redis: {self.redis_host}:{self.redis_port}')
+                sleep(20)
 
 
 if __name__ == '__main__':
