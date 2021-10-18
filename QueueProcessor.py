@@ -22,8 +22,8 @@ class QueueProcessor:
         self.redis_port = 6379
         self.set_redis_parameters_from_yml()
 
-        self.service_host = None
-        self.service_port = None
+        self.service_host = 'localhost'
+        self.service_port = 5051
         self.set_server_parameters_from_yml()
 
         client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
@@ -37,6 +37,9 @@ class QueueProcessor:
 
         with open(f'config.yml', 'r') as f:
             config_dict = yaml.safe_load(f)
+            if not config_dict:
+                return
+
             self.redis_host = config_dict['redis_host'] if 'redis_host' in config_dict else self.redis_host
             self.redis_port = int(config_dict['redis_port']) if 'redis_port' in config_dict else self.redis_port
 
@@ -46,6 +49,9 @@ class QueueProcessor:
 
         with open(f'config.yml', 'r') as f:
             config_dict = yaml.safe_load(f)
+            if not config_dict:
+                return
+
             self.service_host = config_dict['service_host'] if 'service_host' in config_dict else self.service_host
             self.service_port = int(config_dict['service_port']) if 'service_port' in config_dict else self.service_port
 

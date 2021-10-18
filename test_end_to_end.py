@@ -16,7 +16,6 @@ from data.Task import Task
 
 class TestEndToEnd(TestCase):
     def setUp(self):
-        create_configuration()
         subprocess.run('docker-compose -f docker-compose-service-with-redis.yml up  -d', shell=True)
         time.sleep(5)
 
