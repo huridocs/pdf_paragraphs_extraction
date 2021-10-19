@@ -14,7 +14,7 @@ from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
 from segmentator.predict import predict
 
-logger = get_logger('app')
+logger = get_logger('service')
 
 app = FastAPI()
 

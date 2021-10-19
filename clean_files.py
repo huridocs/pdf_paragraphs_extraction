@@ -10,7 +10,7 @@ def rm(file_path):
 
 
 if __name__ == '__main__':
-    rm('docker_volume/app.log')
+    rm('docker_volume/service.log')
     rm('docker_volume/redis_tasks.log')
 
     shutil.rmtree('db/diagnostic.data', ignore_errors=True)
