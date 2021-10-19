@@ -59,8 +59,8 @@ def remove_xml_metadata(xml_file_path):
     shutil.rmtree(file_xml_data_path, ignore_errors=True)
 
 
-def extract_paragraphs_v2(task: Task):
-    pdf_file_path, xml_file_path, failed_pdf_path = get_paths(task.tenant, task.pdf_file_name)
+def extract_paragraphs(task: Task):
+    pdf_file_path, xml_file_path, failed_pdf_path = get_paths(task.tenant, task.task)
 
     if not convert_to_xml(pdf_file_path, xml_file_path, failed_pdf_path):
         return None
@@ -70,7 +70,7 @@ def extract_paragraphs_v2(task: Task):
     segments = [SegmentBox.from_pdf_segment(x) for x in pdf_segments]
 
     extraction_data = ExtractionData(tenant=task.tenant,
-                                     pdf_file_name=task.pdf_file_name,
+                                     task=task.task,
                                      paragraphs=segments)
 
     if os.path.exists(pdf_file_path):

@@ -34,28 +34,28 @@ class TestEndToEnd(TestCase):
             requests.post(f"{host}/async_extraction/{tenant}", files=files)
 
         queue = RedisSMQ(host='127.0.0.1', port='6479', qname="segmentation_tasks")
-        task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
 
-        queue.sendMessage().message('{"message_to_avoid":"to_write_in_log"}').execute()
+        queue.sendMessage().message('{"message_to_avoid":"to_be_written_in_log_file"}').execute()
 
+        task = Task(tenant=tenant, task=pdf_file_name)
         queue.sendMessage().message(str(task.json())).execute()
 
         extraction_message = self.get_redis_message()
 
-        response = requests.get(extraction_message.results_url)
+        response = requests.get(extraction_message.data_url)
 
         extraction_data_dict = json.loads(response.json())
         extraction_data = ExtractionData(**extraction_data_dict)
 
         self.assertEqual(tenant, extraction_message.tenant)
-        self.assertEqual(pdf_file_name, extraction_message.pdf_file_name)
+        self.assertEqual(pdf_file_name, extraction_message.task)
         self.assertEqual(True, extraction_message.success)
         self.assertEqual(200, response.status_code)
         self.assertLess(15, len(extraction_data.paragraphs))
         self.assertEqual('A/INF/76/1', extraction_data.paragraphs[0].text)
         self.assertEqual({1, 2}, {x.page_number for x in extraction_data.paragraphs})
 
-        response = requests.get(extraction_message.file_results_url)
+        response = requests.get(extraction_message.file_url)
         self.assertEqual(200, response.status_code)
         self.assertTrue('<?xml version="1.0" encoding="UTF-8"?>' in str(response.content))
         self.assertFalse(os.path.exists(f'{docker_volume_path}/xml/{tenant}/{pdf_file_name}'))
@@ -69,23 +69,22 @@ class TestEndToEnd(TestCase):
             files = {'file': stream}
             requests.post(f"{host}/async_extraction/{tenant}", files=files)
 
-        task = Task(tenant=tenant, pdf_file_name=pdf_file_name)
+        task = Task(tenant=tenant, task=pdf_file_name)
         queue.sendMessage().message(task.json()).execute()
 
         extraction_message = self.get_redis_message()
 
         self.assertEqual(tenant, extraction_message.tenant)
-        self.assertEqual('README.md', extraction_message.pdf_file_name)
+        self.assertEqual('README.md', extraction_message.task)
         self.assertEqual(False, extraction_message.success)
         self.assertTrue(os.path.exists(
-            f'{docker_volume_path}/failed_pdf/{extraction_message.tenant}/{extraction_message.pdf_file_name}'))
+            f'{docker_volume_path}/failed_pdf/{extraction_message.tenant}/{extraction_message.task}'))
 
         shutil.rmtree(f'{docker_volume_path}/failed_pdf/{tenant}', ignore_errors=True)
 
     @staticmethod
     def get_redis_message() -> ExtractionMessage:
         queue = RedisSMQ(host='127.0.0.1', port='6479', qname='segmentation_results', quiet=True)
-
         for i in range(10):
             time.sleep(2)
             message = queue.receiveMessage().exceptions(False).execute()

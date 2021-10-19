@@ -11,7 +11,7 @@ from rsmq import RedisSMQ
 from data.ExtractionMessage import ExtractionMessage
 
 from data.Task import Task
-from extract_pdf_paragraphs.extract_paragraphs_v2 import extract_paragraphs_v2
+from extract_pdf_paragraphs.extract_paragraphs import extract_paragraphs
 from get_logger import get_logger
 
 
@@ -62,11 +62,11 @@ class QueueProcessor:
             self.logger.error(f'Not a valid message: {message}')
             return True
 
-        extraction_data = extract_paragraphs_v2(task)
+        extraction_data = extract_paragraphs(task)
 
         if not extraction_data:
             extraction_message = ExtractionMessage(tenant=task.tenant,
-                                                   pdf_file_name=task.pdf_file_name,
+                                                   task=task.task,
                                                    success=False,
                                                    error_message='Error getting the xml from the pdf')
 
@@ -74,13 +74,13 @@ class QueueProcessor:
             self.logger.error(extraction_message.json())
             return True
 
-        results_url = f'{self.service_url}/get_paragraphs/{task.tenant}/{task.pdf_file_name}'
-        file_results_url = f'{self.service_url}/get_xml/{task.tenant}/{task.pdf_file_name}'
+        results_url = f'{self.service_url}/get_paragraphs/{task.tenant}/{task.task}'
+        file_results_url = f'{self.service_url}/get_xml/{task.tenant}/{task.task}'
         extraction_message = ExtractionMessage(tenant=extraction_data.tenant,
-                                               pdf_file_name=extraction_data.pdf_file_name,
+                                               task=extraction_data.task,
                                                success=True,
-                                               results_url=results_url,
-                                               file_results_url=file_results_url)
+                                               data_url=results_url,
+                                               file_url=file_results_url)
 
         self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
         self.extractions_queue.sendMessage(delay=2).message(extraction_message.dict()).execute()

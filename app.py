@@ -68,7 +68,7 @@ async def get_paragraphs(tenant: str, pdf_file_name: str):
     try:
         client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
         pdf_paragraph_db = client['pdf_paragraph']
-        suggestions_filter = {"tenant": tenant, "pdf_file_name": pdf_file_name}
+        suggestions_filter = {"tenant": tenant, "task": pdf_file_name}
 
         extraction_data_dict = pdf_paragraph_db.paragraphs.find_one(suggestions_filter)
 
