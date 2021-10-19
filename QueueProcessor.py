@@ -62,29 +62,37 @@ class QueueProcessor:
             self.logger.error(f'Not a valid message: {message}')
             return True
 
-        extraction_data = extract_paragraphs(task)
+        self.logger.error(f'Valid message: {message}')
 
-        if not extraction_data:
-            extraction_message = ExtractionMessage(tenant=task.tenant,
+        try:
+            extraction_data = extract_paragraphs(task)
+
+            if not extraction_data:
+                extraction_message = ExtractionMessage(tenant=task.tenant,
+                                                       task=task.task,
+                                                       params=task.params,
+                                                       success=False,
+                                                       error_message='Error getting the xml from the pdf')
+
+                self.extractions_queue.sendMessage().message(extraction_message.dict()).execute()
+                self.logger.error(extraction_message.json())
+                return True
+
+            results_url = f'{self.service_url}/get_paragraphs/{task.tenant}/{task.params.filename}'
+            file_results_url = f'{self.service_url}/get_xml/{task.tenant}/{task.params.filename}'
+            extraction_message = ExtractionMessage(tenant=extraction_data.tenant,
                                                    task=task.task,
-                                                   success=False,
-                                                   error_message='Error getting the xml from the pdf')
+                                                   params=task.params,
+                                                   success=True,
+                                                   data_url=results_url,
+                                                   file_url=file_results_url)
 
-            self.extractions_queue.sendMessage().message(extraction_message.dict()).execute()
-            self.logger.error(extraction_message.json())
+            self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
+            self.extractions_queue.sendMessage(delay=3).message(extraction_message.dict()).execute()
             return True
-
-        results_url = f'{self.service_url}/get_paragraphs/{task.tenant}/{task.task}'
-        file_results_url = f'{self.service_url}/get_xml/{task.tenant}/{task.task}'
-        extraction_message = ExtractionMessage(tenant=extraction_data.tenant,
-                                               task=extraction_data.task,
-                                               success=True,
-                                               data_url=results_url,
-                                               file_url=file_results_url)
-
-        self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
-        self.extractions_queue.sendMessage(delay=2).message(extraction_message.dict()).execute()
-        return True
+        except Exception:
+            self.logger.error('error', exc_info=1)
+            return True
 
     def subscribe_to_extractions_tasks_queue(self):
         while True:

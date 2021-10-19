@@ -6,6 +6,7 @@ import subprocess
 
 from PdfFeatures.PdfFeatures import PdfFeatures
 from data.ExtractionData import ExtractionData
+from data.Params import Params
 from data.SegmentBox import SegmentBox
 from data.Task import Task
 from segmentator.predict import predict
@@ -60,7 +61,7 @@ def remove_xml_metadata(xml_file_path):
 
 
 def extract_paragraphs(task: Task):
-    pdf_file_path, xml_file_path, failed_pdf_path = get_paths(task.tenant, task.task)
+    pdf_file_path, xml_file_path, failed_pdf_path = get_paths(task.tenant, task.params.filename)
 
     if not convert_to_xml(pdf_file_path, xml_file_path, failed_pdf_path):
         return None
@@ -70,7 +71,7 @@ def extract_paragraphs(task: Task):
     segments = [SegmentBox.from_pdf_segment(x) for x in pdf_segments]
 
     extraction_data = ExtractionData(tenant=task.tenant,
-                                     task=task.task,
+                                     file_name=task.params.filename,
                                      paragraphs=segments)
 
     if os.path.exists(pdf_file_path):

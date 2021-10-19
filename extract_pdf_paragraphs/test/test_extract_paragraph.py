@@ -5,6 +5,7 @@ from unittest import TestCase
 import mongomock
 import pymongo
 
+from data.Params import Params
 from data.Task import Task
 from extract_pdf_paragraphs.extract_paragraphs import extract_paragraphs
 
@@ -25,13 +26,13 @@ class TestGetParagraphs(TestCase):
                         f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')
 
         # act
-        task = Task(tenant=tenant, task=pdf_file_name)
+        task = Task(tenant=tenant, task='segmentation', params=Params(filename=pdf_file_name))
         extraction_data = extract_paragraphs(task)
 
         #assert
         self.assertIsNotNone(extraction_data)
         self.assertEqual(tenant, extraction_data.tenant)
-        self.assertEqual(pdf_file_name, extraction_data.task)
+        self.assertEqual(pdf_file_name, extraction_data.file_name)
         self.assertLess(15, len(extraction_data.paragraphs))
         self.assertEqual('A/INF/76/1', extraction_data.paragraphs[0].text)
         self.assertEqual({1, 2}, {x.page_number for x in extraction_data.paragraphs})
@@ -50,13 +51,13 @@ class TestGetParagraphs(TestCase):
         shutil.copyfile(f'{ROOT_FOLDER}/test_files/test.pdf',
                         f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')
 
-        task = Task(tenant=tenant, task=pdf_file_name)
+        task = Task(tenant=tenant, task='segmentation', params=Params(filename=pdf_file_name))
 
         extraction_data = extract_paragraphs(task)
 
         self.assertIsNotNone(extraction_data)
         self.assertEqual(tenant, extraction_data.tenant)
-        self.assertEqual(pdf_file_name, extraction_data.task)
+        self.assertEqual(pdf_file_name, extraction_data.file_name)
         self.assertLess(15, len(extraction_data.paragraphs))
         self.assertEqual('A/INF/76/1', extraction_data.paragraphs[0].text)
         self.assertEqual({1, 2}, {x.page_number for x in extraction_data.paragraphs})
@@ -72,7 +73,8 @@ class TestGetParagraphs(TestCase):
         shutil.rmtree(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}', ignore_errors=True)
 
         os.makedirs(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}')
-        task = Task(tenant=tenant, task='no_file')
+        task = Task(tenant=tenant, task='segmentation', params=Params(filename='no_file'))
+
         extraction_data = extract_paragraphs(task)
 
         self.assertIsNone(extraction_data)
@@ -90,7 +92,8 @@ class TestGetParagraphs(TestCase):
         os.makedirs(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}')
         shutil.copyfile(f'{ROOT_FOLDER}/README.md', f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')
 
-        task = Task(tenant=tenant, task=pdf_file_name)
+        task = Task(tenant=tenant, task='segmentation', params=Params(filename=pdf_file_name))
+
         extract_paragraphs(task)
 
         self.assertIsNone(mongo_client.pdf_paragraph.paragraphs.find_one())

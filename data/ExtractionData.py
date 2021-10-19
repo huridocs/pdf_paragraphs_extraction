@@ -7,5 +7,5 @@ from data.SegmentBox import SegmentBox
 
 class ExtractionData(BaseModel):
     tenant: str
-    task: str
+    file_name: str
     paragraphs: List[SegmentBox]

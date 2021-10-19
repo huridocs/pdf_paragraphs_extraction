@@ -58,17 +58,17 @@ class TestApp(TestCase):
         tenant = 'tenant_to_get_paragraphs'
         pdf_file_name = 'pdf_file_name.pdf'
         json_data = [{'tenant': 'wrong tenant',
-                      'task': "wrong tenant",
+                      'file_name': "wrong tenant",
                       'paragraphs': [],
                       },
                      {'tenant': tenant,
-                      'task': pdf_file_name,
+                      'file_name': pdf_file_name,
                       'paragraphs': [
                           {"left": 1, "top": 2, "width": 3, "height": 4, "page_number": 5, 'text': '1'},
                           {"left": 6, "top": 7, "width": 8, "height": 9, "page_number": 10, 'text': '2'}],
                       },
                      {'tenant': 'wrong tenant_2',
-                      'pdf_file_name': "wrong tenant",
+                      'file_name': "wrong tenant",
                       'paragraphs': [],
                       }]
 
@@ -80,7 +80,7 @@ class TestApp(TestCase):
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(tenant, extraction_data.tenant)
-        self.assertEqual(pdf_file_name, extraction_data.task)
+        self.assertEqual(pdf_file_name, extraction_data.file_name)
         self.assertEqual(2, len(extraction_data.paragraphs))
         self.assertEqual([1, 2, 3, 4, 5, '1'], list(extraction_data.paragraphs[0].dict().values()))
         self.assertEqual([6, 7, 8, 9, 10, '2'], list(extraction_data.paragraphs[1].dict().values()))

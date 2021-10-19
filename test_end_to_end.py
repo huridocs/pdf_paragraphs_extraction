@@ -10,12 +10,13 @@ from rsmq import RedisSMQ
 
 from data.ExtractionData import ExtractionData
 from data.ExtractionMessage import ExtractionMessage
+from data.Params import Params
 from data.Task import Task
 
 
 class TestEndToEnd(TestCase):
     def setUp(self):
-        subprocess.run('docker-compose -f docker-compose-service-with-redis.yml up  -d', shell=True)
+        subprocess.run('docker-compose -f docker-compose-service-with-redis.yml up  -d --build', shell=True)
         time.sleep(5)
 
     def tearDown(self):
@@ -37,7 +38,7 @@ class TestEndToEnd(TestCase):
 
         queue.sendMessage().message('{"message_to_avoid":"to_be_written_in_log_file"}').execute()
 
-        task = Task(tenant=tenant, task=pdf_file_name)
+        task = Task(tenant=tenant, task='segmentation', params=Params(filename=pdf_file_name))
         queue.sendMessage().message(str(task.json())).execute()
 
         extraction_message = self.get_redis_message()
@@ -48,7 +49,7 @@ class TestEndToEnd(TestCase):
         extraction_data = ExtractionData(**extraction_data_dict)
 
         self.assertEqual(tenant, extraction_message.tenant)
-        self.assertEqual(pdf_file_name, extraction_message.task)
+        self.assertEqual(pdf_file_name, extraction_message.params.filename)
         self.assertEqual(True, extraction_message.success)
         self.assertEqual(200, response.status_code)
         self.assertLess(15, len(extraction_data.paragraphs))
@@ -69,16 +70,17 @@ class TestEndToEnd(TestCase):
             files = {'file': stream}
             requests.post(f"{host}/async_extraction/{tenant}", files=files)
 
-        task = Task(tenant=tenant, task=pdf_file_name)
+        task = Task(tenant=tenant, task='segmentation', params=Params(filename=pdf_file_name))
+
         queue.sendMessage().message(task.json()).execute()
 
         extraction_message = self.get_redis_message()
 
         self.assertEqual(tenant, extraction_message.tenant)
-        self.assertEqual('README.md', extraction_message.task)
+        self.assertEqual('README.md', extraction_message.params.filename)
         self.assertEqual(False, extraction_message.success)
         self.assertTrue(os.path.exists(
-            f'{docker_volume_path}/failed_pdf/{extraction_message.tenant}/{extraction_message.task}'))
+            f'{docker_volume_path}/failed_pdf/{extraction_message.tenant}/{extraction_message.params.filename}'))
 
         shutil.rmtree(f'{docker_volume_path}/failed_pdf/{tenant}', ignore_errors=True)
 
