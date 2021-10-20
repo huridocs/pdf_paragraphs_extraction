@@ -15,6 +15,9 @@ if __name__ == '__main__':
 
     shutil.rmtree('db/diagnostic.data', ignore_errors=True)
     shutil.rmtree('db/journal', ignore_errors=True)
+    shutil.rmtree('docker_volume/to_extract', ignore_errors=True)
+    shutil.rmtree('docker_volume/xml', ignore_errors=True)
+    shutil.rmtree('docker_volume/failed_pdf', ignore_errors=True)
 
     for file in os.listdir('db'):
         if 'README.md' == file:

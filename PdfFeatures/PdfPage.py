@@ -14,5 +14,7 @@ class PdfPage():
 
     @staticmethod
     def from_pdfalto(xml_page: Tag, fonts: List[PdfFont]):
-        tags = [PdfTag.from_pdfalto(xml_page['PHYSICAL_IMG_NR'], xml_tag, fonts) for xml_tag in xml_page.find_all('TextLine')]
+        xml_tags = [xml_tag for xml_tag in xml_page.find_all('TextLine')]
+        tags = [PdfTag.from_pdfalto(xml_page['PHYSICAL_IMG_NR'], xml_tag, fonts) for xml_tag in xml_tags]
+        tags = [x for x in tags if x.content != '' and x.font is not None]
         return PdfPage(int(xml_page['PHYSICAL_IMG_NR']), int(float(xml_page['WIDTH'])), int(float(xml_page['HEIGHT'])), tags)

@@ -67,6 +67,32 @@ class TestGetParagraphs(TestCase):
 
         shutil.rmtree(f'{DOCKER_VOLUME_PATH}/xml/{tenant}', ignore_errors=True)
 
+    def test_extract_paragraphs_different_pdf(self):
+        # setup
+        tenant = "different_tenant"
+        pdf_file_name = "different.pdf"
+        xml_file_name = "different.xml"
+        shutil.rmtree(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}', ignore_errors=True)
+        shutil.rmtree(f'{DOCKER_VOLUME_PATH}/xml/{tenant}', ignore_errors=True)
+        os.makedirs(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}')
+        shutil.copyfile(f'{ROOT_FOLDER}/test_files/different.pdf',
+                        f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}')
+
+        # act
+        task = Task(tenant=tenant, task='segmentation', params=Params(filename=pdf_file_name))
+        extraction_data = extract_paragraphs(task)
+
+        #assert
+        self.assertIsNotNone(extraction_data)
+        self.assertEqual(tenant, extraction_data.tenant)
+        self.assertEqual(pdf_file_name, extraction_data.file_name)
+        self.assertLess(15, len(extraction_data.paragraphs))
+        self.assertEqual(12, len({x.page_number for x in extraction_data.paragraphs}))
+        self.assertTrue(os.path.exists(f'{DOCKER_VOLUME_PATH}/xml/{tenant}/{xml_file_name}'))
+        self.assertFalse(os.path.exists(f'{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}'))
+
+        shutil.rmtree(f'{DOCKER_VOLUME_PATH}/xml/{tenant}', ignore_errors=True)
+
     def test_extract_paragraphs_when_no_pdf_file(self):
         tenant = "test_extract_paragraphs_when_no_pdf_file"
 
