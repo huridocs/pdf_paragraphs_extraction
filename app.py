@@ -6,13 +6,13 @@ from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.responses import PlainTextResponse
 import sys
 
-from PdfFeatures.PdfFeatures import PdfFeatures
 from data.SegmentBox import SegmentBox
+from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.pdfalto.PdfAltoXml import get_xml_tags_from_file_content
+from extract_pdf_paragraphs.segmentator.predict import predict
 from get_logger import get_logger
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
-from segmentator.predict import predict
 
 logger = get_logger('service')
 

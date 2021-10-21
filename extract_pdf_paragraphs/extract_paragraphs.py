@@ -4,11 +4,10 @@ import platform
 import shutil
 import subprocess
 
-from PdfFeatures.PdfFeatures import PdfFeatures
 from data.ExtractionData import ExtractionData
-from data.Params import Params
 from data.SegmentBox import SegmentBox
 from data.Task import Task
+from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
 from segmentator.predict import predict
 
 ROOT_DIRECTORY = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))

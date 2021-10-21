@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from PdfFeatures.PdfSegment import PdfSegment
+from extract_pdf_paragraphs.PdfFeatures.PdfSegment import PdfSegment
 
 
 class SegmentBox(BaseModel):

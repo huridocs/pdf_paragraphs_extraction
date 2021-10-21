@@ -1,6 +1,6 @@
 from typing import List
 
-from PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
 
 
 class PdfSegment:
