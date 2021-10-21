@@ -1,21 +1,19 @@
-## Get PDF paragraphs
+<h3 align="center">Extract PDF paragraphs</h3>
+<p align="center">A Docker-powered stateless API for extracting paragraphs from PDFs</p>
 
-This service uses machine learning to segment a PDF in paragraphs.
+---
 
-### Dependencies
+This service provides a developer-friendly API to extract using machine learning
+algorithms the paragraphs positions and texts from PDFs. 
 
-* Docker [install] (https://runnable.com/docker/getting-started/)
-* Docker-compose [install] (https://docs.docker.com/compose/install/)
-    * Note: On mac Docker-compose is installed with Docker
+## Quick Start
 
 
-### How to use it
-
-Start service:
+Start the service:
 
     docker-compose up
 
-Get paragraphs from a PDF:
+Get the paragraphs from a PDF:
 
     curl -X GET -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051
 
@@ -23,7 +21,20 @@ To stop the server:
 
     docker-compose down
 
-### How to use it asynchronously
+## Contents
+- [Quick Start](#quick-start)
+- [Dependencies](#dependencies)
+- [How to use it asynchronously](#how-to-use-it-asynchronously)
+
+
+## Dependencies
+
+* Docker [install] (https://runnable.com/docker/getting-started/)
+* Docker-compose [install] (https://docs.docker.com/compose/install/)
+    * Note: On mac Docker-compose is installed with Docker
+    
+  
+## How to use it asynchronously
 
 <b>Configure the redis server</b>
 
@@ -81,7 +92,7 @@ It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/
     virtualenv venv
     source venv/bin/activate
     pip install -r requirements.txt
-    
+
 ### Execute tests
 
     python -m unittest
