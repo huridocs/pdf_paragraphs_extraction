@@ -28,7 +28,7 @@ class QueueProcessor:
         client = pymongo.MongoClient('mongodb://mongo_paragraphs:27017')
         self.pdf_paragraph_db = client['pdf_paragraph']
 
-        self.extractions_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname='segmentation_results')
+        self.results_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname='segmentation_results')
 
     def set_redis_parameters_from_yml(self):
         if not os.path.exists(f'config.yml'):
@@ -74,7 +74,7 @@ class QueueProcessor:
                                                        success=False,
                                                        error_message='Error getting the xml from the pdf')
 
-                self.extractions_queue.sendMessage().message(extraction_message.dict()).execute()
+                self.results_queue.sendMessage().message(extraction_message.dict()).execute()
                 self.logger.error(extraction_message.json())
                 return True
 
@@ -88,7 +88,7 @@ class QueueProcessor:
                                                    file_url=file_results_url)
 
             self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
-            self.extractions_queue.sendMessage(delay=3).message(extraction_message.dict()).execute()
+            self.results_queue.sendMessage(delay=3).message(extraction_message.dict()).execute()
             return True
         except Exception:
             self.logger.error('error', exc_info=1)
@@ -97,9 +97,9 @@ class QueueProcessor:
     def subscribe_to_extractions_tasks_queue(self):
         while True:
             try:
-                self.extractions_queue.createQueue().exceptions(False).execute()
+                self.results_queue.createQueue().vt(120).exceptions(False).execute()
                 extractions_tasks_queue = RedisSMQ(host=self.redis_host, port=self.redis_port, qname="segmentation_tasks")
-                extractions_tasks_queue.createQueue().exceptions(False).execute()
+                extractions_tasks_queue.createQueue().vt(120).exceptions(False).execute()
 
                 self.logger.info(f'Connecting to redis: {self.redis_host}:{self.redis_port}')
 

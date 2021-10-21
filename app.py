@@ -1,6 +1,5 @@
 import json
 import os
-from time import sleep
 
 import pymongo
 from fastapi import FastAPI, HTTPException, File, UploadFile
