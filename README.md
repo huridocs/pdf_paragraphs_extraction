@@ -25,6 +25,9 @@ To stop the server:
 - [Quick Start](#quick-start)
 - [Dependencies](#dependencies)
 - [How to use it asynchronously](#how-to-use-it-asynchronously)
+- [Get service logs](#get-service-logs)
+- [Set up environment for development](#set-up-environment-for-development)
+- [Execute tests](#execute-tests)
 
 
 ## Dependencies
@@ -76,7 +79,7 @@ When the segmentation task is done, a message is placed in the results queue:
 
     docker-compose down
 
-### Logs
+## Get service logs
 
 The service logs are stored in the file `docker_volume/service.log`
 
@@ -84,7 +87,7 @@ To use a graylog server, create a file `config.yml` with the following content:
 
     graylog_ip: [ip]
 
-### Set up environment for development
+## Set up environment for development
 
 It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/)
 
@@ -93,6 +96,6 @@ It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/
     source venv/bin/activate
     pip install -r requirements.txt
 
-### Execute tests
+## Execute tests
 
     python -m unittest
