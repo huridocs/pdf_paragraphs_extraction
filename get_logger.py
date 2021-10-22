@@ -18,6 +18,6 @@ def get_logger(logger_name):
         return logger
 
     graylog_ip = yaml.safe_load(open("config.yml", 'r'))['graylog_ip']
-    handler = graypy.GELFUDPHandler(graylog_ip, 12201, localname="get_pdf_paragraphs")
+    handler = graypy.GELFUDPHandler(graylog_ip, 12201, localname="segmentation_server")
     logger.addHandler(handler)
     return logger

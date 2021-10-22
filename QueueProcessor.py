@@ -88,6 +88,7 @@ class QueueProcessor:
                                                    file_url=file_results_url)
 
             self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
+            self.logger.info(extraction_message.json())
             self.results_queue.sendMessage(delay=3).message(extraction_message.dict()).execute()
             return True
         except Exception:
