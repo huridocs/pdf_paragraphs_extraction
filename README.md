@@ -25,6 +25,8 @@ To stop the server:
 - [Dependencies](#dependencies)
 - [Requirements](#requirements)
 - [How to use it asynchronously](#how-to-use-it-asynchronously)
+- [HTTP server](#http-server)
+- [Queue processor](#queue-processor)
 - [Get service logs](#get-service-logs)
 - [Set up environment for development](#set-up-environment-for-development)
 - [Execute tests](#execute-tests)
@@ -121,6 +123,30 @@ or in python
     requests.get(results_message.file_url)
 
 ![Alt logo](readme_pictures/get_paragraphs.png?raw=true "Get paragraphs")
+
+## HTTP server
+
+![Alt logo](readme_pictures/http_server.png?raw=true "HTTP server")
+
+The container `HTTP server` is coded using Python 3.9 and uses the [FastApi](https://fastapi.tiangolo.com/) web framework.
+
+If the service is running, the end point definitions can be founded in the following url:
+
+    http://localhost:5051/docs
+
+The end points code can be founded inside the file `app.py`.
+
+The errors are reported to the file `docker_volume/service.log`, if the configuration is not changed (see [Get service logs](#get-service-logs))
+
+
+## Queue processor
+
+![Alt logo](readme_pictures/queue_processor.png?raw=true "Queue processor")
+
+The container `Queue processor` is coded using Python 3.9, and it is on charge of the communication with redis. 
+
+The code can be founded in the file `QueueProcessor.py` and it uses the library `RedisSMQ` to interact with the 
+redis queues.
 
 ## Get service logs
 
