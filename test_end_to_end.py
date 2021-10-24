@@ -8,6 +8,7 @@ from unittest import TestCase
 import requests
 from rsmq import RedisSMQ
 
+from ServiceConfig import ServiceConfig
 from data.ExtractionData import ExtractionData
 from data.ExtractionMessage import ExtractionMessage
 from data.Params import Params
@@ -28,11 +29,11 @@ class TestEndToEnd(TestCase):
 
         tenant = 'end_to_end_test'
         pdf_file_name = 'test.pdf'
-        host = 'http://localhost:5051'
+        config = ServiceConfig()
 
         with open(f'{root_path}/test_files/{pdf_file_name}', 'rb') as stream:
             files = {'file': stream}
-            requests.post(f"{host}/async_extraction/{tenant}", files=files)
+            requests.post(f"{config.service_url}/async_extraction/{tenant}", files=files)
 
         queue = RedisSMQ(host='127.0.0.1', port='6479', qname="segmentation_tasks")
 
@@ -41,7 +42,7 @@ class TestEndToEnd(TestCase):
         task = Task(tenant=tenant, task='segmentation', params=Params(filename=pdf_file_name))
         queue.sendMessage().message(str(task.json())).execute()
 
-        extraction_message = self.get_redis_message()
+        extraction_message = self.get_redis_message(config)
 
         response = requests.get(extraction_message.data_url)
 
@@ -68,13 +69,13 @@ class TestEndToEnd(TestCase):
 
         with open(f'{root_path}/README.md', 'rb') as stream:
             files = {'file': stream}
-            requests.post(f"{host}/async_extraction/{tenant}", files=files)
+            requests.post(f"{config.service_url}/async_extraction/{tenant}", files=files)
 
         task = Task(tenant=tenant, task='segmentation', params=Params(filename=pdf_file_name))
 
         queue.sendMessage().message(task.json()).execute()
 
-        extraction_message = self.get_redis_message()
+        extraction_message = self.get_redis_message(config)
 
         self.assertEqual(tenant, extraction_message.tenant)
         self.assertEqual('README.md', extraction_message.params.filename)
@@ -85,8 +86,12 @@ class TestEndToEnd(TestCase):
         shutil.rmtree(f'{docker_volume_path}/failed_pdf/{tenant}', ignore_errors=True)
 
     @staticmethod
-    def get_redis_message() -> ExtractionMessage:
-        queue = RedisSMQ(host='127.0.0.1', port='6479', qname='segmentation_results', quiet=True)
+    def get_redis_message(config: ServiceConfig) -> ExtractionMessage:
+        queue = RedisSMQ(host=config.end_to_end_redis_host,
+                         port=config.end_to_end_redis_port,
+                         qname='segmentation_results',
+                         quiet=True)
+
         for i in range(10):
             time.sleep(2)
             message = queue.receiveMessage().exceptions(False).execute()
