@@ -77,7 +77,7 @@ class QueueProcessor:
 
                 self.logger.info(f'Connecting to redis: {self.config.redis_host}:{self.config.redis_port}')
 
-                redis_smq_consumer = RedisSMQConsumer(qname="segmentation_tasks",
+                redis_smq_consumer = RedisSMQConsumer(qname=self.config.tasks_queue_name,
                                                       processor=self.process,
                                                       host=self.config.redis_host,
                                                       port=self.config.redis_port)

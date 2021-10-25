@@ -24,9 +24,11 @@ To stop the server:
 - [Quick Start](#quick-start)
 - [Dependencies](#dependencies)
 - [Requirements](#requirements)
+- [Docker containers](#docker-containers)
 - [How to use it asynchronously](#how-to-use-it-asynchronously)
 - [HTTP server](#http-server)
 - [Queue processor](#queue-processor)
+- [Service configuration](#service-configuration)
 - [Get service logs](#get-service-logs)
 - [Set up environment for development](#set-up-environment-for-development)
 - [Execute tests](#execute-tests)
@@ -44,7 +46,7 @@ To stop the server:
 * 2Gb RAM memory
 * Single core
   
-## How to use it asynchronously
+## Docker containers
 
 A redis server is needed to use the service asynchronously. For that matter, it can be used the 
 docker-compose file `docker-compose-service-with-redis.yml` that has a built-in 
@@ -59,28 +61,7 @@ Containers with `docker-compose -f docker-compose-service-with-redis.yml up`
 ![Alt logo](readme_pictures/docker_compose_redis.png?raw=true "docker-compose -f docker-compose-service-with-redis.yml up")
 
 
-<b>Configuration file</b>
-
-A configuration file could be provided to set the redis server parameters
-and the `extract pdf paragraphs` server hosts and ports. If a configuration is not provided,
-the defaults values uses the redis from the 'docker-compose-service-with-redis.yml' 
-file.
-
-The configuration could be manually created, or it can be used the following script:
-
-    python3 -m pip install graypy~=2.1.0 PyYAML~=5.4.1
-    python3 ServiceConfig.py
-
-Configuration file name: `config.yml`
-
-Parameters:
-
-    service_host: [shost_ip]
-    service_port: [port_number]
-    redis_host: [redis_host]
-    redis_port: [redis_port]
-
-<b>Asynchronous flow</b>
+## How to use it asynchronously
 
 1. Send PDF to extract
 
@@ -152,6 +133,27 @@ The container `Queue processor` is coded using Python 3.9, and it is on charge o
 
 The code can be founded in the file `QueueProcessor.py` and it uses the library `RedisSMQ` to interact with the 
 redis queues.
+
+## Service configuration
+
+A configuration file could be provided to set the redis server parameters
+and the `extract pdf paragraphs` server hosts and ports. If a configuration is not provided,
+the defaults values uses the redis from the 'docker-compose-service-with-redis.yml' 
+file.
+
+The configuration could be manually created, or it can be used the following script:
+
+    python3 -m pip install graypy~=2.1.0 PyYAML~=5.4.1
+    python3 ServiceConfig.py
+
+Configuration file name: `config.yml`
+
+Parameters:
+
+    service_host: [host_ip]
+    service_port: [port_number]
+    redis_host: [redis_host]
+    redis_port: [redis_port]
 
 ## Get service logs
 
