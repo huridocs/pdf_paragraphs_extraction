@@ -1,6 +1,5 @@
 import logging
 import os
-import socket
 from typing import Dict
 
 import graypy
@@ -18,10 +17,6 @@ class ServiceConfig:
         self.config_path = 'config.yml'
         self.config_from_yml: Dict[str, any] = dict()
         self.read_configuration_from_yml()
-
-        self.end_to_end_redis_host = '127.0.0.1'
-        self.end_to_end_redis_port = 6379
-        self.set_end_to_end_redis_port()
 
         self.redis_host = self.get_parameter_from_yml('redis_host', 'redis_paragraphs')
         self.redis_port = self.get_parameter_from_yml('redis_port', 6379)
@@ -48,15 +43,6 @@ class ServiceConfig:
                 self.config_from_yml = config_from_yml
 
         return dict()
-
-    def set_end_to_end_redis_port(self):
-        if not os.path.exists('docker-compose-service-with-redis.yml'):
-            return
-
-        with open("docker-compose-service-with-redis.yml", 'r') as f:
-            docker_yml = yaml.safe_load(f)
-            services = list(docker_yml['services'].keys())
-            self.end_to_end_redis_port = docker_yml['services'][services[-1]]['ports'][0].split(':')[0]
 
     def get_logger(self, logger_name):
         logger = logging.getLogger('graylog')

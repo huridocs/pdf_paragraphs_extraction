@@ -66,7 +66,12 @@ and the `extract pdf paragraphs` server hosts and ports. If a configuration is n
 the defaults values uses the redis from the 'docker-compose-service-with-redis.yml' 
 file.
 
-File name: `config.yml`
+The configuration could be manually created, or it can be used the following script:
+
+    python3 -m pip install graypy~=2.1.0 PyYAML~=5.4.1
+    python3 ServiceConfig.py
+
+Configuration file name: `config.yml`
 
 Parameters:
 
