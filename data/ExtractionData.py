@@ -9,3 +9,5 @@ class ExtractionData(BaseModel):
     tenant: str
     file_name: str
     paragraphs: List[SegmentBox]
+    page_height: int
+    page_width: int

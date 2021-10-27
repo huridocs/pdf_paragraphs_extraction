@@ -71,7 +71,9 @@ def extract_paragraphs(task: Task):
 
     extraction_data = ExtractionData(tenant=task.tenant,
                                      file_name=task.params.filename,
-                                     paragraphs=segments)
+                                     paragraphs=segments,
+                                     page_width=pdf_features.pages[0].page_width if pdf_features.pages else 0,
+                                     page_height=pdf_features.pages[0].page_height if pdf_features.pages else 0)
 
     if os.path.exists(pdf_file_path):
         os.remove(pdf_file_path)

@@ -53,6 +53,8 @@ class TestEndToEnd(TestCase):
         self.assertEqual(True, extraction_message.success)
         self.assertEqual(200, response.status_code)
         self.assertLess(15, len(extraction_data.paragraphs))
+        self.assertEqual(612, extraction_data.page_width)
+        self.assertEqual(792, extraction_data.page_height)
         self.assertEqual('A/INF/76/1', extraction_data.paragraphs[0].text)
         self.assertEqual({1, 2}, {x.page_number for x in extraction_data.paragraphs})
 

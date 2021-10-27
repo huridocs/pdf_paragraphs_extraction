@@ -66,6 +66,8 @@ class TestApp(TestCase):
                       'paragraphs': [
                           {"left": 1, "top": 2, "width": 3, "height": 4, "page_number": 5, 'text': '1'},
                           {"left": 6, "top": 7, "width": 8, "height": 9, "page_number": 10, 'text': '2'}],
+                      'page_height': 1,
+                      'page_width': 2
                       },
                      {'tenant': 'wrong tenant_2',
                       'file_name': "wrong tenant",
@@ -82,6 +84,8 @@ class TestApp(TestCase):
         self.assertEqual(tenant, extraction_data.tenant)
         self.assertEqual(pdf_file_name, extraction_data.file_name)
         self.assertEqual(2, len(extraction_data.paragraphs))
+        self.assertEqual(1, extraction_data.page_height)
+        self.assertEqual(2, extraction_data.page_width)
         self.assertEqual([1, 2, 3, 4, 5, '1'], list(extraction_data.paragraphs[0].dict().values()))
         self.assertEqual([6, 7, 8, 9, 10, '2'], list(extraction_data.paragraphs[1].dict().values()))
         self.assertIsNone(mongo_client.pdf_paragraph.paragraphs.find_one(
