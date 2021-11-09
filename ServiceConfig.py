@@ -97,9 +97,6 @@ class ServiceConfig:
         if user_input != '' and user_input[0].lower() == 'n':
             return
 
-        with open("docker-compose-service-with-redis.yml", 'r') as f:
-            config_dict['service_port'] = yaml.safe_load(f)['services']['server']['ports'][0].split(':')[0]
-
         print('[Enter to DO NOT modify it]')
         for option in OPTIONS:
             configuration_input = input(f'{option}: [{config_dict[option]}] ')
