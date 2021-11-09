@@ -27,7 +27,7 @@ services:
     ports:
       - '29017-29019:27017-27019'
   redis_paragraphs:
-    image: "redis:alpine"
+    image: "redis:5.0.14"
     command: redis-server
     ports:
       - "6479:6379"
