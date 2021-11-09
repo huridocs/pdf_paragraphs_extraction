@@ -97,7 +97,7 @@ class ServiceConfig:
         if user_input != '' and user_input[0].lower() == 'n':
             return
 
-        with open("docker-compose.yml", 'r') as f:
+        with open("docker-compose-service-with-redis.yml", 'r') as f:
             config_dict['service_port'] = yaml.safe_load(f)['services']['server']['ports'][0].split(':')[0]
 
         print('[Enter to DO NOT modify it]')
@@ -110,8 +110,8 @@ class ServiceConfig:
     @staticmethod
     def get_service_port():
         port = None
-        if os.path.exists('docker-compose.yml'):
-            with open("docker-compose.yml", 'r') as f:
+        if os.path.exists('docker-compose-service-with-redis.yml'):
+            with open("docker-compose-service-with-redis.yml", 'r') as f:
                 docker_yml = yaml.safe_load(f)
                 services = list(docker_yml['services'].keys())
                 port = docker_yml['services'][services[0]]['ports'][0].split(':')[0]
