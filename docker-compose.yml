@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile_sever
     ports:
-      - "5051:5050"
+      - "127.0.0.1:5051:5050"
     volumes:
       - ./docker_volume:/app/docker_volume
     depends_on:
@@ -23,4 +23,4 @@ services:
     volumes:
       - ./db:/data/db
     ports:
-      - '29017-29019:27017-27019'
+      - '127.0.0.1:29017-29019:27017-27019'
