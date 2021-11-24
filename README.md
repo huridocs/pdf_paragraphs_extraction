@@ -178,9 +178,9 @@ It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/
 
 ## Troubleshooting
 
-Issue: Permission error starting the docker containers
-Cause: Due to docker creating files with the root user some permission errors can occur starting the docker containers.
-Solution: There are two solutions. 
+### Issue: Permission error starting the docker containers\
+Cause: Due to docker creating files with the root user some permission errors can occur starting the docker containers.\
+Solution: There are two solutions.
 
 First solution is running docker with sudo
 
@@ -190,3 +190,30 @@ Second solution is setting up a development environment and running
 
     sudo python clean_files.py
     docker-compose up 
+
+
+### Issue: Configuration changes but not reflected in service
+Cause: Docker should be re-built in order to get the configuration
+Solution: 
+
+    sudo docker-compose up --build
+
+
+### Issue: Redis in localhost not used by the service
+Solution: In linux, the redis server to use should be in other machine or using the dockerized redis.
+
+    rm -rf config.yml
+    sudo docker-compose -f docker-compose-service-with-redis.yml up --build
+
+And using the redis in localhost:6479
+
+In MacOS, it can be used the following config.yml in order to access to the redis in localhost:
+
+    redis_host: host.docker.internal
+    redis_port: 6379
+    service_host: localhost
+    service_port: 5051
+
+### Issue: Error downloading pip wheel
+Solution: Change RAM memory used by the docker containers to 3Gb or 4Gb 
+
