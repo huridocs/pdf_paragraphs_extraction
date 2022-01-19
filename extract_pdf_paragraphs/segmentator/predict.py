@@ -1,7 +1,8 @@
 import pathlib
 
-from segmentator.LightGBM24Features import LightGBM24Features
 import lightgbm as lgb
+
+from extract_pdf_paragraphs.segmentator.LightGBM24Features import LightGBM24Features
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
 

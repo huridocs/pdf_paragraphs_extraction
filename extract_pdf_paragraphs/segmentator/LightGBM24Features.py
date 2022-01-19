@@ -4,19 +4,18 @@ import numpy as np
 from typing import List
 from copy import deepcopy
 
-from PdfFeatures.PdfFeatures import PdfFeatures
-from PdfFeatures.PdfFont import PdfFont
-from PdfFeatures.PdfSegment import PdfSegment
-from PdfFeatures.PdfTag import PdfTag
-from PdfFeatures.Rectangle import Rectangle
-from segmentator.get_features import PdfAltoXml
+from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
+from extract_pdf_paragraphs.PdfFeatures.PdfSegment import PdfSegment
+from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
+from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.segmentator.get_features import PdfAltoXml
 
 CONTEXT_SIZE = 8
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
 
 
 class LightGBM24Features:
-
     def __init__(self, X_train, y_train, X_test, y_test, model=None, model_name: str = None):
         self.X_train = X_train
         self.y_train = y_train

@@ -1,8 +1,9 @@
 import pathlib
 from collections import namedtuple, Counter
 from typing import List, Tuple
-from PdfFeatures import PdfFeatures
-from PdfFeatures.PdfTag import PdfTag
+
+from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
 
 SegmentPdfalto = namedtuple('SegmentPdfalto', ['page_number', 'page_width', 'page_height', 'xml_tags'])
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
