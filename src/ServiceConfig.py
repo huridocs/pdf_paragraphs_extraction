@@ -15,6 +15,7 @@ DOCKER_VOLUME_PATH = f"{APP_PATH}/../docker_volume"
 
 class ServiceConfig:
     def __init__(self):
+        self.create_docker_volume()
         self.tasks_queue_name = SERVICE_NAME + "_tasks"
         self.results_queue_name = SERVICE_NAME + "_results"
 
@@ -117,6 +118,11 @@ class ServiceConfig:
             config_dict[option] = configuration_input
 
         self.write_configuration(config_dict)
+
+    @staticmethod
+    def create_docker_volume():
+        if not os.path.exists(DOCKER_VOLUME_PATH):
+            os.mkdir(DOCKER_VOLUME_PATH)
 
 
 if __name__ == "__main__":
