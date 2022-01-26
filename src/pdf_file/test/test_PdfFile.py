@@ -2,14 +2,13 @@ import os
 import shutil
 from unittest import TestCase
 
-from ServiceConfig import ServiceConfig
+# from ServiceConfig import ServiceConfig
 from pdf_file.PdfFile import PdfFile
 
 ROOT_FOLDER = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 )
 DOCKER_VOLUME_PATH = f"{ROOT_FOLDER}/docker_volume"
-config = ServiceConfig()
 
 
 class TestPdfFile(TestCase):

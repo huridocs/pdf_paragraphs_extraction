@@ -7,8 +7,10 @@ import uuid
 
 from bs4 import BeautifulSoup
 
+from ServiceConfig import ServiceConfig
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
+SERVICE_CONFIG = ServiceConfig()
 
 
 def create_xml_from_pdf(pdf_path, file_path_xml):
@@ -21,17 +23,17 @@ def create_xml_from_pdf(pdf_path, file_path_xml):
 
 
 def get_file_path(file_name, extension):
-    if not os.path.exists(f"{THIS_SCRIPT_PATH}/../../../docker_volume/files_pdfalto"):
-        os.makedirs(f"{THIS_SCRIPT_PATH}/../../../docker_volume/files_pdfalto")
+    if not os.path.exists(f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto"):
+        os.makedirs(f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto")
 
     if not os.path.exists(
-        f"{THIS_SCRIPT_PATH}/../../../docker_volume/files_pdfalto/{extension}"
+        f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto/{extension}"
     ):
         os.makedirs(
-            f"{THIS_SCRIPT_PATH}/../../../docker_volume/files_pdfalto/{extension}"
+            f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto/{extension}"
         )
 
-    return f"{THIS_SCRIPT_PATH}/../../../docker_volume/files_pdfalto/{extension}/{file_name}.{extension}"
+    return f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto/{extension}/{file_name}.{extension}"
 
 
 def get_xml_tags_from_file_content(file_content):

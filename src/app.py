@@ -14,8 +14,8 @@ from extract_pdf_paragraphs.segmentator.predict import predict
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
 
-config = ServiceConfig()
-logger = config.get_logger("service")
+SERVICE_CONFIG = ServiceConfig()
+logger = SERVICE_CONFIG.get_logger("service")
 
 app = FastAPI()
 
@@ -74,7 +74,7 @@ async def extract_paragraphs(file: UploadFile = File(...)):
 async def get_paragraphs(tenant: str, pdf_file_name: str):
     try:
         client = pymongo.MongoClient(
-            f"mongodb://{config.mongo_host}:{config.mongo_port}"
+            f"mongodb://{SERVICE_CONFIG.mongo_host}:{SERVICE_CONFIG.mongo_port}"
         )
 
         suggestions_filter = {"tenant": tenant, "file_name": pdf_file_name}
@@ -99,9 +99,9 @@ async def get_xml(tenant: str, pdf_file_name: str):
     try:
         xml_file_name = ".".join(pdf_file_name.split(".")[:-1]) + ".xml"
 
-        with open(f"../docker_volume/xml/{tenant}/{xml_file_name}", mode="r") as file:
+        with open(f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}", mode="r") as file:
             content = file.read()
-            os.remove(f"../docker_volume/xml/{tenant}/{xml_file_name}")
+            os.remove(f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}")
             return content
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="No xml file")

@@ -1,13 +1,10 @@
-import pathlib
-import uuid
-
 from bs4 import BeautifulSoup
 
 from typing import List
 
-from PdfFeatures.PdfFont import PdfFont
-from PdfFeatures.PdfPage import PdfPage
-from PdfFeatures.PdfTag import PdfTag
+from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
+from extract_pdf_paragraphs.PdfFeatures.PdfPage import PdfPage
+from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
 
 
 class PdfFeatures:

@@ -1,8 +1,8 @@
 from bs4 import Tag
-from PdfFeatures.PdfFont import PdfFont
 from typing import List
 
-from PdfFeatures.PdfTag import PdfTag
+from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
+from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
 
 
 class PdfPage:

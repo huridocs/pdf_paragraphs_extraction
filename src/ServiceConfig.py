@@ -10,17 +10,19 @@ OPTIONS = ["redis_host", "redis_port", "service_host", "service_port"]
 SERVICE_NAME = "segmentation"
 
 APP_PATH = Path(__file__).parent.absolute()
-DOCKER_VOLUME_PATH = f"{APP_PATH}/../docker_volume"
 
 
 class ServiceConfig:
     def __init__(self):
+        self.config_from_yml: Dict[str, any] = dict()
+
+        self.docker_volume_path = f"{APP_PATH}/../docker_volume"
         self.create_docker_volume()
+
         self.tasks_queue_name = SERVICE_NAME + "_tasks"
         self.results_queue_name = SERVICE_NAME + "_results"
 
         self.config_path = "config.yml"
-        self.config_from_yml: Dict[str, any] = dict()
         self.read_configuration_from_yml()
 
         self.redis_host = self.get_parameter_from_yml("redis_host", "127.0.0.1")
@@ -59,7 +61,7 @@ class ServiceConfig:
             or not self.config_from_yml["graylog_ip"]
         ):
             logger.addHandler(
-                logging.FileHandler(f"{DOCKER_VOLUME_PATH}/{logger_name}.log")
+                logging.FileHandler(f"{self.docker_volume_path}/{logger_name}.log")
             )
             return logger
 
@@ -119,10 +121,12 @@ class ServiceConfig:
 
         self.write_configuration(config_dict)
 
-    @staticmethod
-    def create_docker_volume():
-        if not os.path.exists(DOCKER_VOLUME_PATH):
-            os.mkdir(DOCKER_VOLUME_PATH)
+    def create_docker_volume(self):
+        logger = self.get_logger('buuuh')
+        if not os.path.exists(self.docker_volume_path):
+            logger.error('what')
+            logger.error(self.docker_volume_path)
+            os.mkdir(self.docker_volume_path)
 
 
 if __name__ == "__main__":

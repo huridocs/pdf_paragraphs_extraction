@@ -25,7 +25,6 @@ class TestEndToEnd(TestCase):
     def test_end_to_end(self):
         root_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         docker_volume_path = f"{root_path}/docker_volume"
-
         tenant = "end_to_end_test"
         pdf_file_name = "test.pdf"
         service_url = "http://localhost:5051"
