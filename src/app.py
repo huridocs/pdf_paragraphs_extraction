@@ -99,9 +99,14 @@ async def get_xml(tenant: str, pdf_file_name: str):
     try:
         xml_file_name = ".".join(pdf_file_name.split(".")[:-1]) + ".xml"
 
-        with open(f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}", mode="r") as file:
+        with open(
+            f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}",
+            mode="r",
+        ) as file:
             content = file.read()
-            os.remove(f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}")
+            os.remove(
+                f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}"
+            )
             return content
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="No xml file")

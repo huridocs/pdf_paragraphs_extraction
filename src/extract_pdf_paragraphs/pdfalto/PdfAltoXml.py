@@ -29,9 +29,7 @@ def get_file_path(file_name, extension):
     if not os.path.exists(
         f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto/{extension}"
     ):
-        os.makedirs(
-            f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto/{extension}"
-        )
+        os.makedirs(f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto/{extension}")
 
     return f"{SERVICE_CONFIG.docker_volume_path}/files_pdfalto/{extension}/{file_name}.{extension}"
 

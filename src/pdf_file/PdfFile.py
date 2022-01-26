@@ -15,11 +15,11 @@ class PdfFile:
         if not os.path.exists(
             f"{self.service_config.docker_volume_path}/to_extract/{self.tenant}"
         ):
-            os.mkdir(f"{self.service_config.docker_volume_path}/to_extract/{self.tenant}")
+            os.mkdir(
+                f"{self.service_config.docker_volume_path}/to_extract/{self.tenant}"
+            )
 
-        path = (
-            f"{self.service_config.docker_volume_path}/to_extract/{self.tenant}/{pdf_file_name}"
-        )
+        path = f"{self.service_config.docker_volume_path}/to_extract/{self.tenant}/{pdf_file_name}"
 
         file_path_pdf = pathlib.Path(path)
         file_path_pdf.write_bytes(file)
