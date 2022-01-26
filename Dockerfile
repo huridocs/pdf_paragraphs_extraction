@@ -14,10 +14,8 @@ WORKDIR /app
 COPY ./src ./src
 
 FROM base AS api
-COPY docker-compose.yml .
 CMD gunicorn -k uvicorn.workers.UvicornWorker --chdir ./src app:app --bind 0.0.0.0:5051
 
 FROM base AS extract_pdf_paragraphs
-COPY docker-compose.yml .
 CMD python3 src/QueueProcessor.py
 

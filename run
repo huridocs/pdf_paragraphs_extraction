@@ -33,7 +33,9 @@ function check_format {
 
 function test {
   _source_venv
-  python -m unittest discover -s src
+  command cd src
+  command pytest
+
 }
 
 function linter {
