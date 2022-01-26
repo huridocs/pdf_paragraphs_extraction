@@ -17,3 +17,4 @@ PyRSMQ
 lightgbm~=3.2.1
 redis~=3.5.3
 pytest
+black
