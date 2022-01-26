@@ -122,10 +122,7 @@ class ServiceConfig:
         self.write_configuration(config_dict)
 
     def create_docker_volume(self):
-        logger = self.get_logger("buuuh")
         if not os.path.exists(self.docker_volume_path):
-            logger.error("what")
-            logger.error(self.docker_volume_path)
             os.mkdir(self.docker_volume_path)
 
 
