@@ -33,7 +33,7 @@ class ServiceConfig:
         self.service_url = f"http://{self.service_host}:{self.service_port}"
 
         self.mongo_host = self.get_parameter_from_yml("mongo_host", "127.0.0.1")
-        self.mongo_port = self.get_parameter_from_yml("mongo_port", 27017)
+        self.mongo_port = self.get_parameter_from_yml("mongo_port", 28017)
 
     def get_parameter_from_yml(self, parameter_name: str, default: any):
         if parameter_name in self.config_from_yml:

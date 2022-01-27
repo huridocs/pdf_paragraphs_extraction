@@ -29,6 +29,7 @@ services:
   mongo_paragraphs:
     network_mode: host
     restart: unless-stopped
+    command: mongod --port 28017
     image: "mongo:4.0.1"
   redis_paragraphs:
     network_mode: host

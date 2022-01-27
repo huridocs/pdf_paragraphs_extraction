@@ -58,9 +58,9 @@ class TestApp(TestCase):
         self.assertEqual(1, min(pages))
         self.assertEqual(2, max(pages))
 
-    @mongomock.patch(servers=["mongodb://127.0.0.1:27017"])
+    @mongomock.patch(servers=["mongodb://127.0.0.1:28017"])
     def test_get_paragraphs_from_db(self):
-        mongo_client = pymongo.MongoClient("mongodb://127.0.0.1:27017")
+        mongo_client = pymongo.MongoClient("mongodb://127.0.0.1:28017")
         tenant = "tenant_to_get_paragraphs"
         pdf_file_name = "pdf_file_name.pdf"
         json_data = [
@@ -124,7 +124,7 @@ class TestApp(TestCase):
             )
         )
 
-    @mongomock.patch(servers=["mongodb://127.0.0.1:27017"])
+    @mongomock.patch(servers=["mongodb://127.0.0.1:28017"])
     def test_get_paragraphs_when_no_data(self):
         tenant = "tenant_to_get_paragraphs"
         pdf_file_name = "pdf_file_name"
