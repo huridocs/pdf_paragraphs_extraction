@@ -10,7 +10,7 @@ an option to get an asynchronous flow using message queues on redis.
 ## Quick Start
 Start the service:
 
-    docker-compose up
+    ./run start
 
 Get the paragraphs from a PDF:
 
@@ -18,7 +18,7 @@ Get the paragraphs from a PDF:
 
 To stop the server:
 
-    docker-compose down
+    ./run stop
 
 ## Contents
 - [Quick Start](#quick-start)
@@ -49,14 +49,14 @@ To stop the server:
 ## Docker containers
 
 A redis server is needed to use the service asynchronously. For that matter, it can be used the 
-docker-compose file `docker-compose-service-with-redis.yml` that has a built-in 
+command `./run start:testing` that has a built-in 
 redis server.
 
-Containers with `docker-compose up`
+Containers with `./run start`
 
 ![Alt logo](readme_pictures/docker_compose_up.png?raw=true "docker-compose up")
 
-Containers with `docker-compose -f docker-compose-service-with-redis.yml up`
+Containers with `./run start:testing`
 
 ![Alt logo](readme_pictures/docker_compose_redis.png?raw=true "docker-compose -f docker-compose-service-with-redis.yml up")
 
@@ -138,8 +138,7 @@ redis queues.
 
 A configuration file could be provided to set the redis server parameters
 and the `extract pdf paragraphs` server hosts and ports. If a configuration is not provided,
-the defaults values uses the redis from the 'docker-compose-service-with-redis.yml' 
-file.
+the defaults values are used.
 
 The configuration could be manually created, or it can be used the following script:
 
@@ -148,18 +147,21 @@ The configuration could be manually created, or it can be used the following scr
 
 Configuration file name: `config.yml`
 
-Parameters:
+Default parameters:
 
-    service_host: [host_ip]
-    service_port: [port_number]
+    service_host: localhost
+    service_port: 5051
     redis_host: [redis_host]
     redis_port: [redis_port]
+    mongo_host: [redis_host]
+    mongo_port: [redis_port]
+    graylog_ip: [redis_port]
 
 ## Get service logs
 
 The service logs are stored by default in the files `docker_volume/service.log` and `docker_volume/redis_tasks.log`
 
-To use a graylog server, create a file `config.yml` with the following content:
+To use a graylog server, add the following line to the `config.yml` file:
 
     graylog_ip: [ip]
 
@@ -167,52 +169,13 @@ To use a graylog server, create a file `config.yml` with the following content:
 
 It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/)
 
-    pip3 install virtualenv
-    virtualenv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
+    ./run install_venv
 
 ## Execute tests
 
-    python -m unittest
+    ./run test
 
 ## Troubleshooting
-
-### Issue: Permission error starting the docker containers\
-Cause: Due to docker creating files with the root user some permission errors can occur starting the docker containers.\
-Solution: There are two solutions.
-
-First solution is running docker with sudo
-
-    sudo docker-compose up 
-
-Second solution is setting up a development environment and running 
-
-    sudo python clean_files.py
-    docker-compose up 
-
-
-### Issue: Configuration changes but not reflected in service
-Cause: Docker should be re-built in order to get the configuration
-Solution: 
-
-    sudo docker-compose up --build
-
-
-### Issue: Redis in localhost not used by the service
-Solution: In linux, the redis server to use should be in other machine or using the dockerized redis.
-
-    rm -rf config.yml
-    sudo docker-compose -f docker-compose-service-with-redis.yml up --build
-
-And using the redis in localhost:6479
-
-In MacOS, it can be used the following config.yml in order to access to the redis in localhost:
-
-    redis_host: host.docker.internal
-    redis_port: 6379
-    service_host: localhost
-    service_port: 5051
 
 ### Issue: Error downloading pip wheel
 Solution: Change RAM memory used by the docker containers to 3Gb or 4Gb 

@@ -6,7 +6,7 @@ from pathlib import Path
 import graypy
 import yaml
 
-OPTIONS = ["redis_host", "redis_port", "service_host", "service_port"]
+OPTIONS = ["redis_host", "redis_port", "service_host", "service_port", 'mongo_host', 'mongo_port', 'graylog_ip']
 SERVICE_NAME = "segmentation"
 
 APP_PATH = Path(__file__).parent.absolute()
@@ -35,6 +35,8 @@ class ServiceConfig:
         self.mongo_host = self.get_parameter_from_yml("mongo_host", "127.0.0.1")
         self.mongo_port = self.get_parameter_from_yml("mongo_port", 28017)
 
+        self.graylog_ip = self.get_parameter_from_yml("graylog_ip", '')
+
     def get_parameter_from_yml(self, parameter_name: str, default: any):
         if parameter_name in self.config_from_yml:
             return self.config_from_yml[parameter_name]
@@ -56,18 +58,13 @@ class ServiceConfig:
         logger = logging.getLogger("graylog")
         logger.setLevel(logging.INFO)
 
-        if (
-            "graylog_ip" not in self.config_from_yml
-            or not self.config_from_yml["graylog_ip"]
-        ):
-            logger.addHandler(
-                logging.FileHandler(f"{self.docker_volume_path}/{logger_name}.log")
+        if self.graylog_ip:
+            handler = graypy.GELFUDPHandler(
+                self.config_from_yml["graylog_ip"], 12201, localname="segmentation_server"
             )
-            return logger
+        else:
+            handler = logging.FileHandler(f"{self.docker_volume_path}/{logger_name}.log")
 
-        handler = graypy.GELFUDPHandler(
-            self.config_from_yml["graylog_ip"], 12201, localname="segmentation_server"
-        )
         logger.addHandler(handler)
         return logger
 
@@ -101,6 +98,9 @@ class ServiceConfig:
         config_dict["redis_port"] = self.redis_port
         config_dict["service_host"] = self.service_host
         config_dict["service_port"] = self.service_port
+        config_dict["mongo_host"] = self.mongo_host
+        config_dict["mongo_port"] = self.mongo_port
+        config_dict["graylog_ip"] = self.graylog_ip
 
         print(":::::::::: Actual configuration :::::::::::\n")
         for config_key in config_dict:
