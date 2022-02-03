@@ -151,11 +151,11 @@ Default parameters:
 
     service_host: localhost
     service_port: 5051
-    redis_host: [redis_host]
-    redis_port: [redis_port]
-    mongo_host: [redis_host]
-    mongo_port: [redis_port]
-    graylog_ip: [redis_port]
+    redis_host: 127.0.0.1
+    redis_port: 6379
+    mongo_host: 127.0.0.1
+    mongo_port: 28017
+    graylog_ip: 
 
 ## Get service logs
 
