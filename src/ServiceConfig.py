@@ -6,7 +6,15 @@ from pathlib import Path
 import graypy
 import yaml
 
-OPTIONS = ["redis_host", "redis_port", "service_host", "service_port", 'mongo_host', 'mongo_port', 'graylog_ip']
+OPTIONS = [
+    "redis_host",
+    "redis_port",
+    "service_host",
+    "service_port",
+    "mongo_host",
+    "mongo_port",
+    "graylog_ip",
+]
 SERVICE_NAME = "segmentation"
 
 APP_PATH = Path(__file__).parent.absolute()
@@ -35,7 +43,7 @@ class ServiceConfig:
         self.mongo_host = self.get_parameter_from_yml("mongo_host", "127.0.0.1")
         self.mongo_port = self.get_parameter_from_yml("mongo_port", 28017)
 
-        self.graylog_ip = self.get_parameter_from_yml("graylog_ip", '')
+        self.graylog_ip = self.get_parameter_from_yml("graylog_ip", "")
 
     def get_parameter_from_yml(self, parameter_name: str, default: any):
         if parameter_name in self.config_from_yml:
@@ -60,10 +68,14 @@ class ServiceConfig:
 
         if self.graylog_ip:
             handler = graypy.GELFUDPHandler(
-                self.config_from_yml["graylog_ip"], 12201, localname="segmentation_server"
+                self.config_from_yml["graylog_ip"],
+                12201,
+                localname="segmentation_server",
             )
         else:
-            handler = logging.FileHandler(f"{self.docker_volume_path}/{logger_name}.log")
+            handler = logging.FileHandler(
+                f"{self.docker_volume_path}/{logger_name}.log"
+            )
 
         logger.addHandler(handler)
         return logger
