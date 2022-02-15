@@ -67,17 +67,18 @@ class ServiceConfig:
         logger.setLevel(logging.INFO)
 
         if self.graylog_ip:
-            handler = graypy.GELFUDPHandler(
-                self.config_from_yml["graylog_ip"],
+            graylog_handler = graypy.GELFUDPHandler(
+                self.graylog_ip,
                 12201,
                 localname=SERVICE_NAME,
             )
-        else:
-            handler = logging.FileHandler(
-                f"{self.docker_volume_path}/{logger_name}.log"
-            )
+            logger.addHandler(graylog_handler)
 
-        logger.addHandler(handler)
+        file_handler = logging.FileHandler(
+            f"{self.docker_volume_path}/{logger_name}.log"
+        )
+
+        logger.addHandler(file_handler)
         return logger
 
     def write_configuration(self, config_dict: Dict[str, str]):
