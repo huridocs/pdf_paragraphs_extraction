@@ -74,9 +74,7 @@ class ServiceConfig:
             )
             logger.addHandler(graylog_handler)
 
-        file_handler = logging.FileHandler(
-            f"{self.docker_volume_path}/{logger_name}.log"
-        )
+        file_handler = logging.FileHandler(f"{self.docker_volume_path}/{logger_name}.log")
 
         logger.addHandler(file_handler)
         return logger
@@ -100,9 +98,7 @@ class ServiceConfig:
             return
 
         with open(self.config_path, "w") as config_file:
-            config_file.write(
-                "\n".join([f"{k}: {v}" for k, v in config_to_write.items()])
-            )
+            config_file.write("\n".join([f"{k}: {v}" for k, v in config_to_write.items()]))
 
     def create_configuration(self):
         config_dict = dict()

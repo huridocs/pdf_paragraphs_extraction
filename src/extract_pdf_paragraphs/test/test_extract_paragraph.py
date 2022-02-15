@@ -9,9 +9,7 @@ from data.Params import Params
 from data.Task import Task
 from extract_pdf_paragraphs.extract_paragraphs import extract_paragraphs
 
-ROOT_FOLDER = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-)
+ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 DOCKER_VOLUME_PATH = f"{ROOT_FOLDER}/docker_volume"
 
 
@@ -31,9 +29,7 @@ class TestGetParagraphs(TestCase):
         )
 
         # act
-        task = Task(
-            tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name)
-        )
+        task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
         extraction_data = extract_paragraphs(task)
 
         # assert
@@ -45,12 +41,8 @@ class TestGetParagraphs(TestCase):
         self.assertLess(15, len(extraction_data.paragraphs))
         self.assertEqual("A/INF/76/1", extraction_data.paragraphs[0].text)
         self.assertEqual({1, 2}, {x.page_number for x in extraction_data.paragraphs})
-        self.assertTrue(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/xml/{tenant}/{xml_file_name}")
-        )
-        self.assertFalse(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}")
-        )
+        self.assertTrue(os.path.exists(f"{DOCKER_VOLUME_PATH}/xml/{tenant}/{xml_file_name}"))
+        self.assertFalse(os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}"))
 
         shutil.rmtree(f"{DOCKER_VOLUME_PATH}/xml/{tenant}", ignore_errors=True)
 
@@ -66,9 +58,7 @@ class TestGetParagraphs(TestCase):
             f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}",
         )
 
-        task = Task(
-            tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name)
-        )
+        task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
 
         extraction_data = extract_paragraphs(task)
 
@@ -79,12 +69,8 @@ class TestGetParagraphs(TestCase):
         self.assertEqual("A/INF/76/1", extraction_data.paragraphs[0].text)
         self.assertEqual({1, 2}, {x.page_number for x in extraction_data.paragraphs})
 
-        self.assertTrue(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/xml/{tenant}/{xml_file_name}")
-        )
-        self.assertFalse(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}")
-        )
+        self.assertTrue(os.path.exists(f"{DOCKER_VOLUME_PATH}/xml/{tenant}/{xml_file_name}"))
+        self.assertFalse(os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}"))
 
         shutil.rmtree(f"{DOCKER_VOLUME_PATH}/xml/{tenant}", ignore_errors=True)
 
@@ -102,9 +88,7 @@ class TestGetParagraphs(TestCase):
         )
 
         # act
-        task = Task(
-            tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name)
-        )
+        task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
         extraction_data = extract_paragraphs(task)
 
         # assert
@@ -115,12 +99,8 @@ class TestGetParagraphs(TestCase):
         self.assertEqual(792, extraction_data.page_height)
         self.assertLess(15, len(extraction_data.paragraphs))
         self.assertEqual(12, len({x.page_number for x in extraction_data.paragraphs}))
-        self.assertTrue(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/xml/{tenant}/{xml_file_name}")
-        )
-        self.assertFalse(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}")
-        )
+        self.assertTrue(os.path.exists(f"{DOCKER_VOLUME_PATH}/xml/{tenant}/{xml_file_name}"))
+        self.assertFalse(os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}"))
 
         shutil.rmtree(f"{DOCKER_VOLUME_PATH}/xml/{tenant}", ignore_errors=True)
 
@@ -130,9 +110,7 @@ class TestGetParagraphs(TestCase):
         shutil.rmtree(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}", ignore_errors=True)
 
         os.makedirs(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}")
-        task = Task(
-            tenant=tenant, task="segmentation", params=Params(filename="no_file")
-        )
+        task = Task(tenant=tenant, task="segmentation", params=Params(filename="no_file"))
 
         extraction_data = extract_paragraphs(task)
 
@@ -154,22 +132,14 @@ class TestGetParagraphs(TestCase):
             f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}",
         )
 
-        task = Task(
-            tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name)
-        )
+        task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
 
         extract_paragraphs(task)
 
         self.assertIsNone(mongo_client.pdf_paragraph.paragraphs.find_one())
-        self.assertFalse(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}")
-        )
-        self.assertFalse(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/xml/{tenant}/{pdf_file_name}")
-        )
-        self.assertTrue(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/failed_pdf/{tenant}/{pdf_file_name}")
-        )
+        self.assertFalse(os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}"))
+        self.assertFalse(os.path.exists(f"{DOCKER_VOLUME_PATH}/xml/{tenant}/{pdf_file_name}"))
+        self.assertTrue(os.path.exists(f"{DOCKER_VOLUME_PATH}/failed_pdf/{tenant}/{pdf_file_name}"))
 
         shutil.rmtree(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}", ignore_errors=True)
         shutil.rmtree(f"{DOCKER_VOLUME_PATH}/failed_pdf/{tenant}", ignore_errors=True)

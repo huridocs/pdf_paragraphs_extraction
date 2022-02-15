@@ -10,15 +10,7 @@ class PdfFont:
 
     @staticmethod
     def from_text_style_pdfalto(xml_text_style_tag: Tag):
-        bold: bool = (
-            "bold" in xml_text_style_tag["FONTSTYLE"]
-            if "FONTSTYLE" in xml_text_style_tag.attrs
-            else False
-        )
-        italics: bool = (
-            "italics" in xml_text_style_tag["FONTSTYLE"]
-            if "FONTSTYLE" in xml_text_style_tag.attrs
-            else False
-        )
+        bold: bool = "bold" in xml_text_style_tag["FONTSTYLE"] if "FONTSTYLE" in xml_text_style_tag.attrs else False
+        italics: bool = "italics" in xml_text_style_tag["FONTSTYLE"] if "FONTSTYLE" in xml_text_style_tag.attrs else False
         font_size = float(xml_text_style_tag["FONTSIZE"])
         return PdfFont(xml_text_style_tag["ID"], bold, italics, font_size)

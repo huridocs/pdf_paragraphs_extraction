@@ -20,9 +20,7 @@ class TestApp(TestCase):
     def test_error(self):
         response = client.get("/error")
         self.assertEqual(500, response.status_code)
-        self.assertEqual(
-            {"detail": "This is a test error from the error endpoint"}, response.json()
-        )
+        self.assertEqual({"detail": "This is a test error from the error endpoint"}, response.json())
 
     def test_async_extraction(self):
         tenant = "tenant_add_task"
@@ -34,9 +32,7 @@ class TestApp(TestCase):
             response = client.post(f"/async_extraction/{tenant}", files=files)
 
         self.assertEqual(200, response.status_code)
-        self.assertTrue(
-            os.path.exists(f"../docker_volume/to_extract/{tenant}/test.pdf")
-        )
+        self.assertTrue(os.path.exists(f"../docker_volume/to_extract/{tenant}/test.pdf"))
 
         shutil.rmtree(f"../docker_volume/to_extract/{tenant}", ignore_errors=True)
 
@@ -46,9 +42,7 @@ class TestApp(TestCase):
             response = client.get("/", files=files)
 
         segments_boxes = json.loads(response.json())
-        pages = [
-            segment_box["page_number"] for segment_box in segments_boxes["paragraphs"]
-        ]
+        pages = [segment_box["page_number"] for segment_box in segments_boxes["paragraphs"]]
 
         self.assertEqual(200, response.status_code)
         self.assertLess(15, len(segments_boxes["paragraphs"]))
@@ -112,17 +106,9 @@ class TestApp(TestCase):
         self.assertEqual(2, len(extraction_data.paragraphs))
         self.assertEqual(1, extraction_data.page_height)
         self.assertEqual(2, extraction_data.page_width)
-        self.assertEqual(
-            [1, 2, 3, 4, 5, "1"], list(extraction_data.paragraphs[0].dict().values())
-        )
-        self.assertEqual(
-            [6, 7, 8, 9, 10, "2"], list(extraction_data.paragraphs[1].dict().values())
-        )
-        self.assertIsNone(
-            mongo_client.pdf_paragraph.paragraphs.find_one(
-                {"tenant": tenant, "pdf_file_name": pdf_file_name}
-            )
-        )
+        self.assertEqual([1, 2, 3, 4, 5, "1"], list(extraction_data.paragraphs[0].dict().values()))
+        self.assertEqual([6, 7, 8, 9, 10, "2"], list(extraction_data.paragraphs[1].dict().values()))
+        self.assertIsNone(mongo_client.pdf_paragraph.paragraphs.find_one({"tenant": tenant, "pdf_file_name": pdf_file_name}))
 
     @mongomock.patch(servers=["mongodb://127.0.0.1:28017"])
     def test_get_paragraphs_when_no_data(self):
@@ -140,20 +126,14 @@ class TestApp(TestCase):
 
         shutil.rmtree(f"../docker_volume/xml/{tenant}", ignore_errors=True)
         os.makedirs(f"../docker_volume/xml/{tenant}")
-        shutil.copyfile(
-            "./test_files/test.xml", f"../docker_volume/xml/{tenant}/{xml_file_name}"
-        )
+        shutil.copyfile("./test_files/test.xml", f"../docker_volume/xml/{tenant}/{xml_file_name}")
 
         response = client.get(f"/get_xml/{tenant}/{pdf_file_name}")
 
         self.assertEqual(200, response.status_code)
         self.assertIsNotNone(response.content)
-        self.assertEqual(
-            "text/plain; charset=utf-8", response.headers.get("content-type")
-        )
-        self.assertFalse(
-            os.path.exists(f"../docker_volume/xml/{tenant}/{xml_file_name}")
-        )
+        self.assertEqual("text/plain; charset=utf-8", response.headers.get("content-type"))
+        self.assertFalse(os.path.exists(f"../docker_volume/xml/{tenant}/{xml_file_name}"))
 
         shutil.rmtree(f"../docker_volume/xml/{tenant}", ignore_errors=True)
 

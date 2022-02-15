@@ -30,10 +30,7 @@ class PdfFeatures:
     @staticmethod
     def from_xml_content(xml_content):
         pages = list()
-        fonts = [
-            PdfFont.from_text_style_pdfalto(xml_tag)
-            for xml_tag in xml_content.find_all("TextStyle")
-        ]
+        fonts = [PdfFont.from_text_style_pdfalto(xml_tag) for xml_tag in xml_content.find_all("TextStyle")]
 
         for xml_page in xml_content.find_all("Page"):
             pages.append(PdfPage.from_pdfalto(xml_page, fonts))

@@ -17,9 +17,7 @@ THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
 
 
 class LightGBM24Features:
-    def __init__(
-        self, X_train, y_train, X_test, y_test, model=None, model_name: str = None
-    ):
+    def __init__(self, X_train, y_train, X_test, y_test, model=None, model_name: str = None):
         self.X_train = X_train
         self.y_train = y_train
         self.X_test = X_test
@@ -82,16 +80,9 @@ class LightGBM24Features:
                         )
                     )
 
-                X = (
-                    np.array([new_data_row])
-                    if X is None
-                    else np.concatenate((X, np.array([new_data_row])), axis=0)
-                )
+                X = np.array([new_data_row]) if X is None else np.concatenate((X, np.array([new_data_row])), axis=0)
 
-                if (
-                    page.tags[tag_index + CONTEXT_SIZE].segment_no
-                    == page.tags[tag_index + CONTEXT_SIZE + 1].segment_no
-                ):
+                if page.tags[tag_index + CONTEXT_SIZE].segment_no == page.tags[tag_index + CONTEXT_SIZE + 1].segment_no:
                     y = np.append(y, 1)
                 else:
                     y = np.append(y, 0)
@@ -110,36 +101,20 @@ class LightGBM24Features:
             if X_sub is None:
                 print(f"File has no data")
                 continue
-            if (
-                pdf_features.file_type == "one_column_train"
-                or pdf_features.file_type == "multi_column_train"
-            ):
-                X_train = (
-                    X_sub
-                    if X_train is None
-                    else np.concatenate((X_train, X_sub), axis=0)
-                )
+            if pdf_features.file_type == "one_column_train" or pdf_features.file_type == "multi_column_train":
+                X_train = X_sub if X_train is None else np.concatenate((X_train, X_sub), axis=0)
                 y_train = np.append(y_train, y_sub)
-            elif (
-                pdf_features.file_type == "one_column_test"
-                or pdf_features.file_type == "multi_column_test"
-            ):
-                X_test = (
-                    X_sub if X_test is None else np.concatenate((X_test, X_sub), axis=0)
-                )
+            elif pdf_features.file_type == "one_column_test" or pdf_features.file_type == "multi_column_test":
+                X_test = X_sub if X_test is None else np.concatenate((X_test, X_sub), axis=0)
                 y_test = np.append(y_test, y_sub)
 
         return LightGBM24Features(X_train, y_train, X_test, y_test)
 
-    def get_predicted_segments(
-        self, pdfalto_xml, page_tags: List[PdfTag]
-    ) -> List[PdfSegment]:
+    def get_predicted_segments(self, pdfalto_xml, page_tags: List[PdfTag]) -> List[PdfSegment]:
 
         X = None
         context_size: int
-        with open(
-            f"{THIS_SCRIPT_PATH}/model_LightGBM_24Features_2021-09-06_18:50:27.txt", "r"
-        ) as config_file:
+        with open(f"{THIS_SCRIPT_PATH}/model_LightGBM_24Features_2021-09-06_18:50:27.txt", "r") as config_file:
             context_size = int(config_file.readlines()[0])
 
         for i in range(context_size):
@@ -184,24 +159,16 @@ class LightGBM24Features:
                     )
                 )
 
-            X = (
-                np.array([new_data_row])
-                if X is None
-                else np.concatenate((X, np.array([new_data_row])), axis=0)
-            )
+            X = np.array([new_data_row]) if X is None else np.concatenate((X, np.array([new_data_row])), axis=0)
 
         y = self.model.predict(X) if len(X.shape) == 2 else self.model.predict([X])
-        same_paragraph_prediction = [
-            True if prediction > 0.5 else False for prediction in y
-        ]
+        same_paragraph_prediction = [True if prediction > 0.5 else False for prediction in y]
 
         segments_by_tags = list()
         segments_by_tags.append([page_tags[context_size]])
         for prediction_index, same_paragraph in enumerate(same_paragraph_prediction):
             if same_paragraph:
-                segments_by_tags[-1].append(
-                    page_tags[prediction_index + context_size + 1]
-                )
+                segments_by_tags[-1].append(page_tags[prediction_index + context_size + 1])
                 continue
 
             segments_by_tags.append([page_tags[prediction_index + context_size + 1]])
@@ -229,9 +196,7 @@ class LightGBM24Features:
         for page in pdf_features.pages:
             if len(page.tags) == 0 or len(page.tags) == 1:
                 continue
-            segments_for_a_page: List[PdfSegment] = self.get_predicted_segments(
-                pdfalto_xml, deepcopy(page.tags)
-            )
+            segments_for_a_page: List[PdfSegment] = self.get_predicted_segments(pdfalto_xml, deepcopy(page.tags))
             segments.extend(segments_for_a_page)
 
         return segments

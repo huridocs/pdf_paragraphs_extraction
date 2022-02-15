@@ -17,9 +17,7 @@ class QueueProcessor:
         self.config = ServiceConfig()
         self.logger = self.config.get_logger("redis_tasks")
 
-        client = pymongo.MongoClient(
-            f"mongodb://{self.config.mongo_host}:{self.config.mongo_port}"
-        )
+        client = pymongo.MongoClient(f"mongodb://{self.config.mongo_host}:{self.config.mongo_port}")
         self.pdf_paragraph_db = client["pdf_paragraph"]
 
         self.results_queue = RedisSMQ(
@@ -49,9 +47,7 @@ class QueueProcessor:
                     error_message="Error getting the xml from the pdf",
                 )
 
-                self.results_queue.sendMessage().message(
-                    extraction_message.dict()
-                ).execute()
+                self.results_queue.sendMessage().message(extraction_message.dict()).execute()
                 self.logger.error(extraction_message.json())
                 return True
 
@@ -68,9 +64,7 @@ class QueueProcessor:
 
             self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
             self.logger.info(extraction_message.json())
-            self.results_queue.sendMessage(delay=3).message(
-                extraction_message.dict()
-            ).execute()
+            self.results_queue.sendMessage(delay=3).message(extraction_message.dict()).execute()
             return True
         except Exception:
             self.logger.error("error", exc_info=1)
@@ -86,13 +80,9 @@ class QueueProcessor:
                     qname=self.config.tasks_queue_name,
                 )
 
-                extractions_tasks_queue.createQueue().vt(120).exceptions(
-                    False
-                ).execute()
+                extractions_tasks_queue.createQueue().vt(120).exceptions(False).execute()
 
-                self.logger.info(
-                    f"Connecting to redis: {self.config.redis_host}:{self.config.redis_port}"
-                )
+                self.logger.info(f"Connecting to redis: {self.config.redis_host}:{self.config.redis_port}")
 
                 redis_smq_consumer = RedisSMQConsumer(
                     qname=self.config.tasks_queue_name,
@@ -102,9 +92,7 @@ class QueueProcessor:
                 )
                 redis_smq_consumer.run()
             except redis.exceptions.ConnectionError:
-                self.logger.error(
-                    f"Error connecting to redis: {self.config.redis_host}:{self.config.redis_port}"
-                )
+                self.logger.error(f"Error connecting to redis: {self.config.redis_host}:{self.config.redis_port}")
                 sleep(20)
 
 

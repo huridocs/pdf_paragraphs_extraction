@@ -35,13 +35,9 @@ class TestEndToEnd(TestCase):
 
         queue = RedisSMQ(host="127.0.0.1", port="6379", qname="segmentation_tasks")
 
-        queue.sendMessage().message(
-            '{"message_to_avoid":"to_be_written_in_log_file"}'
-        ).execute()
+        queue.sendMessage().message('{"message_to_avoid":"to_be_written_in_log_file"}').execute()
 
-        task = Task(
-            tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name)
-        )
+        task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
         queue.sendMessage().message(str(task.json())).execute()
 
         extraction_message = self.get_redis_message()
@@ -63,12 +59,8 @@ class TestEndToEnd(TestCase):
 
         response = requests.get(extraction_message.file_url)
         self.assertEqual(200, response.status_code)
-        self.assertTrue(
-            '<?xml version="1.0" encoding="UTF-8"?>' in str(response.content)
-        )
-        self.assertFalse(
-            os.path.exists(f"{docker_volume_path}/xml/{tenant}/{pdf_file_name}")
-        )
+        self.assertTrue('<?xml version="1.0" encoding="UTF-8"?>' in str(response.content))
+        self.assertFalse(os.path.exists(f"{docker_volume_path}/xml/{tenant}/{pdf_file_name}"))
 
         shutil.rmtree(f"{docker_volume_path}/xml/{tenant}", ignore_errors=True)
 
@@ -79,9 +71,7 @@ class TestEndToEnd(TestCase):
             files = {"file": stream}
             requests.post(f"{service_url}/async_extraction/{tenant}", files=files)
 
-        task = Task(
-            tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name)
-        )
+        task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
 
         queue.sendMessage().message(task.json()).execute()
 
@@ -100,9 +90,7 @@ class TestEndToEnd(TestCase):
 
     @staticmethod
     def get_redis_message() -> ExtractionMessage:
-        queue = RedisSMQ(
-            host="127.0.0.1", port="6379", qname="segmentation_results", quiet=True
-        )
+        queue = RedisSMQ(host="127.0.0.1", port="6379", qname="segmentation_results", quiet=True)
 
         for i in range(10):
             time.sleep(2)

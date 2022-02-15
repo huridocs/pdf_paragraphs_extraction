@@ -5,9 +5,7 @@ from unittest import TestCase
 # from ServiceConfig import ServiceConfig
 from pdf_file.PdfFile import PdfFile
 
-ROOT_FOLDER = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-)
+ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
 DOCKER_VOLUME_PATH = f"{ROOT_FOLDER}/docker_volume"
 
 
@@ -21,9 +19,7 @@ class TestPdfFile(TestCase):
         with open(f"{ROOT_FOLDER}/src/test_files/test.pdf", "rb") as file:
             pdf_file.save(pdf_file_name, file.read())
 
-        self.assertTrue(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/tenant_one/test.pdf")
-        )
+        self.assertTrue(os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/tenant_one/test.pdf"))
         shutil.rmtree(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}", ignore_errors=True)
 
     def test_save_different_file(self):
@@ -36,8 +32,6 @@ class TestPdfFile(TestCase):
         with open(f"{ROOT_FOLDER}/src/test_files/test.pdf", "rb") as file:
             pdf_file.save(pdf_file_name, file.read())
 
-        self.assertTrue(
-            os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}")
-        )
+        self.assertTrue(os.path.exists(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}/{pdf_file_name}"))
 
         shutil.rmtree(f"{DOCKER_VOLUME_PATH}/to_extract/{tenant}", ignore_errors=True)

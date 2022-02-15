@@ -31,9 +31,7 @@ async def info():
 @app.get("/error")
 async def error():
     logger.error("This is a test error from the error endpoint")
-    raise HTTPException(
-        status_code=500, detail="This is a test error from the error endpoint"
-    )
+    raise HTTPException(status_code=500, detail="This is a test error from the error endpoint")
 
 
 @app.post("/async_extraction/{tenant}")
@@ -73,9 +71,7 @@ async def extract_paragraphs(file: UploadFile = File(...)):
 @app.get("/get_paragraphs/{tenant}/{pdf_file_name}")
 async def get_paragraphs(tenant: str, pdf_file_name: str):
     try:
-        client = pymongo.MongoClient(
-            f"mongodb://{SERVICE_CONFIG.mongo_host}:{SERVICE_CONFIG.mongo_port}"
-        )
+        client = pymongo.MongoClient(f"mongodb://{SERVICE_CONFIG.mongo_host}:{SERVICE_CONFIG.mongo_port}")
 
         suggestions_filter = {"tenant": tenant, "file_name": pdf_file_name}
 
@@ -89,9 +85,7 @@ async def get_paragraphs(tenant: str, pdf_file_name: str):
         raise HTTPException(status_code=404, detail="No paragraphs")
     except Exception:
         logger.error("Error", exc_info=1)
-        raise HTTPException(
-            status_code=422, detail="An error has occurred. Check graylog for more info"
-        )
+        raise HTTPException(status_code=422, detail="An error has occurred. Check graylog for more info")
 
 
 @app.get("/get_xml/{tenant}/{pdf_file_name}", response_class=PlainTextResponse)
@@ -104,14 +98,10 @@ async def get_xml(tenant: str, pdf_file_name: str):
             mode="r",
         ) as file:
             content = file.read()
-            os.remove(
-                f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}"
-            )
+            os.remove(f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}")
             return content
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="No xml file")
     except Exception:
         logger.error("Error", exc_info=1)
-        raise HTTPException(
-            status_code=422, detail="An error has occurred. Check graylog for more info"
-        )
+        raise HTTPException(status_code=422, detail="An error has occurred. Check graylog for more info")
