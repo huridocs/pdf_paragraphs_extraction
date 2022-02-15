@@ -33,7 +33,7 @@ class QueueProcessor:
             self.logger.error(f"Not a valid message: {message}")
             return True
 
-        self.logger.error(f"Valid message: {message}")
+        self.logger.info(f"Valid message: {message}")
 
         try:
             extraction_data = extract_paragraphs(task)
