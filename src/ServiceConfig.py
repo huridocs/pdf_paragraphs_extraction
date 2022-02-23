@@ -73,6 +73,7 @@ class ServiceConfig:
                 localname=SERVICE_NAME,
             )
             logger.addHandler(graylog_handler)
+            return logger
 
         file_handler = logging.FileHandler(f"{self.docker_volume_path}/{logger_name}.log")
 
