@@ -2,8 +2,8 @@ from typing import List
 
 from bs4 import Tag
 
-from PdfFeatures.PdfFont import PdfFont
-from PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
+from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
 
 
 class PdfTag:

@@ -1,7 +1,4 @@
-import os
-import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+import math
 from typing import List
 from bs4 import Tag
 
@@ -17,10 +14,10 @@ class Rectangle:
 
     @staticmethod
     def from_tag(tag: Tag) -> "Rectangle":
-        x_min = int(float(tag["HPOS"]))
-        y_min = int(float(tag["VPOS"]))
-        x_max = int(float(tag["WIDTH"])) + x_min
-        y_max = int(float(tag["HEIGHT"])) + y_min
+        x_min = int(float(tag["HPOS"])) if not math.isnan(float(tag["HPOS"])) else 0
+        y_min = int(float(tag["VPOS"])) if not math.isnan(float(tag["VPOS"])) else 0
+        x_max = int(float(tag["WIDTH"])) + x_min if not math.isnan(float(tag["WIDTH"])) else x_min
+        y_max = int(float(tag["HEIGHT"])) + y_min if not math.isnan(float(tag["HEIGHT"])) else y_min
 
         return Rectangle(x_min, y_min, x_max, y_max)
 

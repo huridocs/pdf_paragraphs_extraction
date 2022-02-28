@@ -67,7 +67,7 @@ class QueueProcessor:
             self.results_queue.sendMessage(delay=3).message(extraction_message.dict()).execute()
             return True
         except Exception:
-            self.logger.error("error", exc_info=1)
+            self.logger.error("error extracting the paragraphs", exc_info=1)
             return True
 
     def subscribe_to_extractions_tasks_queue(self):
