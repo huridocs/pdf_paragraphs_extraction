@@ -43,10 +43,6 @@ function linter {
   command flake8
 }
 
-function _create_docker_volume {
-  command mkdir -p docker_volume
-}
-
 function remove_docker_containers {
   docker-compose ps -q | xargs docker rm
 }
@@ -56,12 +52,10 @@ function remove_docker_images {
 }
 
 function start {
-  _create_docker_volume
   docker-compose up --build "${@}"
 }
 
 function start:testing {
-  _create_docker_volume
   docker-compose --profile testing up --build "${@}"
 }
 

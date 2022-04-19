@@ -36,9 +36,15 @@ To stop the server:
 
 
 ## Dependencies
-* Docker [install] (https://runnable.com/docker/getting-started/)
-* Docker-compose [install] (https://docs.docker.com/compose/install/)
-    * Note: On mac Docker-compose is installed with Docker
+* Docker 20.10.14 [install link](https://runnable.com/docker/getting-started/)
+* Docker-compose 2.4.1 
+
+    Note: On mac Docker-compose is installed with Docker
+
+    [install link](https://docs.docker.com/compose/install/) 
+
+    [install on Ubuntu link](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
+
     
 
 ## Requirements
