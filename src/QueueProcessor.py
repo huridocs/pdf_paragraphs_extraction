@@ -30,10 +30,10 @@ class QueueProcessor:
         try:
             task = Task(**message)
         except ValidationError:
-            self.logger.error(f"Not a valid message: {message}")
+            self.logger.error(f"Not a valid Redis message: {message}")
             return True
 
-        self.logger.info(f"Valid message: {message}")
+        self.logger.info(f"Processing Redis message: {message}")
 
         try:
             extraction_data = extract_paragraphs(task)
@@ -63,7 +63,7 @@ class QueueProcessor:
             )
 
             self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
-            self.logger.info(extraction_message.json())
+            self.logger.info(f"Results Redis message: {extraction_message}")
             self.results_queue.sendMessage(delay=3).message(extraction_message.dict()).execute()
             return True
         except Exception:

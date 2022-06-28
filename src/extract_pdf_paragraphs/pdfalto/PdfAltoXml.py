@@ -53,3 +53,26 @@ def get_xml_tags_from_file_content(file_content):
     shutil.rmtree(file_xml_data_path)
 
     return xml_tags
+
+
+def get_xml_from_file_content(file_content):
+    file_id = str(uuid.uuid1())
+
+    file_path_pdf = pathlib.Path(get_file_path(file_id, "pdf"))
+    file_path_pdf.write_bytes(file_content)
+
+    file_path_xml = get_file_path(file_id, "xml")
+    file_xml_metadata_path = file_path_xml.replace(".xml", "_metadata.xml")
+    file_xml_data_path = file_path_xml.replace(".xml", ".xml_data")
+
+    create_xml_from_pdf(file_path_pdf, file_path_xml)
+
+    with open(file_path_xml) as stream_file:
+        stream = stream_file.read()
+
+    os.remove(file_path_pdf)
+    os.remove(file_path_xml)
+    os.remove(file_xml_metadata_path)
+    shutil.rmtree(file_xml_data_path)
+
+    return stream

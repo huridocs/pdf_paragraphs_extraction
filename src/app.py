@@ -9,7 +9,7 @@ import sys
 from ServiceConfig import ServiceConfig
 from data.SegmentBox import SegmentBox
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
-from extract_pdf_paragraphs.pdfalto.PdfAltoXml import get_xml_tags_from_file_content
+from extract_pdf_paragraphs.pdfalto.PdfAltoXml import get_xml_tags_from_file_content, get_xml_from_file_content
 from extract_pdf_paragraphs.segmentator.predict import predict
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
@@ -67,6 +67,15 @@ async def extract_paragraphs(file: UploadFile = File(...)):
     except Exception:
         logger.error(f"Error segmenting {filename}", exc_info=1)
         raise HTTPException(status_code=422, detail=f"Error segmenting {filename}")
+
+
+@app.get("/pdf_to_xml", response_class=PlainTextResponse)
+async def pdf_to_xml(file: UploadFile = File(...)):
+    try:
+        return get_xml_from_file_content(file.file.read())
+    except Exception:
+        logger.error(f"Error extracting xml", exc_info=1)
+        raise HTTPException(status_code=422, detail=f"Error extracting xml")
 
 
 @app.get("/get_paragraphs/{tenant}/{pdf_file_name}")
