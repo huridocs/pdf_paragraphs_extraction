@@ -4,7 +4,7 @@ import pymongo
 import redis
 from pydantic import ValidationError
 from rsmq.consumer import RedisSMQConsumer
-from rsmq import RedisSMQ
+from rsmq import RedisSMQ, cmd
 
 from ServiceConfig import ServiceConfig
 from data.ExtractionMessage import ExtractionMessage
@@ -24,6 +24,11 @@ class QueueProcessor:
             host=self.config.redis_host,
             port=self.config.redis_port,
             qname=self.config.results_queue_name,
+        )
+        self.extractions_tasks_queue = RedisSMQ(
+            host=self.config.redis_host,
+            port=self.config.redis_port,
+            qname=self.config.tasks_queue_name,
         )
 
     def process(self, id, message, rc, ts):
@@ -73,14 +78,8 @@ class QueueProcessor:
     def subscribe_to_extractions_tasks_queue(self):
         while True:
             try:
-                self.results_queue.createQueue().vt(120).exceptions(False).execute()
-                extractions_tasks_queue = RedisSMQ(
-                    host=self.config.redis_host,
-                    port=self.config.redis_port,
-                    qname=self.config.tasks_queue_name,
-                )
-
-                extractions_tasks_queue.createQueue().vt(120).exceptions(False).execute()
+                self.extractions_tasks_queue.getQueueAttributes().exec_command()
+                self.results_queue.getQueueAttributes().exec_command()
 
                 self.logger.info(f"Connecting to redis: {self.config.redis_host}:{self.config.redis_port}")
 
@@ -94,6 +93,11 @@ class QueueProcessor:
             except redis.exceptions.ConnectionError:
                 self.logger.error(f"Error connecting to redis: {self.config.redis_host}:{self.config.redis_port}")
                 sleep(20)
+            except cmd.exceptions.QueueDoesNotExist:
+                self.logger.info("Creating queues")
+                self.extractions_tasks_queue.createQueue().vt(120).exceptions(False).execute()
+                self.results_queue.createQueue().exceptions(False).execute()
+                self.logger.info("Queues have been created")
 
 
 if __name__ == "__main__":

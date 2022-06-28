@@ -40,7 +40,7 @@ function test {
 
 function linter {
   _source_venv
-  command flake8
+  command flake8 src
 }
 
 function remove_docker_containers {
@@ -61,6 +61,16 @@ function start:testing {
 
 function stop {
   docker-compose --profile testing stop
+}
+
+function delete_queues {
+  _source_venv
+  python3 scripts/delete_queues.py
+}
+
+function queues_messages {
+  _source_venv
+  python3 scripts/queue_messages.py
 }
 
 function help {

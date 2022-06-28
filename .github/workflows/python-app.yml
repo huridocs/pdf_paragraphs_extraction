@@ -24,7 +24,7 @@ jobs:
     - name: Install venv
       run: ./run install_venv
 
-    - name: Lint with flake8
+    - name: Lint with black
       run: ./run check_format
 
     - name: Test with unittest

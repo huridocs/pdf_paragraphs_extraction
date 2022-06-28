@@ -20,7 +20,7 @@ logger = SERVICE_CONFIG.get_logger("service")
 
 app = FastAPI()
 
-logger.info(f"Get PDF paragraphs service has started")
+logger.info("Get PDF paragraphs service has started")
 
 
 @app.get("/info")
@@ -74,8 +74,8 @@ async def pdf_to_xml(file: UploadFile = File(...)):
     try:
         return get_xml_from_file_content(file.file.read())
     except Exception:
-        logger.error(f"Error extracting xml", exc_info=1)
-        raise HTTPException(status_code=422, detail=f"Error extracting xml")
+        logger.error("Error extracting xml", exc_info=1)
+        raise HTTPException(status_code=422, detail="Error extracting xml")
 
 
 @app.get("/get_paragraphs/{tenant}/{pdf_file_name}")

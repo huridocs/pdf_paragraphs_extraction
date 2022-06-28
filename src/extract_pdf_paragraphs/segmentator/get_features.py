@@ -27,8 +27,8 @@ class PdfAltoXml:
 
         for page in self.pdf_features.pages:
             for tag in page.tags:
-                top, height = tag.bounding_box.top, tag.bounding_box.height
-                left, width = tag.bounding_box.left, tag.bounding_box.width
+                top, _ = tag.bounding_box.top, tag.bounding_box.height
+                left, _ = tag.bounding_box.left, tag.bounding_box.width
                 bottom, right = tag.bounding_box.bottom, tag.bounding_box.right
 
                 on_the_bottom = list(filter(lambda x: bottom < x.bounding_box.top, page.tags))

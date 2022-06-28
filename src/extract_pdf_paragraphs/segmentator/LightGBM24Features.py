@@ -99,7 +99,7 @@ class LightGBM24Features:
         for pdf_features in pdf_features_list:
             X_sub, y_sub = LightGBM24Features.__get_training_data(pdf_features)
             if X_sub is None:
-                print(f"File has no data")
+                print("File has no data")
                 continue
             if pdf_features.file_type == "one_column_train" or pdf_features.file_type == "multi_column_train":
                 X_train = X_sub if X_train is None else np.concatenate((X_train, X_sub), axis=0)
