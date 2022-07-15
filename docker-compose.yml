@@ -13,6 +13,9 @@ services:
       - ./docker_volume:/app/docker_volume
     depends_on:
       - mongo_paragraphs
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - SENTRY_DSN=${SENTRY_DSN:-}
   extract_pdf_paragraphs:
     init: true
     network_mode: host
@@ -26,6 +29,9 @@ services:
       - ./docker_volume:/app/docker_volume
     depends_on:
       - mongo_paragraphs
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - SENTRY_DSN=${SENTRY_DSN:-}
   mongo_paragraphs:
     network_mode: host
     restart: unless-stopped
