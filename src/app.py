@@ -6,6 +6,9 @@ from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.responses import PlainTextResponse
 import sys
 
+from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
+import sentry_sdk
+
 from ServiceConfig import ServiceConfig
 from data.SegmentBox import SegmentBox
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
@@ -21,6 +24,16 @@ logger = SERVICE_CONFIG.get_logger("service")
 app = FastAPI()
 
 logger.info("Get PDF paragraphs service has started")
+
+try:
+    sentry_sdk.init(
+        os.environ.get("SENTRY_DSN"),
+        traces_sample_rate=0.1,
+        environment=os.environ.get("ENVIRONMENT", "development"),
+    )
+    app.add_middleware(SentryAsgiMiddleware)
+except Exception:
+    pass
 
 
 @app.get("/info")

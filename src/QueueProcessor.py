@@ -1,3 +1,4 @@
+import os
 from time import sleep
 
 import pymongo
@@ -5,6 +6,8 @@ import redis
 from pydantic import ValidationError
 from rsmq.consumer import RedisSMQConsumer
 from rsmq import RedisSMQ, cmd
+from sentry_sdk.integrations.redis import RedisIntegration
+import sentry_sdk
 
 from ServiceConfig import ServiceConfig
 from data.ExtractionMessage import ExtractionMessage
@@ -101,5 +104,15 @@ class QueueProcessor:
 
 
 if __name__ == "__main__":
+    try:
+        sentry_sdk.init(
+            os.environ.get("SENTRY_DSN"),
+            traces_sample_rate=0.1,
+            environment=os.environ.get("ENVIRONMENT", "development"),
+            integrations=[RedisIntegration()],
+        )
+    except Exception:
+        pass
+
     redis_tasks_processor = QueueProcessor()
     redis_tasks_processor.subscribe_to_extractions_tasks_queue()
