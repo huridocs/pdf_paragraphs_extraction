@@ -41,8 +41,9 @@ class PdfAltoXml:
                 if len(on_the_bottom) > 0:
                     line_spaces.append(min(map(lambda x: int(x.bounding_box.top - bottom), on_the_bottom)))
 
-                same_line_tags = filter(lambda x: (top <= x.bounding_box.top < bottom) or
-                                                  (top < x.bounding_box.bottom <= bottom), page.tags)
+                same_line_tags = filter(
+                    lambda x: (top <= x.bounding_box.top < bottom) or (top < x.bounding_box.bottom <= bottom), page.tags
+                )
                 on_the_right = filter(lambda x: right < x.bounding_box.left, same_line_tags)
                 on_the_left = filter(lambda x: x.bounding_box.left < left, same_line_tags)
 
@@ -104,13 +105,13 @@ class PdfAltoXml:
 
         start_lines_differences = absolute_left_1 - absolute_left_2
 
-        tags_in_the_middle = list(
-            filter(lambda x: tag_1.bounding_box.bottom <= x.bounding_box.top < top_2, tags_for_page))
-        tags_in_the_middle_top = max(map(lambda x: x.bounding_box.top, tags_in_the_middle)) if len(
-            tags_in_the_middle) > 0 else 0
-        tags_in_the_middle_bottom = min(
-            map(lambda x: x.bounding_box.bottom, tags_in_the_middle)) if len(
-            tags_in_the_middle) > 0 else 0
+        tags_in_the_middle = list(filter(lambda x: tag_1.bounding_box.bottom <= x.bounding_box.top < top_2, tags_for_page))
+        tags_in_the_middle_top = (
+            max(map(lambda x: x.bounding_box.top, tags_in_the_middle)) if len(tags_in_the_middle) > 0 else 0
+        )
+        tags_in_the_middle_bottom = (
+            min(map(lambda x: x.bounding_box.bottom, tags_in_the_middle)) if len(tags_in_the_middle) > 0 else 0
+        )
 
         top_distance = top_2 - top_1 - height_1
 
@@ -153,39 +154,40 @@ class PdfAltoXml:
             if tag_2.content[-1] in self.letter_corpus.keys():
                 tag_2_last_letter[self.letter_corpus[tag_2.content[-1]]] = 1
 
-        features = [self.font_size_mode / 100,
-                              same_font,
-                              absolute_right_1,
-                              top_1,
-                              right_1,
-                              width_1,
-                              height_1,
-                              top_2,
-                              right_2,
-                              width_2,
-                              height_2,
-                              top_distance,
-                              top_distance - self.lines_space_mode,
-                              top_distance_gaps,
-                              self.lines_space_mode - top_distance_gaps,
-                              self.right_space_mode - absolute_right_1,
-                              top_distance - height_1,
-                              start_lines_differences,
-                              right_distance,
-                              left_distance,
-                              right_gap_1,
-                              left_gap_2,
-                              height_difference,
-                              end_lines_difference,
-                              len(tag_1.content),
-                              len(tag_2.content),
-                              tag_1.content.count(' '),
-                              tag_2.content.count(' '),
-                              sum(character in string.punctuation for character in tag_1.content),
-                              sum(character in string.punctuation for character in tag_2.content),
-                              # sum(character in tag_1.content for character in string.punctuation),
-                              # sum(character in tag_2.content for character in string.punctuation),
-                              ]
+        features = [
+            self.font_size_mode / 100,
+            same_font,
+            absolute_right_1,
+            top_1,
+            right_1,
+            width_1,
+            height_1,
+            top_2,
+            right_2,
+            width_2,
+            height_2,
+            top_distance,
+            top_distance - self.lines_space_mode,
+            top_distance_gaps,
+            self.lines_space_mode - top_distance_gaps,
+            self.right_space_mode - absolute_right_1,
+            top_distance - height_1,
+            start_lines_differences,
+            right_distance,
+            left_distance,
+            right_gap_1,
+            left_gap_2,
+            height_difference,
+            end_lines_difference,
+            len(tag_1.content),
+            len(tag_2.content),
+            tag_1.content.count(" "),
+            tag_2.content.count(" "),
+            sum(character in string.punctuation for character in tag_1.content),
+            sum(character in string.punctuation for character in tag_2.content),
+            # sum(character in tag_1.content for character in string.punctuation),
+            # sum(character in tag_2.content for character in string.punctuation),
+        ]
 
         features.extend(tag_1_first_letter)
         features.extend(tag_1_last_letter)
@@ -200,14 +202,16 @@ class PdfAltoXml:
         height = tag.bounding_box.height
         left = tag.bounding_box.left
 
-        on_the_right = list(filter(
-            lambda x: (top <= x.bounding_box.top < (top + height)) or (top < (
-                    x.bounding_box.bottom) <= (top + height)), tags))
+        on_the_right = list(
+            filter(
+                lambda x: (top <= x.bounding_box.top < (top + height)) or (top < (x.bounding_box.bottom) <= (top + height)),
+                tags,
+            )
+        )
 
         on_the_right = list(filter(lambda x: left < x.bounding_box.left, on_the_right))
         on_the_right_left = 0 if len(on_the_right) == 0 else min(map(lambda x: x.bounding_box.left, on_the_right))
-        on_the_right_right = 0 if len(on_the_right) == 0 else max(
-            map(lambda x: x.bounding_box.right, on_the_right))
+        on_the_right_right = 0 if len(on_the_right) == 0 else max(map(lambda x: x.bounding_box.right, on_the_right))
 
         return on_the_right_left, on_the_right_right
 
@@ -217,13 +221,15 @@ class PdfAltoXml:
         height = tag.bounding_box.height
         right = tag.bounding_box.right
 
-        on_the_left = list(filter(
-            lambda x: (top <= x.bounding_box.top < (top + height)) or (top < (
-                    x.bounding_box.bottom) <= (top + height)), tags))
+        on_the_left = list(
+            filter(
+                lambda x: (top <= x.bounding_box.top < (top + height)) or (top < (x.bounding_box.bottom) <= (top + height)),
+                tags,
+            )
+        )
 
         on_the_left = list(filter(lambda x: x.bounding_box.right < right, on_the_left))
         on_the_left_left = 0 if len(on_the_left) == 0 else min(map(lambda x: x.bounding_box.left, on_the_left))
-        on_the_left_right = 0 if len(on_the_left) == 0 else max(
-            map(lambda x: x.bounding_box.right, on_the_left))
+        on_the_left_right = 0 if len(on_the_left) == 0 else max(map(lambda x: x.bounding_box.right, on_the_left))
 
         return on_the_left_left, on_the_left_right

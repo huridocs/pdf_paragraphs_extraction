@@ -17,7 +17,6 @@ from extract_pdf_paragraphs.segmentator.get_features import PdfAltoXml
 
 
 class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
-
     def __init__(self, X_train, y_train, model_configs: Dict, model=None):
         self.X_train = X_train
         self.y_train = y_train
@@ -29,7 +28,7 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
 
         X = None
         y = np.array([])
-        context_size: int = model_configs['context_size']
+        context_size: int = model_configs["context_size"]
         pdfalto_xml = PdfAltoXml(pdf_features)
 
         for _page in pdf_features.pages:
@@ -37,26 +36,50 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
             page = deepcopy(_page)
 
             for i in range(context_size):
-                page.tags.insert(0, PdfTag(page.page_number, "pad_tag", "",
-                                           PdfFont("pad_font_id", False, False, 0.0), -i-1, -i-1, Rectangle(0, 0, 0, 0), "pad_type"))
+                page.tags.insert(
+                    0,
+                    PdfTag(
+                        page.page_number,
+                        "pad_tag",
+                        "",
+                        PdfFont("pad_font_id", False, False, 0.0),
+                        -i - 1,
+                        -i - 1,
+                        Rectangle(0, 0, 0, 0),
+                        "pad_type",
+                    ),
+                )
 
             for i in range(context_size):
-                page.tags.append(PdfTag(page.page_number, "pad_tag", "",
-                                           PdfFont("pad_font_id", False, False, 0.0), -i-1000, -i-1000, Rectangle(0, 0, 0, 0), "pad_type"))
+                page.tags.append(
+                    PdfTag(
+                        page.page_number,
+                        "pad_tag",
+                        "",
+                        PdfFont("pad_font_id", False, False, 0.0),
+                        -i - 1000,
+                        -i - 1000,
+                        Rectangle(0, 0, 0, 0),
+                        "pad_type",
+                    )
+                )
 
             for tag_index, tag in enumerate(page.tags):
-                if tag_index + (2*context_size+2) > len(page.tags):
+                if tag_index + (2 * context_size + 2) > len(page.tags):
                     continue
 
                 new_data_row = []
 
-                for i in range(2*context_size+1):
-                    new_data_row.extend(pdfalto_xml.get_features_for_given_tags(page.tags[tag_index+i],
-                                                                                page.tags[tag_index+i+1], page.tags))
+                for i in range(2 * context_size + 1):
+                    new_data_row.extend(
+                        pdfalto_xml.get_features_for_given_tags(
+                            page.tags[tag_index + i], page.tags[tag_index + i + 1], page.tags
+                        )
+                    )
 
                 X = np.array([new_data_row]) if X is None else np.concatenate((X, np.array([new_data_row])), axis=0)
 
-                if page.tags[tag_index+context_size].segment_no == page.tags[tag_index+context_size+1].segment_no:
+                if page.tags[tag_index + context_size].segment_no == page.tags[tag_index + context_size + 1].segment_no:
                     y = np.append(y, 1)
                 else:
                     y = np.append(y, 0)
@@ -69,9 +92,11 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
         y_train = np.array([])
 
         for pdf_features in pdf_features_list:
-            X_sub, y_sub = LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features.__get_training_data(pdf_features, model_configs)
+            X_sub, y_sub = LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features.__get_training_data(
+                pdf_features, model_configs
+            )
             if X_sub is None:
-                print(f'File has no data')
+                print(f"File has no data")
                 continue
             X_train = X_sub if X_train is None else np.concatenate((X_train, X_sub), axis=0)
             y_train = np.append(y_train, y_sub)
@@ -84,22 +109,46 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
         context_size: int = self.model_configs["context_size"]
 
         for i in range(context_size):
-            page_tags.insert(0, PdfTag(page_tags[0].page_number, "pad_tag", "",
-                                       PdfFont("pad_font_id", False, False, 0.0), -i - 1, -i - 1, Rectangle(0, 0, 0, 0), "pad_type"))
+            page_tags.insert(
+                0,
+                PdfTag(
+                    page_tags[0].page_number,
+                    "pad_tag",
+                    "",
+                    PdfFont("pad_font_id", False, False, 0.0),
+                    -i - 1,
+                    -i - 1,
+                    Rectangle(0, 0, 0, 0),
+                    "pad_type",
+                ),
+            )
 
         for i in range(context_size):
-            page_tags.append(PdfTag(page_tags[0].page_number, "pad_tag", "",
-                                    PdfFont("pad_font_id", False, False, 0.0), -i - 1000, -i - 1000, Rectangle(0, 0, 0, 0), "pad_type"))
+            page_tags.append(
+                PdfTag(
+                    page_tags[0].page_number,
+                    "pad_tag",
+                    "",
+                    PdfFont("pad_font_id", False, False, 0.0),
+                    -i - 1000,
+                    -i - 1000,
+                    Rectangle(0, 0, 0, 0),
+                    "pad_type",
+                )
+            )
 
         for tag_index, tag in enumerate(page_tags):
-            if tag_index + (2*context_size+2) > len(page_tags):
+            if tag_index + (2 * context_size + 2) > len(page_tags):
                 continue
 
             new_data_row = []
 
             for i in range(2 * context_size + 1):
-                new_data_row.extend(pdfalto_xml.get_features_for_given_tags(page_tags[tag_index + i],
-                                                                            page_tags[tag_index + i + 1], page_tags))
+                new_data_row.extend(
+                    pdfalto_xml.get_features_for_given_tags(
+                        page_tags[tag_index + i], page_tags[tag_index + i + 1], page_tags
+                    )
+                )
 
             if len(new_data_row) == 0:
                 print(pdfalto_xml.pdf_features.file_name, " - ", str(page_tags[0].page_number))
