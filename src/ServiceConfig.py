@@ -1,5 +1,6 @@
 import logging
 import os
+from os.path import join
 from typing import Dict
 from pathlib import Path
 
@@ -17,14 +18,15 @@ OPTIONS = [
 ]
 SERVICE_NAME = "segmentation"
 
-APP_PATH = Path(__file__).parent.absolute()
+APP_PATH = Path(__file__).parent.parent.absolute()
 
 
 class ServiceConfig:
     def __init__(self):
         self.config_from_yml: Dict[str, any] = dict()
 
-        self.docker_volume_path = f"{APP_PATH}/../docker_volume"
+        self.docker_volume_path = join(APP_PATH, "docker_volume")
+        self.huggingface_path = join(self.docker_volume_path, 'huggingface')
         self.create_docker_volume()
 
         self.tasks_queue_name = SERVICE_NAME + "_tasks"
