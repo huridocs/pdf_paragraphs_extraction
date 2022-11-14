@@ -57,7 +57,14 @@ class PdfAltoXml:
             self.tag_types: Dict[str, str] = tag_types
         self.letter_corpus: Dict[str, int] = dict()
 
-        with open(f"extract_pdf_paragraphs/tag_type_finder/letter_corpus.txt", "r") as corpus_file:
+        letter_corpus_path = hf_hub_download(
+            repo_id="HURIDOCS/pdf_segmetation",
+            filename="letter_corpus.txt",
+            revision="da00a69c8d6a84493712e819580c0148757f466c",
+            cache_dir=self.service_config.huggingface_path,
+        )
+
+        with open(letter_corpus_path, "r") as corpus_file:
             corpus_contents = corpus_file.read()
             self.letter_corpus = ast.literal_eval(corpus_contents)
 

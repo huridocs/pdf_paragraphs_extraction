@@ -1,10 +1,12 @@
 from collections import Counter
 from typing import List, Tuple, Dict
 
+from huggingface_hub import hf_hub_download
 from numpy import unique
 import string
 import ast
 
+from ServiceConfig import ServiceConfig
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
 
@@ -19,7 +21,15 @@ class PdfAltoXml:
         self.font_size_mode: float = 0
 
         self.letter_corpus: Dict[str, int] = dict()
-        with open(f"extract_pdf_paragraphs/tag_type_finder/letter_corpus.txt", "r") as corpus_file:
+        service_config = ServiceConfig()
+        letter_corpus_path = hf_hub_download(
+            repo_id="HURIDOCS/pdf_segmetation",
+            filename="letter_corpus.txt",
+            revision="da00a69c8d6a84493712e819580c0148757f466c",
+            cache_dir=service_config.huggingface_path,
+        )
+
+        with open(letter_corpus_path, "r") as corpus_file:
             corpus_contents = corpus_file.read()
             self.letter_corpus = ast.literal_eval(corpus_contents)
         self.len_letter_corpus = len(unique(list(self.letter_corpus.values())))

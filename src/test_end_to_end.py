@@ -40,6 +40,7 @@ class TestEndToEnd(TestCase):
         task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
         queue.sendMessage().message(str(task.json())).execute()
 
+        self.wait_for_downloading_models()
         extraction_message = self.get_redis_message()
 
         response = requests.get(extraction_message.data_url)
@@ -87,6 +88,10 @@ class TestEndToEnd(TestCase):
         )
 
         shutil.rmtree(f"{docker_volume_path}/failed_pdf/{tenant}", ignore_errors=True)
+
+    @staticmethod
+    def wait_for_downloading_models():
+        time.sleep(30)
 
     @staticmethod
     def get_redis_message() -> ExtractionMessage:
