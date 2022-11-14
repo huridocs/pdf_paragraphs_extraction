@@ -4,7 +4,7 @@ beautifulsoup4==4.11.1
 graypy~=2.1.0
 sklearn
 python-multipart
-lxml==4.9.0
+lxml==4.9.1
 pydantic==1.9.1
 uvicorn==0.18.2
 gunicorn
