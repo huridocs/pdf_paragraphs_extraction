@@ -23,7 +23,7 @@ class PdfAltoXml:
         self.letter_corpus: Dict[str, int] = dict()
         service_config = ServiceConfig()
         letter_corpus_path = hf_hub_download(
-            repo_id="HURIDOCS/pdf_segmetation",
+            repo_id="HURIDOCS/pdf-segmetation",
             filename="letter_corpus.txt",
             revision="da00a69c8d6a84493712e819580c0148757f466c",
             cache_dir=service_config.huggingface_path,
