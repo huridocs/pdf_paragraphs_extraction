@@ -1,4 +1,4 @@
-FROM python:3.9.10-bullseye AS base
+FROM python:3.10-bullseye AS base
 
 ENV VIRTUAL_ENV=/opt/venv
 RUN python -m venv $VIRTUAL_ENV

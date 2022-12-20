@@ -61,7 +61,7 @@ async def async_extraction(tenant, file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f"Error adding task {filename}")
 
 
-@app.get("/")
+@app.post("/")
 async def extract_paragraphs(file: UploadFile = File(...)):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
@@ -82,7 +82,7 @@ async def extract_paragraphs(file: UploadFile = File(...)):
         raise HTTPException(status_code=422, detail=f"Error segmenting {filename}")
 
 
-@app.get("/pdf_to_xml", response_class=PlainTextResponse)
+@app.post("/pdf_to_xml", response_class=PlainTextResponse)
 async def pdf_to_xml(file: UploadFile = File(...)):
     try:
         return get_xml_from_file_content(file.file.read())

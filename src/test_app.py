@@ -39,7 +39,7 @@ class TestApp(TestCase):
     def test_extract_paragraphs(self):
         with open("./test_files/test.pdf", "rb") as stream:
             files = {"file": stream}
-            response = client.get("/", files=files)
+            response = client.post("/", files=files)
 
         segments_boxes = json.loads(response.json())
         pages = [segment_box["page_number"] for segment_box in segments_boxes["paragraphs"]]
