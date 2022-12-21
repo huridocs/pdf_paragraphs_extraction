@@ -75,7 +75,7 @@ class QueueProcessor:
 
             self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
             self.logger.info(f"Results Redis message: {extraction_message}")
-            self.results_queue.sendMessage(delay=3).message(extraction_message.dict()).execute()
+            self.results_queue.sendMessage(delay=5).message(extraction_message.dict()).execute()
             return True
         except Exception:
             self.logger.error("error extracting the paragraphs", exc_info=1)
