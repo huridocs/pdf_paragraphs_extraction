@@ -15,24 +15,24 @@ from data.Task import Task
 class TestEndToEnd(TestCase):
     service_url = "http://localhost:5051"
 
-    # def test_error_file(self):
-    #     tenant = "end_to_end_test_error"
-    #     pdf_file_name = "error_pdf.pdf"
-    #     queue = RedisSMQ(host="127.0.0.1", port="6379", qname="segmentation_tasks")
-    #
-    #     with open(f"{config.APP_PATH}/test_files/error_pdf.pdf", "rb") as stream:
-    #         files = {"file": stream}
-    #         requests.post(f"{self.service_url}/async_extraction/{tenant}", files=files)
-    #
-    #     task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
-    #
-    #     queue.sendMessage().message(task.json()).execute()
-    #
-    #     extraction_message = self.get_redis_message()
-    #
-    #     self.assertEqual(tenant, extraction_message.tenant)
-    #     self.assertEqual("error_pdf.pdf", extraction_message.params.filename)
-    #     self.assertEqual(False, extraction_message.success)
+    def test_error_file(self):
+        tenant = "end_to_end_test_error"
+        pdf_file_name = "error_pdf.pdf"
+        queue = RedisSMQ(host="127.0.0.1", port="6379", qname="segmentation_tasks")
+
+        with open(f"{config.APP_PATH}/test_files/error_pdf.pdf", "rb") as stream:
+            files = {"file": stream}
+            requests.post(f"{self.service_url}/async_extraction/{tenant}", files=files)
+
+        task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
+
+        queue.sendMessage().message(task.json()).execute()
+
+        extraction_message = self.get_redis_message()
+
+        self.assertEqual(tenant, extraction_message.tenant)
+        self.assertEqual("error_pdf.pdf", extraction_message.params.filename)
+        self.assertEqual(False, extraction_message.success)
 
     def test_async_extraction(self):
         tenant = "end_to_end_test"

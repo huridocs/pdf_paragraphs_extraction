@@ -3,7 +3,6 @@ services:
   api:
     init: true
     restart: unless-stopped
-    user: "${USER_ID}:${GROUP_ID}"
     build:
       context: .
       dockerfile: Dockerfile
@@ -24,7 +23,6 @@ services:
   extract_pdf_paragraphs:
     init: true
     restart: unless-stopped
-    user: "${USER_ID}:${GROUP_ID}"
     build:
       context: .
       dockerfile: Dockerfile
