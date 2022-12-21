@@ -1,6 +1,4 @@
 import json
-import os
-import shutil
 import time
 from unittest import TestCase
 
@@ -15,7 +13,6 @@ from data.Task import Task
 
 
 class TestEndToEnd(TestCase):
-    docker_volume_path = f"{config.ROOT_PATH}/docker_volume"
     service_url = "http://localhost:5051"
 
     def test_error_file(self):
@@ -36,12 +33,6 @@ class TestEndToEnd(TestCase):
         self.assertEqual(tenant, extraction_message.tenant)
         self.assertEqual("error_pdf.pdf", extraction_message.params.filename)
         self.assertEqual(False, extraction_message.success)
-        error_file_path = (
-            f"{self.docker_volume_path}/failed_pdf/{extraction_message.tenant}/{extraction_message.params.filename}"
-        )
-        self.assertTrue(os.path.exists(error_file_path))
-
-        shutil.rmtree(f"{self.docker_volume_path}/failed_pdf/{tenant}", ignore_errors=True)
 
     def test_async_extraction(self):
         tenant = "end_to_end_test"
@@ -58,7 +49,6 @@ class TestEndToEnd(TestCase):
         task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
         queue.sendMessage().message(str(task.json())).execute()
 
-        self.wait_for_downloading_models()
         extraction_message = self.get_redis_message()
 
         response = requests.get(extraction_message.data_url)
@@ -79,13 +69,6 @@ class TestEndToEnd(TestCase):
         response = requests.get(extraction_message.file_url)
         self.assertEqual(200, response.status_code)
         self.assertTrue('<?xml version="1.0" encoding="UTF-8"?>' in str(response.content))
-        self.assertFalse(os.path.exists(f"{self.docker_volume_path}/xml/{tenant}/{pdf_file_name}"))
-
-        shutil.rmtree(f"{self.docker_volume_path}/xml/{tenant}", ignore_errors=True)
-
-    @staticmethod
-    def wait_for_downloading_models():
-        time.sleep(30)
 
     @staticmethod
     def get_redis_message() -> ExtractionMessage:

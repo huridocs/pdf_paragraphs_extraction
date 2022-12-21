@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
       target: api
     volumes:
-      - ./docker_volume:/app/docker_volume
+      - data:/app/docker_volume
     depends_on:
       - mongo_paragraphs
       - redis_paragraphs
@@ -30,7 +30,7 @@ services:
       dockerfile: Dockerfile
       target: extract_pdf_paragraphs
     volumes:
-      - ./docker_volume:/app/docker_volume
+      - data:/app/docker_volume
     depends_on:
       - mongo_paragraphs
       - redis_paragraphs
@@ -58,3 +58,6 @@ services:
       - "6379:6379"
 networks:
   pdf_paragraphs_extraction_network:
+
+volumes:
+  data:

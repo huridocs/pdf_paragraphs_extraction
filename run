@@ -67,4 +67,4 @@ function help {
   compgen -A function | grep -v "^_" | cat -n
 }
 
-USER_ID=$(id -u) GROUP_ID=$(id -g) "${@:-help}"
+"${@:-help}"

@@ -12,8 +12,8 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-RUN mkdir /app
-RUN mkdir /app/src
+RUN mkdir -p /app/src
+RUN mkdir -p /app/docker_valume
 WORKDIR /app
 COPY ./src ./src
 
