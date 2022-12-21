@@ -55,10 +55,6 @@ function start {
   docker-compose up --build "${@}"
 }
 
-function start:testing {
-  docker-compose --profile testing up --build "${@}"
-}
-
 function stop {
   docker-compose --profile testing stop
 }
@@ -66,11 +62,6 @@ function stop {
 function delete_queues {
   _source_venv
   python3 scripts/delete_queues.py
-}
-
-function queues_messages {
-  _source_venv
-  python3 scripts/queue_messages.py
 }
 
 function help {

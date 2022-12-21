@@ -16,7 +16,7 @@ from extract_pdf_paragraphs.pdfalto.PdfAltoXml import get_xml_tags_from_file_con
 from extract_pdf_paragraphs.segmentator.predict import predict
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
-from rsmq import RedisSMQ
+import config
 
 SERVICE_CONFIG = ServiceConfig()
 logger = SERVICE_CONFIG.get_logger("service")
@@ -94,7 +94,7 @@ async def pdf_to_xml(file: UploadFile = File(...)):
 @app.get("/get_paragraphs/{tenant}/{pdf_file_name}")
 async def get_paragraphs(tenant: str, pdf_file_name: str):
     try:
-        client = pymongo.MongoClient(f"mongodb://{SERVICE_CONFIG.mongo_host}:{SERVICE_CONFIG.mongo_port}")
+        client = pymongo.MongoClient(f"mongodb://{config.MONGO_HOST}:{config.MONGO_PORT}")
 
         suggestions_filter = {"tenant": tenant, "file_name": pdf_file_name}
 
@@ -125,24 +125,6 @@ async def get_xml(tenant: str, pdf_file_name: str):
             return content
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="No xml file")
-    except Exception:
-        logger.error("Error", exc_info=1)
-        raise HTTPException(status_code=422, detail="An error has occurred. Check graylog for more info")
-
-
-@app.get("/delete_queues")
-async def delete_queues():
-    try:
-        results_queue = RedisSMQ(
-            host=SERVICE_CONFIG.redis_host,
-            port=SERVICE_CONFIG.redis_port,
-            qname=SERVICE_CONFIG.results_queue_name,
-        )
-
-        results_queue.deleteQueue().execute()
-        results_queue.createQueue().execute()
-
-        return "deleted"
     except Exception:
         logger.error("Error", exc_info=1)
         raise HTTPException(status_code=422, detail="An error has occurred. Check graylog for more info")

@@ -1,6 +1,7 @@
+import logging
 import os
 from time import sleep
-
+import config
 import pymongo
 import redis
 from pydantic import ValidationError
@@ -18,19 +19,19 @@ from extract_pdf_paragraphs.extract_paragraphs import extract_paragraphs
 class QueueProcessor:
     def __init__(self):
         self.config = ServiceConfig()
-        self.logger = self.config.get_logger("redis_tasks")
+        self.logger = logging.getLogger(__name__)
 
-        client = pymongo.MongoClient(f"mongodb://{self.config.mongo_host}:{self.config.mongo_port}")
+        client = pymongo.MongoClient(f"mongodb://{config.MONGO_HOST}:{config.MONGO_PORT}")
         self.pdf_paragraph_db = client["pdf_paragraph"]
 
         self.results_queue = RedisSMQ(
-            host=self.config.redis_host,
-            port=self.config.redis_port,
+            host=config.REDIS_HOST,
+            port=config.REDIS_PORT,
             qname=self.config.results_queue_name,
         )
         self.extractions_tasks_queue = RedisSMQ(
-            host=self.config.redis_host,
-            port=self.config.redis_port,
+            host=config.REDIS_HOST,
+            port=config.REDIS_PORT,
             qname=self.config.tasks_queue_name,
         )
 
@@ -84,17 +85,17 @@ class QueueProcessor:
                 self.extractions_tasks_queue.getQueueAttributes().exec_command()
                 self.results_queue.getQueueAttributes().exec_command()
 
-                self.logger.info(f"Connecting to redis: {self.config.redis_host}:{self.config.redis_port}")
+                self.logger.info(f"Connecting to redis: {config.REDIS_HOST}:{config.REDIS_PORT}")
 
                 redis_smq_consumer = RedisSMQConsumer(
                     qname=self.config.tasks_queue_name,
                     processor=self.process,
-                    host=self.config.redis_host,
-                    port=self.config.redis_port,
+                    host=config.REDIS_HOST,
+                    port=config.REDIS_PORT,
                 )
                 redis_smq_consumer.run()
             except redis.exceptions.ConnectionError:
-                self.logger.error(f"Error connecting to redis: {self.config.redis_host}:{self.config.redis_port}")
+                self.logger.error(f"Error connecting to redis: {config.REDIS_HOST}:{config.REDIS_PORT}")
                 sleep(20)
             except cmd.exceptions.QueueDoesNotExist:
                 self.logger.info("Creating queues")
@@ -106,9 +107,9 @@ class QueueProcessor:
 if __name__ == "__main__":
     try:
         sentry_sdk.init(
-            os.environ.get("SENTRY_DSN"),
+            config.SENTRY_DSN,
             traces_sample_rate=0.1,
-            environment=os.environ.get("ENVIRONMENT", "development"),
+            environment=config.ENVIRONMENT,
             integrations=[RedisIntegration()],
         )
     except Exception:

@@ -1,4 +1,8 @@
-FROM python:3.10-bullseye AS base
+FROM python:3.10-slim-bullseye AS base
+
+RUN apt-get update && \
+	apt-get -y -q --no-install-recommends install libgomp1
+
 
 ENV VIRTUAL_ENV=/opt/venv
 RUN python -m venv $VIRTUAL_ENV

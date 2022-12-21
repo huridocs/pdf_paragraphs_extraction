@@ -8,8 +8,6 @@ import graypy
 import yaml
 
 OPTIONS = [
-    "redis_host",
-    "redis_port",
     "service_host",
     "service_port",
     "mongo_host",
@@ -34,9 +32,6 @@ class ServiceConfig:
 
         self.config_path = "src/config.yml"
         self.read_configuration_from_yml()
-
-        self.redis_host = self.get_parameter_from_yml("redis_host", "127.0.0.1")
-        self.redis_port = self.get_parameter_from_yml("redis_port", 6379)
 
         self.service_host = self.get_parameter_from_yml("service_host", "localhost")
         self.service_port = self.get_parameter_from_yml("service_port", 5051)
@@ -106,8 +101,6 @@ class ServiceConfig:
     def create_configuration(self):
         config_dict = dict()
 
-        config_dict["redis_host"] = self.redis_host
-        config_dict["redis_port"] = self.redis_port
         config_dict["service_host"] = self.service_host
         config_dict["service_port"] = self.service_port
         config_dict["mongo_host"] = self.mongo_host

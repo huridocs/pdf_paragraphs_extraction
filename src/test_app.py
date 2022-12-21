@@ -36,9 +36,9 @@ class TestApp(TestCase):
 
         shutil.rmtree(f"../docker_volume/to_extract/{tenant}", ignore_errors=True)
 
-    @mongomock.patch(servers=["mongodb://127.0.0.1:28017"])
+    @mongomock.patch(servers=["mongodb://localhost:27017"])
     def test_get_paragraphs_from_db(self):
-        mongo_client = pymongo.MongoClient("mongodb://127.0.0.1:28017")
+        mongo_client = pymongo.MongoClient("mongodb://localhost:27017")
         tenant = "tenant_to_get_paragraphs"
         pdf_file_name = "pdf_file_name.pdf"
         json_data = [
@@ -94,7 +94,7 @@ class TestApp(TestCase):
         self.assertEqual([6, 7, 8, 9, 10, "2"], list(extraction_data.paragraphs[1].dict().values()))
         self.assertIsNone(mongo_client.pdf_paragraph.paragraphs.find_one({"tenant": tenant, "pdf_file_name": pdf_file_name}))
 
-    @mongomock.patch(servers=["mongodb://127.0.0.1:28017"])
+    @mongomock.patch(servers=["mongodb://localhost:27017"])
     def test_get_paragraphs_when_no_data(self):
         tenant = "tenant_to_get_paragraphs"
         pdf_file_name = "pdf_file_name"
