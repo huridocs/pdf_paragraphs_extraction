@@ -5,10 +5,8 @@
 .vscode
 *.log
 nohup.out
-config.py
 /venv/
 *.cache
-.env
 *_config.py
 config.yml
 docker_volume

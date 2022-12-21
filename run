@@ -21,13 +21,11 @@ function install_venv {
 
 function formatter {
   _source_venv
-  # Format Python code with black
   command black --line-length 125 .
 }
 
 function check_format {
   _source_venv
-  # Format Python code with black
   command black --line-length 125 . --check
 }
 
@@ -55,10 +53,6 @@ function start {
   docker-compose up --build "${@}"
 }
 
-function start:testing {
-  docker-compose --profile testing up --build "${@}"
-}
-
 function stop {
   docker-compose --profile testing stop
 }
@@ -68,14 +62,9 @@ function delete_queues {
   python3 scripts/delete_queues.py
 }
 
-function queues_messages {
-  _source_venv
-  python3 scripts/queue_messages.py
-}
-
 function help {
   printf "%s <task> \n\nTasks:\n" "${0}"
   compgen -A function | grep -v "^_" | cat -n
 }
 
-USER_ID=$(id -u) GROUP_ID=$(id -g) "${@:-help}"
+"${@:-help}"

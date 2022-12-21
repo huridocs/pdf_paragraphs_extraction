@@ -4,22 +4,21 @@ import platform
 import shutil
 import subprocess
 
-from ServiceConfig import ServiceConfig
+import config
 from data.ExtractionData import ExtractionData
 from data.SegmentBox import SegmentBox
 from data.Task import Task
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.segmentator.predict import predict
 
-SERVICE_CONFIG = ServiceConfig()
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
 
 
 def get_paths(tenant: str, pdf_file_name: str):
     file_name = "".join(pdf_file_name.split(".")[:-1])
-    pdf_file_path = f"{SERVICE_CONFIG.docker_volume_path}/to_extract/{tenant}/{pdf_file_name}"
-    xml_file_path = f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{file_name}.xml"
-    failed_pdf_path = f"{SERVICE_CONFIG.docker_volume_path}/failed_pdf/{tenant}/{pdf_file_name}"
+    pdf_file_path = f"{config.DATA_PATH}/to_extract/{tenant}/{pdf_file_name}"
+    xml_file_path = f"{config.DATA_PATH}/xml/{tenant}/{file_name}.xml"
+    failed_pdf_path = f"{config.DATA_PATH}/failed_pdf/{tenant}/{pdf_file_name}"
     return pdf_file_path, xml_file_path, failed_pdf_path
 
 
