@@ -16,19 +16,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
+    - name: Set up Python 3.10
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: '3.10'
 
     - name: Install venv
-      run: ./run install_venv
+      run: make install_venv
 
     - name: Lint with black
-      run: ./run check_format
+      run: make check_format
 
     - name: Start service
-      run: ./run start -d
+      run: make start_detached
 
     - name: Test with unittest
-      run: ./run test
+      run: make test
