@@ -36,12 +36,10 @@ class TestEndToEnd(TestCase):
         self.assertEqual(tenant, extraction_message.tenant)
         self.assertEqual("error_pdf.pdf", extraction_message.params.filename)
         self.assertEqual(False, extraction_message.success)
-        error_file_path = f"{self.docker_volume_path}/failed_pdf/{extraction_message.tenant}/{extraction_message.params.filename}"
-        self.assertTrue(
-            os.path.exists(
-                error_file_path
-            )
+        error_file_path = (
+            f"{self.docker_volume_path}/failed_pdf/{extraction_message.tenant}/{extraction_message.params.filename}"
         )
+        self.assertTrue(os.path.exists(error_file_path))
 
         shutil.rmtree(f"{self.docker_volume_path}/failed_pdf/{tenant}", ignore_errors=True)
 
