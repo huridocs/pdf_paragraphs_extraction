@@ -21,13 +21,11 @@ function install_venv {
 
 function formatter {
   _source_venv
-  # Format Python code with black
   command black --line-length 125 .
 }
 
 function check_format {
   _source_venv
-  # Format Python code with black
   command black --line-length 125 . --check
 }
 
