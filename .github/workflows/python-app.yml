@@ -27,5 +27,8 @@ jobs:
     - name: Lint with black
       run: ./run check_format
 
+    - name: Start service
+      run: ./run start -d
+
     - name: Test with unittest
       run: ./run test
