@@ -1,8 +1,6 @@
 import os
 import shutil
 from unittest import TestCase
-
-# from ServiceConfig import ServiceConfig
 from pdf_file.PdfFile import PdfFile
 
 ROOT_FOLDER = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))

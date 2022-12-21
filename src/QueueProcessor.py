@@ -1,5 +1,4 @@
 import logging
-import os
 from time import sleep
 import config
 import pymongo
@@ -10,15 +9,17 @@ from rsmq import RedisSMQ, cmd
 from sentry_sdk.integrations.redis import RedisIntegration
 import sentry_sdk
 
-from ServiceConfig import ServiceConfig
 from data.ExtractionMessage import ExtractionMessage
 from data.Task import Task
 from extract_pdf_paragraphs.extract_paragraphs import extract_paragraphs
 
+SERVICE_NAME = "segmentation"
+TASK_QUEUE_NAME = SERVICE_NAME + "_tasks"
+RESULTS_QUEUE_NAME = SERVICE_NAME + "_results"
+
 
 class QueueProcessor:
     def __init__(self):
-        self.config = ServiceConfig()
         self.logger = logging.getLogger(__name__)
 
         client = pymongo.MongoClient(f"mongodb://{config.MONGO_HOST}:{config.MONGO_PORT}")
@@ -27,12 +28,12 @@ class QueueProcessor:
         self.results_queue = RedisSMQ(
             host=config.REDIS_HOST,
             port=config.REDIS_PORT,
-            qname=self.config.results_queue_name,
+            qname=RESULTS_QUEUE_NAME,
         )
         self.extractions_tasks_queue = RedisSMQ(
             host=config.REDIS_HOST,
             port=config.REDIS_PORT,
-            qname=self.config.tasks_queue_name,
+            qname=TASK_QUEUE_NAME,
         )
 
     def process(self, id, message, rc, ts):
@@ -60,8 +61,9 @@ class QueueProcessor:
                 self.logger.error(extraction_message.json())
                 return True
 
-            results_url = f"{self.config.service_url}/get_paragraphs/{task.tenant}/{task.params.filename}"
-            file_results_url = f"{self.config.service_url}/get_xml/{task.tenant}/{task.params.filename}"
+            service_url = f"{config.SERVICE_HOST}:{config.SERVICE_PORT}"
+            results_url = f"{service_url}/get_paragraphs/{task.tenant}/{task.params.filename}"
+            file_results_url = f"{service_url}/get_xml/{task.tenant}/{task.params.filename}"
             extraction_message = ExtractionMessage(
                 tenant=extraction_data.tenant,
                 task=task.task,
@@ -88,7 +90,7 @@ class QueueProcessor:
                 self.logger.info(f"Connecting to redis: {config.REDIS_HOST}:{config.REDIS_PORT}")
 
                 redis_smq_consumer = RedisSMQConsumer(
-                    qname=self.config.tasks_queue_name,
+                    qname=TASK_QUEUE_NAME,
                     processor=self.process,
                     host=config.REDIS_HOST,
                     port=config.REDIS_PORT,

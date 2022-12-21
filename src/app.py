@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 
 import pymongo
@@ -9,7 +10,6 @@ import sys
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 import sentry_sdk
 
-from ServiceConfig import ServiceConfig
 from data.SegmentBox import SegmentBox
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.pdfalto.PdfAltoXml import get_xml_tags_from_file_content, get_xml_from_file_content
@@ -18,8 +18,7 @@ from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
 import config
 
-SERVICE_CONFIG = ServiceConfig()
-logger = SERVICE_CONFIG.get_logger("service")
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
@@ -117,11 +116,11 @@ async def get_xml(tenant: str, pdf_file_name: str):
         xml_file_name = ".".join(pdf_file_name.split(".")[:-1]) + ".xml"
 
         with open(
-            f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}",
+            f"{config.DATA_PATH}/xml/{tenant}/{xml_file_name}",
             mode="r",
         ) as file:
             content = file.read()
-            os.remove(f"{SERVICE_CONFIG.docker_volume_path}/xml/{tenant}/{xml_file_name}")
+            os.remove(f"{config.DATA_PATH}/xml/{tenant}/{xml_file_name}")
             return content
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="No xml file")

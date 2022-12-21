@@ -1,5 +1,4 @@
 import ast
-from os.path import join
 
 import lightgbm as lgb
 import string
@@ -9,7 +8,7 @@ from typing import List, Tuple, Dict
 from huggingface_hub import hf_hub_download
 from numpy import unique
 
-from ServiceConfig import ServiceConfig
+import config
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
 from extract_pdf_paragraphs.tag_type_finder.LightGBM_30Features_OneHotOneLetter import LightGBM_30Features_OneHotOneLetter
@@ -32,14 +31,12 @@ class PdfAltoXml:
         self.right_space_mode: float = 0
         self.font_size_mode: float = 0
 
-        self.service_config = ServiceConfig()
-
-        if tag_types == None:
+        if not tag_types:
             tag_type_finding_config_path = hf_hub_download(
                 repo_id="HURIDOCS/pdf-segmetation",
                 filename="tag_type_finding_model_config.txt",
                 revision="7d98776dd34acb2fe3a06495c82e64b9c84bdc16",
-                cache_dir=self.service_config.huggingface_path,
+                cache_dir=config.HUGGINGFACE_PATH,
             )
 
             model_configs: {} = get_model_configs(tag_type_finding_config_path)
@@ -47,7 +44,7 @@ class PdfAltoXml:
                 repo_id="HURIDOCS/pdf-segmetation",
                 filename="tag_type_finding_model.txt",
                 revision="c9e886597823a7995a1454f2de43b821bc930368",
-                cache_dir=self.service_config.huggingface_path,
+                cache_dir=config.HUGGINGFACE_PATH,
             )
 
             self.tag_type_model = lgb.Booster(model_file=model_path)
@@ -61,7 +58,7 @@ class PdfAltoXml:
             repo_id="HURIDOCS/pdf-segmetation",
             filename="letter_corpus.txt",
             revision="da00a69c8d6a84493712e819580c0148757f466c",
-            cache_dir=self.service_config.huggingface_path,
+            cache_dir=config.HUGGINGFACE_PATH,
         )
 
         with open(letter_corpus_path, "r") as corpus_file:
