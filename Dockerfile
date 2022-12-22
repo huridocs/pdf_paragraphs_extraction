@@ -20,7 +20,7 @@ RUN pip install -r requirements.txt
 WORKDIR /app
 COPY ./src ./src
 
-RUN cd src; python download_models.py
-
 ENV PYTHONPATH "${PYTHONPATH}:/app/src"
+
+RUN cd src; python download_models.py
 
