@@ -75,7 +75,7 @@ class TestEndToEnd(TestCase):
         queue = RedisSMQ(host="127.0.0.1", port="6379", qname="segmentation_results", quiet=True)
 
         for i in range(25):
-            time.sleep(3)
+            time.sleep(0.5)
             message = queue.receiveMessage().exceptions(False).execute()
             if message:
                 queue.deleteMessage(id=message["id"]).execute()
