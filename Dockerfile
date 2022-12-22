@@ -3,7 +3,6 @@ FROM python:3.10-slim-bullseye AS base
 RUN apt-get update && \
 	apt-get -y -q --no-install-recommends install libgomp1
 
-
 ENV VIRTUAL_ENV=/opt/venv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
@@ -17,9 +16,5 @@ RUN mkdir -p /app/docker_valume
 WORKDIR /app
 COPY ./src ./src
 
-FROM base AS api
-CMD gunicorn -k uvicorn.workers.UvicornWorker --chdir ./src app:app --bind 0.0.0.0:5051
-
-FROM base AS extract_pdf_paragraphs
-CMD python3 src/QueueProcessor.py
+ENV PYTHONPATH "${PYTHONPATH}:/app/src"
 
