@@ -17,9 +17,10 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-
 WORKDIR /app
 COPY ./src ./src
+
+RUN cd src; python download_models.py
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/src"
 
