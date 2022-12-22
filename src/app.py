@@ -5,7 +5,6 @@ from typing import List
 
 import pymongo
 from fastapi import FastAPI, HTTPException, File, UploadFile
-from fastapi.openapi.models import Response
 from fastapi.responses import PlainTextResponse
 import sys
 
