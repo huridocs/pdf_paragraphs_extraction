@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   api:
+    container_name: api
     entrypoint: [ "gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--chdir", "./src", "app:app", "--bind", "0.0.0.0:5051" ]
     init: true
     restart: unless-stopped
@@ -21,6 +22,7 @@ services:
       - "5051:5051"
     env_file: .env
   extract_pdf_paragraphs:
+    container_name: worker
     entrypoint: [ "python", "-m", "src.QueueProcessor" ]
     init: true
     restart: unless-stopped

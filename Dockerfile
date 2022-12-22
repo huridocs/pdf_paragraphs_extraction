@@ -3,7 +3,13 @@ FROM python:3.11-slim-bullseye AS base
 RUN apt-get update && \
 	apt-get -y -q --no-install-recommends install libgomp1
 
-ENV VIRTUAL_ENV=/opt/venv
+RUN mkdir -p /app/src /app/docker_volume
+
+RUN addgroup --system python && adduser --system --group python
+RUN chown -R python:python /app
+USER python
+
+ENV VIRTUAL_ENV=/app/venv
 RUN python -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
@@ -11,8 +17,7 @@ COPY requirements.txt requirements.txt
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-RUN mkdir -p /app/src
-RUN mkdir -p /app/docker_valume
+
 WORKDIR /app
 COPY ./src ./src
 
