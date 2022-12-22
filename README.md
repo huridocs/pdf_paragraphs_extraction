@@ -34,7 +34,6 @@ To stop the server:
 - [HTTP server](#http-server)
 - [Queue processor](#queue-processor)
 - [Service configuration](#service-configuration)
-- [Get service logs](#get-service-logs)
 - [Set up environment for development](#set-up-environment-for-development)
 - [Execute tests](#execute-tests)
 - [Troubleshooting](#troubleshooting)
@@ -53,12 +52,10 @@ To stop the server:
     
 
 ## Requirements
-
 * 2Gb RAM memory
 * Single core
   
 ## Docker containers
-
 A redis server is needed to use the service asynchronously. For that matter, it can be used the 
 command `make start:testing` that has a built-in 
 redis server.
@@ -73,7 +70,6 @@ Containers with `make start:testing`
 
 
 ## How to use it asynchronously
-
 1. Send PDF to extract
 
     curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051/async_extraction/[tenant_name]
@@ -121,8 +117,8 @@ or in python
 
 ![Alt logo](readme_pictures/get_paragraphs.png?raw=true "Get paragraphs")
 
-## HTTP server
 
+## HTTP server
 ![Alt logo](readme_pictures/http_server.png?raw=true "HTTP server")
 
 The container `HTTP server` is coded using Python 3.9 and uses the [FastApi](https://fastapi.tiangolo.com/) web framework.
@@ -137,7 +133,6 @@ The errors are reported to the file `docker_volume/service.log`, if the configur
 
 
 ## Queue processor
-
 ![Alt logo](readme_pictures/queue_processor.png?raw=true "Queue processor")
 
 The container `Queue processor` is coded using Python 3.9, and it is on charge of the communication with redis. 
@@ -145,39 +140,22 @@ The container `Queue processor` is coded using Python 3.9, and it is on charge o
 The code can be founded in the file `QueueProcessor.py` and it uses the library `RedisSMQ` to interact with the 
 redis queues.
 
+
 ## Service configuration
-
-A configuration file could be provided to set the redis server parameters
-and the `extract pdf paragraphs` server hosts and ports. If a configuration is not provided,
+Some parameters could be configured using environment variables. If a configuration is not provided,
 the defaults values are used.
-
-The configuration could be manually created, or it can be used the following script:
-
-    python3 -m pip install graypy~=2.1.0 PyYAML~=5.4.1
-    python3 ServiceConfig.py
-
-Configuration file name: `config.yml`
 
 Default parameters:
 
-    service_host: localhost
-    service_port: 5051
-    redis_host: 127.0.0.1
-    redis_port: 6379
-    mongo_host: 127.0.0.1
-    mongo_port: 28017
-    graylog_ip: 
+    REDIS_HOST=redis_paragraphs
+    REDIS_PORT=6379
+    MONGO_HOST=mongo_paragraphs
+    MONGO_PORT=28017
+    SERVICE_HOST=http://127.0.0.1
+    SERVICE_PORT=5051
 
-## Get service logs
-
-The service logs are stored by default in the files `docker_volume/service.log` and `docker_volume/redis_tasks.log`
-
-To use a graylog server, add the following line to the `config.yml` file:
-
-    graylog_ip: [ip]
 
 ## Set up environment for development
-
 It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/)
 
     make install_venv
