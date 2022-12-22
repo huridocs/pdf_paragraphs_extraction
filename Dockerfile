@@ -1,7 +1,6 @@
 FROM python:3.11-slim-bullseye AS base
 
-RUN apt-get update && \
-	apt-get -y -q --no-install-recommends install libgomp1
+RUN apt-get update && apt-get -y -q --no-install-recommends install libgomp1
 
 RUN mkdir -p /app/src /app/docker_volume
 
