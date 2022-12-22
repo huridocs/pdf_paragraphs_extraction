@@ -36,3 +36,10 @@ letter_corpus_path = hf_hub_download(
     revision="da00a69c8d6a84493712e819580c0148757f466c",
     cache_dir=config.HUGGINGFACE_PATH,
 )
+
+toc_model_path = hf_hub_download(
+    repo_id="HURIDOCS/pdf-segmetation",
+    filename="TwoModelsV3SegmentsContext2.model",
+    revision="be662a6d3e0fdf4ce66d6663ac19a9f4517e18c7",
+    cache_dir=config.HUGGINGFACE_PATH,
+)

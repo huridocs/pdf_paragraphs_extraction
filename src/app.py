@@ -1,22 +1,27 @@
 import json
 import logging
 import os
+from typing import List
 
 import pymongo
 from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi.openapi.models import Response
 from fastapi.responses import PlainTextResponse
 import sys
 
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 import sentry_sdk
+from starlette import status
 
 from data.SegmentBox import SegmentBox
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.PdfFeatures.PdfSegment import PdfSegment
 from extract_pdf_paragraphs.pdfalto.PdfAltoXml import get_xml_tags_from_file_content, get_xml_from_file_content
 from extract_pdf_paragraphs.segmentator.predict import predict
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
 import config
+from toc.TOC import TOC
 
 logger = logging.getLogger(__name__)
 
@@ -127,3 +132,19 @@ async def get_xml(tenant: str, pdf_file_name: str):
     except Exception:
         logger.error("Error", exc_info=1)
         raise HTTPException(status_code=422, detail="An error has occurred. Check graylog for more info")
+
+
+@app.post("/get_toc")
+def get_toc(file: UploadFile = File(...)):
+    filename = '"No file name! Probably an error about the file in the request"'
+    try:
+        filename = file.filename
+        xml_tags = get_xml_tags_from_file_content(file.file.read())
+        pdf_features = PdfFeatures.from_xml_content(xml_tags)
+        pdf_segments: List[PdfSegment] = predict(pdf_features)
+
+        toc = TOC.from_pdf_tags(xml_tags, pdf_segments)
+        return toc.to_dict()
+    except Exception:
+        logger.error(f"Error extracting TOC for {filename}", exc_info=1)
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail="Error extracting TOC")

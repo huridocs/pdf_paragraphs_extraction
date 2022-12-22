@@ -1,5 +1,5 @@
 import math
-from typing import List
+from typing import List, Dict
 from bs4 import Tag
 
 
@@ -20,6 +20,16 @@ class Rectangle:
         y_max = int(float(tag["HEIGHT"])) + y_min if not math.isnan(float(tag["HEIGHT"])) else y_min
 
         return Rectangle(x_min, y_min, x_max, y_max)
+
+    @staticmethod
+    def from_segment_dict(paragraph: Dict[str, any]) -> "Rectangle":
+
+        return Rectangle(
+            paragraph["left"],
+            paragraph["top"],
+            paragraph["left"] + paragraph["width"],
+            paragraph["top"] + paragraph["height"],
+        )
 
     @staticmethod
     def merge_rectangles(rectangles: List["Rectangle"]) -> "Rectangle":
@@ -64,3 +74,9 @@ class Rectangle:
             return False
 
         return True
+
+    @staticmethod
+    def from_segment_box(segment_box: "SegmentBox"):
+        return Rectangle(
+            segment_box.left, segment_box.top, segment_box.left + segment_box.width, segment_box.top + segment_box.height
+        )

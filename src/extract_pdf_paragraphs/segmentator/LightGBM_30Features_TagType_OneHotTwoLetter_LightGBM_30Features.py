@@ -1,12 +1,7 @@
 import numpy as np
 from typing import List, Dict
-from pathlib import Path
 
 from copy import deepcopy
-from os import makedirs
-
-
-import lightgbm as lgb
 
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
