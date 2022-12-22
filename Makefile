@@ -36,3 +36,8 @@ stop:
 delete_queues:
 	. venv/bin/activate; python scripts/delete_queues.py
 
+download_models:
+	. venv/bin/activate; command cd src; python download_models.py
+
+check_api_ready:
+	. venv/bin/activate; python scripts/check_api_ready.py

@@ -1,13 +1,14 @@
 from collections import Counter
+from os.path import join
 from typing import List, Tuple, Dict
 
-from huggingface_hub import hf_hub_download
 from numpy import unique
 import string
 import ast
 
 
 import config
+from download_models import letter_corpus_path
 from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
 
@@ -22,12 +23,6 @@ class PdfAltoXml:
         self.font_size_mode: float = 0
 
         self.letter_corpus: Dict[str, int] = dict()
-        letter_corpus_path = hf_hub_download(
-            repo_id="HURIDOCS/pdf-segmetation",
-            filename="letter_corpus.txt",
-            revision="da00a69c8d6a84493712e819580c0148757f466c",
-            cache_dir=config.HUGGINGFACE_PATH,
-        )
 
         with open(letter_corpus_path, "r") as corpus_file:
             corpus_contents = corpus_file.read()
