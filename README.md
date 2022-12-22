@@ -10,15 +10,20 @@ an option to get an asynchronous flow using message queues on redis.
 ## Quick Start
 Start the service:
 
-    ./run start
+    make start
 
 Get the paragraphs from a PDF:
 
     curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051
 
+Get table of content
+
+    curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051/get_toc
+
+
 To stop the server:
 
-    ./run stop
+    make stop
 
 ## Contents
 - [Quick Start](#quick-start)
@@ -55,14 +60,14 @@ To stop the server:
 ## Docker containers
 
 A redis server is needed to use the service asynchronously. For that matter, it can be used the 
-command `./run start:testing` that has a built-in 
+command `make start:testing` that has a built-in 
 redis server.
 
-Containers with `./run start`
+Containers with `make start`
 
 ![Alt logo](readme_pictures/docker_compose_up.png?raw=true "docker-compose up")
 
-Containers with `./run start:testing`
+Containers with `make start:testing`
 
 ![Alt logo](readme_pictures/docker_compose_redis.png?raw=true "docker-compose -f docker-compose-service-with-redis.yml up")
 
@@ -175,11 +180,11 @@ To use a graylog server, add the following line to the `config.yml` file:
 
 It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/)
 
-    ./run install_venv
+    make install_venv
 
 ## Execute tests
 
-    ./run test
+    make test
 
 ## Troubleshooting
 
