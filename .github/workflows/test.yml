@@ -30,5 +30,8 @@ jobs:
     - name: Start service
       run: make start_detached
 
+    - name: Check API ready
+      run: make check_api_ready
+
     - name: Test with unittest
       run: make test

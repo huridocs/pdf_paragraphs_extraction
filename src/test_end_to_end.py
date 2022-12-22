@@ -15,18 +15,6 @@ from data.Task import Task
 class TestEndToEnd(TestCase):
     service_url = "http://localhost:5051"
 
-    @classmethod
-    def setUpClass(cls):
-        cls.check_api_ready()
-
-    @classmethod
-    def check_api_ready(cls):
-        for i in range(15):
-            time.sleep(0.5)
-            response = requests.get(f"{cls.service_url}/info")
-            if response.status_code == 200:
-                break
-
     def test_error_file(self):
         tenant = "end_to_end_test_error"
         pdf_file_name = "error_pdf.pdf"
