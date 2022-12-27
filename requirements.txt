@@ -1,5 +1,5 @@
 fastapi==0.88.0
-numpy==1.24.0
+numpy==1.24.1
 beautifulsoup4==4.11.1
 graypy==2.1.0
 python-multipart==0.0.5
