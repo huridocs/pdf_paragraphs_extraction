@@ -4,7 +4,7 @@ beautifulsoup4==4.11.1
 graypy==2.1.0
 python-multipart==0.0.5
 lxml==4.9.2
-pydantic==1.10.2
+pydantic==1.10.4
 uvicorn==0.20.0
 gunicorn==20.1.0
 nltk==3.8.1
