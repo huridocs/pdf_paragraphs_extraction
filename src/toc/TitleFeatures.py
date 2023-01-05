@@ -273,7 +273,7 @@ class TitleFeatures:
             # self.indentation
         )
 
-    def get_previous_first_characters(self) -> List[str]:
+    def get_possible_previous_point(self) -> List[str]:
         previous_characters = self.first_characters
         final_special_markers = ""
         last_part = ""
@@ -290,6 +290,9 @@ class TitleFeatures:
             previous_characters = previous_characters[:-1]
 
         previous_items = self.get_previous_items(last_part)
+
+        if not previous_items and len(self.first_characters) >= 4:
+            return [self.first_characters]
 
         return [previous_characters + x + final_special_markers for x in previous_items]
 

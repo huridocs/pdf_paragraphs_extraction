@@ -16,6 +16,7 @@ services:
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-development}
       - SENTRY_DSN=${SENTRY_DSN:-}
+      - WEB_CONCURRENCY=2
     networks:
       - pdf_paragraphs_extraction_network
     ports:

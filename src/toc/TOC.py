@@ -35,11 +35,7 @@ class TOC:
             if self.toc[index].point_closed:
                 continue
 
-            if self.titles_features_sorted[index].first_characters in title_features.get_previous_first_characters():
-                self.close_toc_items(self.toc[index].indentation)
-                return self.toc[index].indentation
-
-            if self.titles_features_sorted[index].get_features_toc() == title_features.get_features_toc():
+            if self.same_indentation(self.titles_features_sorted[index], title_features):
                 self.close_toc_items(self.toc[index].indentation)
                 return self.toc[index].indentation
 
@@ -55,6 +51,16 @@ class TOC:
         toc_pdf_features = TocPdfFeatures.from_xml_content(xml_tags)
         toc_pdf_features.set_segments_from_pdf_segments(pdf_segments)
         return TOC(toc_pdf_features)
+
+    @staticmethod
+    def same_indentation(previous_title_features: TitleFeatures, title_features: TitleFeatures):
+        if previous_title_features.first_characters in title_features.get_possible_previous_point():
+            return True
+
+        if previous_title_features.get_features_toc() == title_features.get_features_toc():
+            return True
+
+        return False
 
     def to_dict(self):
         toc: List[dict[str, any]] = list()
