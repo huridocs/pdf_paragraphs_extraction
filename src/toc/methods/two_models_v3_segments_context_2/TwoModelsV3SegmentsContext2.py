@@ -25,6 +25,10 @@ class TwoModelsV3SegmentsContext2(Method):
 
         model = lgb.Booster(model_file=toc_model_path)
         segments = LightgbmTwoModelsV3SegmentsContext2.get_segments(pdfs_features)
+
+        if not segments:
+            return pdfs_features
+
         labels = lightgbm_stack_multilingual.predict(model, segments)
 
         valid_tag_types = [TAG_TYPE_DICT["title"], TAG_TYPE_DICT["text"], TAG_TYPE_DICT["list"]]
