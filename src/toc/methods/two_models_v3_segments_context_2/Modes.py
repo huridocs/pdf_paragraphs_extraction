@@ -32,7 +32,7 @@ class Modes:
         self.right_space_mode = mode(right_spaces)
 
         font_sizes = [segment_tag.font.font_size for segment_tag in self.pdf_features.get_tags() if segment_tag.font]
-        self.font_size_mode =  mode(font_sizes) if font_sizes else 0
+        self.font_size_mode = mode(font_sizes) if font_sizes else 0
         font_ids = [segment_tag.font.font_id for segment_tag in self.pdf_features.get_tags() if segment_tag.font]
         self.font_family_name_mode = mode(font_ids) if font_ids else ""
         self.font_family_mode = abs(
