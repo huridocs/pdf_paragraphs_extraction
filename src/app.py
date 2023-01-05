@@ -135,10 +135,10 @@ async def get_xml(tenant: str, pdf_file_name: str):
 
 @app.post("/get_toc")
 def get_toc(file: UploadFile = File(...)):
-    filename = '"No file name! Probably an error about the file in the request"'
+    filename = "No file name!"
     try:
-        logger.info(f"Getting TOC {filename}")
         filename = file.filename
+        logger.info(f"Getting TOC {filename}")
         xml_tags = get_xml_tags_from_file_content(file.file.read())
         pdf_features = PdfFeatures.from_xml_content(xml_tags)
         pdf_segments: List[PdfSegment] = predict(pdf_features)
