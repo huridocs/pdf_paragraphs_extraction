@@ -26,6 +26,15 @@ class TestEndToEnd(TestCase):
             toc[0],
         )
 
+    def test_blank_pdf(self):
+        with open(f"{config.APP_PATH}/test_files/blank.pdf", "rb") as stream:
+            files = {"file": stream}
+            response = requests.post(f"{self.service_url}/get_toc", files=files)
+
+        toc = json.loads(response.content)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual([], toc)
+
     def test_fail_toc(self):
         with open(f"{config.APP_PATH}/test_files/error_pdf.pdf", "rb") as stream:
             files = {"file": stream}
