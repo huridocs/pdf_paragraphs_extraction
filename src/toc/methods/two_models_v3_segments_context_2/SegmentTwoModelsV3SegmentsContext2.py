@@ -214,6 +214,8 @@ class SegmentTwoModelsV3SegmentsContext2:
                 self.is_left,
                 self.indentation,
                 self.title_index,
+                self.top,
+                self.bottom
             ]
             + self.get_context_features()
         )
