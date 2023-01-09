@@ -19,7 +19,7 @@ services:
     network_mode: 'host'
     ports:
       - "5051:5051"
-    env_file: .local.env
+    env_file: .env.local
   extract_pdf_paragraphs:
     container_name: pdf_paragraphs_extraction_worker
     entrypoint: [ "python", "-m", "src.QueueProcessor" ]
@@ -36,7 +36,7 @@ services:
       - ENVIRONMENT=${ENVIRONMENT:-development}
       - SENTRY_DSN=${SENTRY_DSN:-}
     network_mode: 'host'
-    env_file: .local.env
+    env_file: .env.local
   mongo_paragraphs:
     restart: unless-stopped
     command: mongod --port 28017
