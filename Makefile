@@ -27,6 +27,9 @@ remove_docker_images:
 start:
 	docker compose up --build
 
+start_local:
+	docker compose -f local-docker-compose.yml up
+
 start_detached:
 	docker compose up --build -d
 
