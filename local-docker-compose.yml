@@ -1,0 +1,49 @@
+version: "3.8"
+services:
+  api:
+    container_name: pdf_paragraphs_extraction_api
+    entrypoint: [ "gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--chdir", "./src", "app:app", "--bind", "0.0.0.0:5051" ]
+    init: true
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - data:/app/docker_volume
+    depends_on:
+      - mongo_paragraphs
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - SENTRY_DSN=${SENTRY_DSN:-}
+      - WEB_CONCURRENCY=2
+    network_mode: 'host'
+    ports:
+      - "5051:5051"
+    env_file: .env.local
+  extract_pdf_paragraphs:
+    container_name: pdf_paragraphs_extraction_worker
+    entrypoint: [ "python", "-m", "src.QueueProcessor" ]
+    init: true
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - data:/app/docker_volume
+    depends_on:
+      - mongo_paragraphs
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - SENTRY_DSN=${SENTRY_DSN:-}
+    network_mode: 'host'
+    env_file: .env.local
+  mongo_paragraphs:
+    restart: unless-stopped
+    command: mongod --port 28017
+    image: "mongo:4.0.1"
+    network_mode: 'host'
+    ports:
+      - "28017:28017"
+
+volumes:
+  data:
