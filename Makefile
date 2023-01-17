@@ -25,12 +25,15 @@ remove_docker_images:
 	docker compose config --images | xargs docker rmi
 
 start:
-	docker compose up --build
-
-start_local:
 	docker compose -f local-docker-compose.yml up
 
+start_mac:
+	docker compose -f mac-docker-compose.yml up
+
 start_detached:
+	docker compose up --build -d
+
+start_for_testing:
 	docker compose up --build -d
 
 stop:

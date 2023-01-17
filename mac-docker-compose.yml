@@ -12,12 +12,15 @@ services:
       - data:/app/docker_volume
     depends_on:
       - mongo_paragraphs
+      - redis_paragraphs
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-development}
       - SENTRY_DSN=${SENTRY_DSN:-}
-      - WEB_CONCURRENCY=2
-    network_mode: 'host'
-    env_file: .env.local
+    networks:
+      - pdf_paragraphs_extraction_network
+    ports:
+      - "5051:5051"
+    env_file: .env.mac
   extract_pdf_paragraphs:
     container_name: pdf_paragraphs_extraction_worker
     entrypoint: [ "python", "-m", "src.QueueProcessor" ]
@@ -30,16 +33,21 @@ services:
       - data:/app/docker_volume
     depends_on:
       - mongo_paragraphs
+      - redis_paragraphs
     environment:
       - ENVIRONMENT=${ENVIRONMENT:-development}
       - SENTRY_DSN=${SENTRY_DSN:-}
-    network_mode: 'host'
-    env_file: .env.local
+    networks:
+      - pdf_paragraphs_extraction_network
+    env_file: .env.mac
   mongo_paragraphs:
     restart: unless-stopped
     command: mongod --port 28017
     image: "mongo:4.0.1"
-    network_mode: 'host'
+    networks:
+      - pdf_paragraphs_extraction_network
+networks:
+  pdf_paragraphs_extraction_network:
 
 volumes:
   data:
