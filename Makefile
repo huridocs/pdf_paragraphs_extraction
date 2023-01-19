@@ -25,7 +25,7 @@ remove_docker_images:
 	docker compose config --images | xargs docker rmi
 
 start:
-	docker compose -f local-docker-compose.yml up
+	docker compose -f local-docker-compose.yml up --attach pdf_paragraphs_extraction_worker --attach pdf_paragraphs_extraction_api --build
 
 start_mac:
 	docker compose -f mac-docker-compose.yml up

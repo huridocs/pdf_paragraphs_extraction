@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  api:
+  pdf_paragraphs_extraction_api:
     container_name: pdf_paragraphs_extraction_api
     entrypoint: [ "gunicorn", "-k", "uvicorn.workers.UvicornWorker", "--chdir", "./src", "app:app", "--bind", "0.0.0.0:5051" ]
     init: true
@@ -21,7 +21,7 @@ services:
     ports:
       - "5051:5051"
     env_file: .env.mac
-  extract_pdf_paragraphs:
+  pdf_paragraphs_extraction_worker:
     container_name: pdf_paragraphs_extraction_worker
     entrypoint: [ "python", "-m", "src.QueueProcessor" ]
     init: true
