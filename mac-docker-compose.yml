@@ -20,7 +20,7 @@ services:
       - pdf_paragraphs_extraction_network
     ports:
       - "5051:5051"
-    env_file: .env
+    env_file: .env.mac
   pdf_paragraphs_extraction_worker:
     container_name: pdf_paragraphs_extraction_worker
     entrypoint: [ "python", "-m", "src.QueueProcessor" ]
@@ -39,23 +39,13 @@ services:
       - SENTRY_DSN=${SENTRY_DSN:-}
     networks:
       - pdf_paragraphs_extraction_network
-    env_file: .env
+    env_file: .env.mac
   mongo_paragraphs:
     restart: unless-stopped
     command: mongod --port 28017
     image: "mongo:4.0.1"
     networks:
       - pdf_paragraphs_extraction_network
-  redis_paragraphs:
-    restart: unless-stopped
-    image: "redis:5.0.14"
-    command: redis-server
-    environment:
-      - REDIS_REPLICATION_MODE=master
-    networks:
-      - pdf_paragraphs_extraction_network
-    ports:
-      - "6379:6379"
 networks:
   pdf_paragraphs_extraction_network:
 

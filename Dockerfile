@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bullseye AS base
+FROM python:3.11-slim-bullseye
 
 RUN apt-get update && apt-get -y -q --no-install-recommends install libgomp1
 
