@@ -40,6 +40,5 @@ services:
     command: mongod --port 28017
     image: "mongo:4.0.1"
     network_mode: 'host'
-
 volumes:
   data:

@@ -30,6 +30,9 @@ start:
 start_mac:
 	docker compose -f mac-docker-compose.yml up
 
+start_local:
+	docker compose -f local-docker-compose.yml up
+
 start_detached:
 	docker compose up --build -d
 
