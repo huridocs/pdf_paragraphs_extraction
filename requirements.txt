@@ -2,7 +2,7 @@ fastapi==0.92.0
 numpy==1.24.2
 beautifulsoup4==4.11.2
 graypy==2.1.0
-python-multipart==0.0.5
+python-multipart==0.0.6
 lxml==4.9.2
 pydantic==1.10.4
 uvicorn==0.20.0
