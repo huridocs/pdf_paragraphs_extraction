@@ -20,14 +20,12 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
 
     @staticmethod
     def __get_training_data(pdf_features: PdfFeatures, model_configs: Dict):
-
         X = None
         y = np.array([])
         context_size: int = model_configs["context_size"]
         pdfalto_xml = PdfAltoXml(pdf_features)
 
         for _page in pdf_features.pages:
-
             page = deepcopy(_page)
 
             for i in range(context_size):
@@ -99,7 +97,6 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
         return LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features(X_train, y_train, model_configs)
 
     def get_predicted_segments(self, pdfalto_xml, page_tags: List[PdfTag]) -> List[PdfSegment]:
-
         X = np.array([])
         context_size: int = self.model_configs["context_size"]
 
@@ -166,7 +163,6 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
         return pdf_segments_for_page
 
     def predict(self, pdf_features: PdfFeatures) -> List[PdfSegment]:
-
         pdfalto_xml = PdfAltoXml(pdf_features)
 
         segments: List[PdfSegment] = list()
@@ -179,5 +175,4 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
         return segments
 
     def get_segments_for_page(self, pdfalto_xml: PdfAltoXml, page_tags: List[PdfTag]) -> List[PdfSegment]:
-
         return self.get_predicted_segments(pdfalto_xml, deepcopy(page_tags))

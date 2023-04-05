@@ -23,7 +23,6 @@ class Rectangle:
 
     @staticmethod
     def from_segment_dict(paragraph: Dict[str, any]) -> "Rectangle":
-
         return Rectangle(
             paragraph["left"],
             paragraph["top"],
@@ -33,7 +32,6 @@ class Rectangle:
 
     @staticmethod
     def merge_rectangles(rectangles: List["Rectangle"]) -> "Rectangle":
-
         left = min([rectangle.left for rectangle in rectangles])
         top = min([rectangle.top for rectangle in rectangles])
         right = max([rectangle.right for rectangle in rectangles])
@@ -43,12 +41,10 @@ class Rectangle:
 
     @staticmethod
     def from_tags(tags: List[Tag]) -> "Rectangle":
-
         return Rectangle.merge_rectangles([Rectangle.from_tag(tag) for tag in tags])
 
     @staticmethod
     def from_pdftags(tags) -> "Rectangle":
-
         return Rectangle.merge_rectangles(
             [
                 Rectangle(
@@ -63,7 +59,6 @@ class Rectangle:
 
     @staticmethod
     def is_inside_tag(big_rectangle: "Rectangle", small_rectangle: "Rectangle") -> bool:
-
         if big_rectangle.left > small_rectangle.right:
             return False
         elif big_rectangle.right < small_rectangle.left:

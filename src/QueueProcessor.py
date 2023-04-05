@@ -22,7 +22,7 @@ class QueueProcessor:
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
-        client = pymongo.MongoClient(f"mongodb://{config.MONGO_HOST}:{config.MONGO_PORT}")
+        client = pymongo.MongoClient(f"{config.MONGO_HOST}:{config.MONGO_PORT}")
         self.pdf_paragraph_db = client["pdf_paragraph"]
 
         self.results_queue = RedisSMQ(
