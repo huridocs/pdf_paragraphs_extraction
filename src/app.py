@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from contextlib import asynccontextmanager
 from typing import List
 
 import pymongo
@@ -24,7 +25,14 @@ from toc.TOC import TOC
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.mongodb_client = pymongo.MongoClient(f"{config.MONGO_HOST}:{config.MONGO_PORT}")
+    yield
+    app.mongodb_client.close()
+
+
+app = FastAPI(lifespan=lifespan)
 
 logger.info("Get PDF paragraphs service has started")
 
@@ -97,11 +105,8 @@ async def pdf_to_xml(file: UploadFile = File(...)):
 @app.get("/get_paragraphs/{tenant}/{pdf_file_name}")
 async def get_paragraphs(tenant: str, pdf_file_name: str):
     try:
-        client = pymongo.MongoClient(f"mongodb://{config.MONGO_HOST}:{config.MONGO_PORT}")
-
         suggestions_filter = {"tenant": tenant, "file_name": pdf_file_name}
-
-        pdf_paragraph_db = client["pdf_paragraph"]
+        pdf_paragraph_db = app.mongodb_client["pdf_paragraph"]
         extraction_data_dict = pdf_paragraph_db.paragraphs.find_one(suggestions_filter)
         pdf_paragraph_db.paragraphs.delete_many(suggestions_filter)
 
