@@ -92,7 +92,6 @@ class PdfAltoXml:
             self.font_size_mode: float = float(font_mode_tag[0].font_size)
 
     def get_features_for_given_tags(self, tag_1: PdfTag, tag_2: PdfTag, tags_for_page):
-
         top_1 = tag_1.bounding_box.top
         left_1 = tag_1.bounding_box.left
         right_1 = tag_1.bounding_box.right

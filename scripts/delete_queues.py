@@ -6,7 +6,6 @@ REDIS_PORT = "6379"
 
 
 def delete_queues():
-
     try:
         queue = RedisSMQ(
             host=REDIS_HOST,

@@ -25,6 +25,7 @@ from toc.TOC import TOC
 
 logger = logging.getLogger(__name__)
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     app.mongodb_client = pymongo.MongoClient(f"{config.MONGO_HOST}:{config.MONGO_PORT}")

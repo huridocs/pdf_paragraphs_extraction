@@ -37,7 +37,6 @@ class LightGBM_30Features_OneHotOneLetter:
     def get_predicted_tag_types(
         self, pdfalto_xml, page_tags: List[PdfTag], predicted_tag_types: Dict = dict
     ) -> Dict[str, str]:
-
         # X = None
         context_size: int = self.model_configs["context_size"]
         data_rows = []
@@ -129,7 +128,6 @@ class LightGBM_30Features_OneHotOneLetter:
         return predicted_tag_types
 
     def predict(self, pdf_features: PdfFeatures) -> Dict[str, str]:
-
         pdfalto_xml = PdfAltoXml(pdf_features)
         predicted_tag_types: Dict[str, str] = dict()
         for page in pdf_features.pages:
