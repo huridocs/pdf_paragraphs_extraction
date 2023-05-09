@@ -123,7 +123,7 @@ async def get_paragraphs(tenant: str, pdf_file_name: str):
 @app.get("/get_xml/{tenant}/{pdf_file_name}", response_class=PlainTextResponse)
 async def get_xml(tenant: str, pdf_file_name: str):
     try:
-        xml_file_name = ".".join(pdf_file_name.split(".")[:-1]) + ".xml"
+        xml_file_name = pdf_file_name.replace(".", "") + ".xml"
 
         with open(
             f"{config.DATA_PATH}/xml/{tenant}/{xml_file_name}",

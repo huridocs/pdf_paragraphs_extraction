@@ -15,7 +15,7 @@ THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
 
 
 def get_paths(tenant: str, pdf_file_name: str):
-    file_name = "".join(pdf_file_name.split(".")[:-1])
+    file_name = pdf_file_name.replace(".", "")
     pdf_file_path = f"{config.DATA_PATH}/to_extract/{tenant}/{pdf_file_name}"
     xml_file_path = f"{config.DATA_PATH}/xml/{tenant}/{file_name}.xml"
     failed_pdf_path = f"{config.DATA_PATH}/failed_pdf/{tenant}/{pdf_file_name}"
