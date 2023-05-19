@@ -15,5 +15,5 @@ PyRSMQ==0.4.5
 lightgbm==3.3.5
 redis==4.5.4
 huggingface_hub==0.13.3
-httpx==0.23.3
+httpx==0.24.1
 sentry-sdk==1.19.1
