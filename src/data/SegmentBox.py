@@ -32,7 +32,7 @@ class SegmentBox(BaseModel):
             height=segment.bounding_box.height,
             page_number=segment.page_number,
             text=segment.text_content,
-            tag_type=SegmentType.from_string(segment_type_string)
+            tag_type=SegmentType.from_string(segment_type_string),
         )
 
     def correct_input_data_scale(self):
@@ -58,6 +58,6 @@ class SegmentBox(BaseModel):
         }
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     box = SegmentBox(left=1, top=1, width=1, height=1, page_number=1, text="1", tag_type=SegmentType.from_index(1))
     print(box.dict())

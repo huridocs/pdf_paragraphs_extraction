@@ -305,4 +305,3 @@ class PdfAltoXml:
         on_the_left_right = 0 if len(on_the_left) == 0 else max(map(lambda x: x.bounding_box.right, on_the_left))
 
         return on_the_left_left, on_the_left_right
-    
