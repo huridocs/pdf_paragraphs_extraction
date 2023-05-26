@@ -35,6 +35,8 @@ class PdfAltoXml:
             self.tag_type_model = lgb.Booster(model_file=pdf_tag_type_model_path)
             self.tag_type_finder = LightGBM_30Features_OneHotOneLetter([], [], model_configs, self.tag_type_model)
             self.tag_types: Dict[str, str] = self.tag_type_finder.predict(self.pdf_features)
+            for tag_id, tag in [(t.id, t) for page in pdf_features.pages for t in page.tags]:
+                tag.tag_type = self.tag_types[tag_id]
         else:
             self.tag_types: Dict[str, str] = tag_types
         self.letter_corpus: Dict[str, int] = dict()
@@ -303,3 +305,4 @@ class PdfAltoXml:
         on_the_left_right = 0 if len(on_the_left) == 0 else max(map(lambda x: x.bounding_box.right, on_the_left))
 
         return on_the_left_left, on_the_left_right
+    
