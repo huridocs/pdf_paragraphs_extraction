@@ -15,7 +15,7 @@ class SegmentBox(BaseModel):
     height: float
     page_number: int
     text: str = ""
-    tag_type: SegmentType
+    tag_type: SegmentType = SegmentType.TEXT
 
     class Config:
         use_enum_values = True
