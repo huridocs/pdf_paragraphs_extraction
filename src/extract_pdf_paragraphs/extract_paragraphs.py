@@ -66,6 +66,7 @@ def extract_paragraphs(task: Task):
 
     pdf_features = PdfFeatures.from_pdfalto(xml_file_path)
     pdf_segments = predict(pdf_features)
+
     segments = [SegmentBox.from_pdf_segment(x) for x in pdf_segments]
 
     extraction_data = ExtractionData(

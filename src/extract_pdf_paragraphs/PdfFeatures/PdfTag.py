@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Self
 
 from bs4 import Tag, element
 
@@ -17,6 +17,7 @@ class PdfTag:
         segment_no: int,
         bounding_box: Rectangle,
         tag_type: str,
+        word_tags: list[Self] = None,
     ):
         self.page_number = int(page_number)
         self.id: str = tag_id
@@ -26,6 +27,16 @@ class PdfTag:
         self.segment_no: int = segment_no
         self.bounding_box: Rectangle = bounding_box
         self.tag_type: str = tag_type
+        self.word_tags: list[Self] = word_tags
+
+    def same_line(self, tag: Self):
+        if self.bounding_box.bottom < tag.bounding_box.top:
+            return False
+
+        if tag.bounding_box.bottom < self.bounding_box.top:
+            return False
+
+        return True
 
     @staticmethod
     def from_pdfalto(page_number: int, xml_tag: Tag, fonts: List[PdfFont]):
@@ -41,4 +52,21 @@ class PdfTag:
         segment_no = int(xml_tag["GROUP"]) if "GROUP" in xml_tag.attrs else -1
         bounding_box = Rectangle.from_tag(xml_tag)
         tag_type = xml_tag["TAG_TYPE"] if "TAG_TYPE" in xml_tag.attrs else "not_found"
-        return PdfTag(page_number, tag_id, content, pdf_font, reading_order_no, segment_no, bounding_box, tag_type)
+
+        word_xml_tags = [xml_tag for xml_tag in xml_tag.find_all("String")]
+        word_tags = [PdfTag.from_pdfalto_by_word(page_number, xml_tag, fonts) for xml_tag in word_xml_tags]
+        word_tags = [x for x in word_tags if x.content != "" and x.font is not None]
+
+        return PdfTag(
+            page_number, tag_id, content, pdf_font, reading_order_no, segment_no, bounding_box, tag_type, word_tags
+        )
+
+    @staticmethod
+    def from_pdfalto_by_word(page_number: int, xml_tag: Tag, fonts: List[PdfFont]):
+        pdf_fonts = [x for x in fonts if x.font_id == xml_tag["STYLEREFS"]]
+        pdf_font = None if not pdf_fonts else pdf_fonts[0]
+
+        tag_id = xml_tag["ID"]
+        content = xml_tag["CONTENT"] if type(xml_tag) == element.Tag and "CONTENT" in xml_tag.attrs else ""
+        bounding_box = Rectangle.from_tag(xml_tag)
+        return PdfTag(page_number, tag_id, content, pdf_font, 0, 0, bounding_box, "text")
