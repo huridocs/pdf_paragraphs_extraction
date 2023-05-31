@@ -81,7 +81,7 @@ async def extract_paragraphs(file: UploadFile = File(...)):
         xml_tags = get_xml_tags_from_file_content(file.file.read())
         pdf_features = PdfFeatures.from_xml_content(xml_tags)
         pdf_segments = predict(pdf_features)
-        paragraphs = [SegmentBox.from_pdf_segment(x).dict() for x in pdf_segments]
+        paragraphs = [x.to_segment_box().dict() for x in pdf_segments]
         return json.dumps(
             {
                 "page_width": pdf_features.pages[0].page_width,

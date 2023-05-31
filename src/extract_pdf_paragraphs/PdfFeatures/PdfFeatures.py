@@ -51,3 +51,10 @@ class PdfFeatures:
             for tag in page.tags:
                 tags.append(tag)
         return tags
+
+
+if __name__ == "__main__":
+    with open("/back/projects/pdf_paragraphs_extraction/src/test_files/test.xml", mode="r") as xml_file:
+        xml_content = BeautifulSoup(xml_file.read(), "lxml-xml")
+
+    PdfFeatures.from_xml_content(xml_content)

@@ -17,7 +17,7 @@ class PdfTag:
         segment_no: int,
         bounding_box: Rectangle,
         tag_type: str,
-        word_tags: list[Self] = None,
+        word_tags: list[Self],
     ):
         self.page_number = int(page_number)
         self.id: str = tag_id
@@ -69,4 +69,4 @@ class PdfTag:
         tag_id = xml_tag["ID"]
         content = xml_tag["CONTENT"] if type(xml_tag) == element.Tag and "CONTENT" in xml_tag.attrs else ""
         bounding_box = Rectangle.from_tag(xml_tag)
-        return PdfTag(page_number, tag_id, content, pdf_font, 0, 0, bounding_box, "text")
+        return PdfTag(page_number, tag_id, content, pdf_font, 0, 0, bounding_box, "text", list())

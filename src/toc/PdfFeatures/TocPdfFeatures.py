@@ -102,7 +102,7 @@ class TocPdfFeatures:
 
     def set_segments_from_pdf_segments(self, pdf_segments: List[PdfSegment]):
         pdf_segments_to_merge = defaultdict(list)
-        pdf_segments_from_segmentation = [PdfSegment.from_segment_box(SegmentBox.from_pdf_segment(x)) for x in pdf_segments]
+        pdf_segments_from_segmentation = [PdfSegment.from_segment_box(x.to_segment_box()) for x in pdf_segments]
         for tag in self.get_tags():
             segment_from_tag = PdfSegment.from_pdf_tag(tag)
 

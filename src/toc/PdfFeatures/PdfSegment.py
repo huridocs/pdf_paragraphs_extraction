@@ -2,6 +2,7 @@ from statistics import mode
 from typing import List
 
 from data.SegmentBox import SegmentBox
+from data.SegmentType import SegmentType
 from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
 from src.toc.PdfFeatures.PdfTag import PdfTag
 
@@ -99,4 +100,16 @@ class PdfSegment:
             width=self.bounding_box.width,
             height=self.bounding_box.height,
             page_number=self.page_number,
+        )
+
+    def to_segment_box(self) -> "SegmentBox":
+        return SegmentBox(
+            left=self.bounding_box.left,
+            top=self.bounding_box.top,
+            width=self.bounding_box.width,
+            height=self.bounding_box.height,
+            page_number=self.page_number,
+            text=self.text_content,
+            type=SegmentType.TITLE,
+            scripts=list(),
         )
