@@ -55,7 +55,7 @@ class PdfTag:
             pdf_font,
             reading_order_no,
             segment_no,
-            bounding_box,
+            bounding_box
         )
 
     def to_segment_box(self) -> SegmentBox:

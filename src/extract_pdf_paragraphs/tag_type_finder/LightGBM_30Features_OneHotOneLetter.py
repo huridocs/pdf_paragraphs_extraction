@@ -53,6 +53,7 @@ class LightGBM_30Features_OneHotOneLetter:
                     -i - 1,
                     Rectangle(0, 0, 0, 0),
                     "pad_type",
+                    list()
                 ),
             )
 
@@ -67,6 +68,7 @@ class LightGBM_30Features_OneHotOneLetter:
                     -i - 1000,
                     Rectangle(0, 0, 0, 0),
                     "pad_type",
+                    list()
                 )
             )
 

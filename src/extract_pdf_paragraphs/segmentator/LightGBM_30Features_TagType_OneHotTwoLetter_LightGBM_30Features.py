@@ -112,6 +112,7 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
                     -i - 1,
                     Rectangle(0, 0, 0, 0),
                     "pad_type",
+                    list()
                 ),
             )
 
@@ -126,6 +127,7 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
                     -i - 1000,
                     Rectangle(0, 0, 0, 0),
                     "pad_type",
+                    list()
                 )
             )
 
