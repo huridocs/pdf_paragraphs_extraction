@@ -1,9 +1,9 @@
-from typing import List, Self
+from typing import Self
 
 from bs4 import Tag, element
 
-from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.pdf_features.PdfFont import PdfFont
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
 
 
 class PdfTag:
@@ -28,6 +28,10 @@ class PdfTag:
         self.bounding_box: Rectangle = bounding_box
         self.tag_type: str = tag_type
         self.word_tags: list[Self] = word_tags
+        self.on_the_left_left = 0
+        self.on_the_left_right = 0
+        self.on_the_right_left = 0
+        self.on_the_right_right = 0
 
     def same_line(self, tag: Self):
         if self.bounding_box.bottom < tag.bounding_box.top:
@@ -39,7 +43,7 @@ class PdfTag:
         return True
 
     @staticmethod
-    def from_pdfalto(page_number: int, xml_tag: Tag, fonts: List[PdfFont]):
+    def from_pdfalto(page_number: int, xml_tag: Tag, fonts: list[PdfFont]):
         font_ids = [x["STYLEREFS"] for x in xml_tag.find_all("String") if "STYLEREFS" in x.attrs]
         if len(font_ids) > 0 and len([x for x in fonts if x.font_id == font_ids[-1]]) > 0:
             pdf_font = [x for x in fonts if x.font_id == font_ids[-1]][0]
@@ -62,7 +66,7 @@ class PdfTag:
         )
 
     @staticmethod
-    def from_pdfalto_by_word(page_number: int, xml_tag: Tag, fonts: List[PdfFont]):
+    def from_pdfalto_by_word(page_number: int, xml_tag: Tag, fonts: list[PdfFont]):
         pdf_fonts = [x for x in fonts if x.font_id == xml_tag["STYLEREFS"]]
         pdf_font = None if not pdf_fonts else pdf_fonts[0]
 

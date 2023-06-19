@@ -2,7 +2,7 @@ import dataclasses
 import hashlib
 from statistics import mode
 
-from src.toc.PdfFeatures.TocPdfFeatures import TocPdfFeatures
+from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
 
 
 @dataclasses.dataclass

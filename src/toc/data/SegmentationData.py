@@ -1,5 +1,3 @@
-from typing import List
-
 from pydantic import BaseModel
 
 from src.toc.data.LabeledData import LabeledData
@@ -10,8 +8,8 @@ from data.SegmentBox import SegmentBox
 class SegmentationData(BaseModel):
     page_width: float
     page_height: float
-    xml_segments_boxes: List[SegmentBox]
-    label_segments_boxes: List[SegmentBox] = list()
+    xml_segments_boxes: list[SegmentBox]
+    label_segments_boxes: list[SegmentBox] = list()
 
     @staticmethod
     def from_labeled_data(labeled_data: LabeledData) -> "SegmentationData":

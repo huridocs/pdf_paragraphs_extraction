@@ -1,5 +1,3 @@
-from typing import List
-
 from pydantic import BaseModel
 
 from data.SegmentBox import SegmentBox
@@ -7,7 +5,7 @@ from src.toc.data.SegmentationData import SegmentationData
 
 
 class ExtractionData(BaseModel):
-    paragraphs: List[SegmentBox]
+    paragraphs: list[SegmentBox]
     page_height: int
     page_width: int
 

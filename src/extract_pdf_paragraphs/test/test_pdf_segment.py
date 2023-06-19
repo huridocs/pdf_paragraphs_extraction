@@ -2,10 +2,10 @@ from unittest import TestCase
 
 from data.PdfScript import PdfScript, ScriptsType
 from data.SegmentType import SegmentType
-from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
-from extract_pdf_paragraphs.PdfFeatures.PdfSegment import PdfSegment
-from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.pdf_features.PdfFont import PdfFont
+from extract_pdf_paragraphs.pdf_features.PdfSegment import PdfSegment
+from extract_pdf_paragraphs.pdf_features.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
 
 
 class TestPdfSegment(TestCase):

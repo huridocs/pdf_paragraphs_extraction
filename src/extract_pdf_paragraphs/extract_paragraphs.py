@@ -8,7 +8,7 @@ import config
 from data.ExtractionData import ExtractionData
 from data.SegmentBox import SegmentBox
 from data.Task import Task
-from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.pdf_features.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.segmentator.predict import predict
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()

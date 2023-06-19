@@ -43,3 +43,17 @@ toc_model_path = hf_hub_download(
     revision="d66b49062439d6283464edadd9428a186c553f64",
     cache_dir=config.HUGGINGFACE_PATH,
 )
+
+next_tag_model_path = hf_hub_download(
+    repo_id="HURIDOCS/pdf-segmetation",
+    filename="next_tags.model",
+    revision="52a165ef899ccb6024361393ddae297d55b3f5cb",
+    cache_dir=config.HUGGINGFACE_PATH,
+)
+
+reading_order_model_path = hf_hub_download(
+    repo_id="HURIDOCS/pdf-segmetation",
+    filename="reading_order.model",
+    revision="5f0590ae32f3eb69296fb596013bbd2dd84a3d02",
+    cache_dir=config.HUGGINGFACE_PATH,
+)

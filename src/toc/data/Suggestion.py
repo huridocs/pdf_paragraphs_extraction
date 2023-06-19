@@ -1,5 +1,3 @@
-from typing import List
-
 from pydantic import BaseModel
 
 from data.Option import Option
@@ -11,7 +9,7 @@ class Suggestion(BaseModel):
     property_name: str
     xml_file_name: str
     text: str = ""
-    options: List[Option] = list()
+    options: list[Option] = list()
     segment_text: str
     page_number: int
-    segments_boxes: List[SegmentBox]
+    segments_boxes: list[SegmentBox]

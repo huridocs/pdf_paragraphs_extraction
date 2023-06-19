@@ -3,8 +3,8 @@ from statistics import mode
 from data.PdfScript import PdfScript, ScriptsType
 from data.SegmentBox import SegmentBox
 from data.SegmentType import SegmentType
-from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.pdf_features.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
 
 
 class PdfSegment:

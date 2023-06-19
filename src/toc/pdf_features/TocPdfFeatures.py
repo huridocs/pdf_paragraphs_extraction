@@ -6,28 +6,28 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
-from typing import List, Optional, Dict
+from typing import Optional
 
 from data.SegmentBox import SegmentBox
 from src.toc.data.SegmentationData import SegmentationData
-from src.toc.PdfFeatures.PdfAnnotation import PdfAnnotation
-from src.toc.PdfFeatures.PdfPage import PdfPage
+from src.toc.pdf_features.PdfAnnotation import PdfAnnotation
+from src.toc.pdf_features.PdfPage import PdfPage
 
-from src.toc.PdfFeatures.PdfFont import PdfFont
+from src.toc.pdf_features.PdfFont import PdfFont
 
-from src.toc.PdfFeatures.PdfSegment import PdfSegment
-from src.toc.PdfFeatures.PdfTag import PdfTag
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
+from src.toc.pdf_features.PdfSegment import PdfSegment
+from src.toc.pdf_features.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
 
 
 class TocPdfFeatures:
-    def __init__(self, pages: List[PdfPage], fonts: List[PdfFont], file_name="", file_type: str = ""):
+    def __init__(self, pages: list[PdfPage], fonts: list[PdfFont], file_name="", file_type: str = ""):
         self.pages = pages
         self.fonts = fonts
         self.file_name = file_name
         self.file_type = file_type
         self.pdf_path = ""
-        self.pdf_segments: List[PdfSegment] = list()
+        self.pdf_segments: list[PdfSegment] = list()
 
     @staticmethod
     def from_pdfalto(file_path) -> "TocPdfFeatures":
@@ -78,15 +78,15 @@ class TocPdfFeatures:
         return TocPdfFeatures(pages, fonts, file_name=file_name)
 
     @staticmethod
-    def get_tags_from_pdf_features(pdf_features: "TocPdfFeatures") -> List[PdfTag]:
-        pdf_tags: List[PdfTag] = list()
+    def get_tags_from_pdf_features(pdf_features: "TocPdfFeatures") -> list[PdfTag]:
+        pdf_tags: list[PdfTag] = list()
         for pdf_tag in pdf_features.get_tags():
             pdf_tags.append(pdf_tag)
 
         return pdf_tags
 
-    def get_tags(self) -> List[PdfTag]:
-        tags: List[PdfTag] = list()
+    def get_tags(self) -> list[PdfTag]:
+        tags: list[PdfTag] = list()
         for page in self.pages:
             for tag in page.tags:
                 if tag.content.strip() == "":
@@ -94,13 +94,13 @@ class TocPdfFeatures:
                 tags.append(tag)
         return tags
 
-    def set_segments_from_dict(self, segmentation_dict: Dict[str, str], annotations: List[PdfAnnotation]):
+    def set_segments_from_dict(self, segmentation_dict: dict[str, str], annotations: list[PdfAnnotation]):
         for index, segment_dict in enumerate(segmentation_dict["paragraphs"]):
             segment = PdfSegment.from_segment_dict(index, segment_dict)
             segment.set_ml_label_from_annotations(annotations)
             self.pdf_segments.append(segment)
 
-    def set_segments_from_pdf_segments(self, pdf_segments: List[PdfSegment]):
+    def set_segments_from_pdf_segments(self, pdf_segments: list[PdfSegment]):
         pdf_segments_to_merge = defaultdict(list)
         pdf_segments_from_segmentation = [PdfSegment.from_segment_box(x.to_segment_box()) for x in pdf_segments]
         for tag in self.get_tags():

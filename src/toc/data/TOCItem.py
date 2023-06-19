@@ -1,5 +1,3 @@
-from typing import List
-
 from pydantic import BaseModel
 
 from data.SegmentBox import SegmentBox
@@ -8,7 +6,7 @@ from data.SegmentBox import SegmentBox
 class TOCItem(BaseModel):
     indentation: int
     label: str = ""
-    selectionRectangles: List[SegmentBox]
+    selectionRectangles: list[SegmentBox]
     point_closed: bool = False
 
     def correct_data_scale(self):

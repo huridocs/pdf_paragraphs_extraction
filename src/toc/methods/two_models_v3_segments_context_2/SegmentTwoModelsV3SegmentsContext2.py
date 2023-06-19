@@ -1,11 +1,11 @@
 import re
-from typing import List
+
 import numpy as np
 
-from src.toc.PdfFeatures.TocPdfFeatures import TocPdfFeatures
-from src.toc.PdfFeatures.PdfSegment import PdfSegment
-from src.toc.PdfFeatures.PdfTag import PdfTag
-from src.toc.PdfFeatures.TagType import TAG_TYPE_DICT
+from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
+from src.toc.pdf_features.PdfSegment import PdfSegment
+from src.toc.pdf_features.PdfTag import PdfTag
+from src.toc.pdf_features.TagType import TAG_TYPE_DICT
 from src.toc.methods.two_models_v3_segments_context_2.Modes import Modes
 
 
@@ -16,14 +16,14 @@ class SegmentTwoModelsV3SegmentsContext2:
         self.title_index = title_index
         self.modes = modes
         self.previous_title_segment = None
-        self.context_segments: List["SegmentTwoModelsV3SegmentsContext2"] = list()
+        self.context_segments: list["SegmentTwoModelsV3SegmentsContext2"] = list()
         self.sentence_embeddings = pdf_segment.multilingual_embeddings
         self.segment_index: float = segment_index
         self.confidence: float = 0
         self.page_number = pdf_segment.page_number
         self.page_index = pdf_segment.page_number - 1
         self.pdf_segment = pdf_segment
-        self.segment_tags: List[PdfTag] = [
+        self.segment_tags: list[PdfTag] = [
             pdf_tag
             for pdf_tag in pdf_features.get_tags()
             if self.page_number == pdf_tag.page_number and pdf_segment.is_selected(pdf_tag.bounding_box)
@@ -103,7 +103,7 @@ class SegmentTwoModelsV3SegmentsContext2:
         self.left = self.segment_tags[0].bounding_box.left
         self.right = self.segment_tags[0].bounding_box.right
         self.bottom = self.segment_tags[0].bounding_box.bottom
-        words: List[str] = list()
+        words: list[str] = list()
 
         font_sizes = list()
         for tag in self.segment_tags:
@@ -233,8 +233,8 @@ class SegmentTwoModelsV3SegmentsContext2:
         return False
 
     @staticmethod
-    def from_pdf_features(pdf_features: TocPdfFeatures) -> List["SegmentTwoModelsV3SegmentsContext2"]:
-        segments: List["SegmentTwoModelsV3SegmentsContext2"] = list()
+    def from_pdf_features(pdf_features: TocPdfFeatures) -> list["SegmentTwoModelsV3SegmentsContext2"]:
+        segments: list["SegmentTwoModelsV3SegmentsContext2"] = list()
         title_index = 0
         modes = Modes(pdf_features)
         for index, pdf_segment in enumerate(pdf_features.pdf_segments):

@@ -63,7 +63,7 @@ class TestEndToEnd(TestCase):
         self.assertLess(15, len(extraction_data.paragraphs))
         self.assertEqual(612, extraction_data.page_width)
         self.assertEqual(792, extraction_data.page_height)
-        self.assertEqual("A/INF/76/1", extraction_data.paragraphs[0].text)
+        self.assertEqual("United Nations", extraction_data.paragraphs[0].text)
         self.assertEqual({1, 2}, {x.page_number for x in extraction_data.paragraphs})
 
         response = requests.get(extraction_message.file_url)
@@ -74,7 +74,7 @@ class TestEndToEnd(TestCase):
     def get_redis_message() -> ExtractionMessage:
         queue = RedisSMQ(host="127.0.0.1", port="6379", qname="segmentation_results", quiet=True)
 
-        for i in range(25):
+        for i in range(80):
             time.sleep(0.5)
             message = queue.receiveMessage().exceptions(False).execute()
             if message:

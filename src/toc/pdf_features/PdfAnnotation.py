@@ -1,4 +1,4 @@
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
 
 
 class PdfAnnotation:

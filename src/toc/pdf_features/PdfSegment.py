@@ -1,14 +1,14 @@
 from statistics import mode
-from typing import List
+
 
 from data.SegmentBox import SegmentBox
 from data.SegmentType import SegmentType
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
-from src.toc.PdfFeatures.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
+from src.toc.pdf_features.PdfTag import PdfTag
 
-from src.toc.PdfFeatures.TagType import TagType
+from src.toc.pdf_features.TagType import TagType
 
-from src.toc.PdfFeatures.PdfAnnotation import PdfAnnotation
+from src.toc.pdf_features.PdfAnnotation import PdfAnnotation
 
 
 class PdfSegment:
@@ -43,8 +43,8 @@ class PdfSegment:
 
         return self.is_selected(pdf_segment.bounding_box)
 
-    def set_type_from_tag_types(self, tag_types: List[TagType]):
-        segment_tag_types: List[TagType] = list()
+    def set_type_from_tag_types(self, tag_types: list[TagType]):
+        segment_tag_types: list[TagType] = list()
         for tag_type in tag_types:
             if self.page_number != tag_type.page_number:
                 continue
@@ -55,7 +55,7 @@ class PdfSegment:
         if segment_tag_types:
             self.segment_type = mode([x.tag_type_index for x in segment_tag_types])
 
-    def set_ml_label_from_annotations(self, annotations: List[PdfAnnotation]):
+    def set_ml_label_from_annotations(self, annotations: list[PdfAnnotation]):
         for annotation in annotations:
             if self.page_number != annotation.page_number:
                 continue
@@ -86,7 +86,7 @@ class PdfSegment:
         return PdfSegment(page_number=pdf_tag.page_number, bounding_box=pdf_tag.bounding_box, text_content=pdf_tag.content)
 
     @staticmethod
-    def from_list_to_merge(pdf_segments_to_merge: List["PdfSegment"]):
+    def from_list_to_merge(pdf_segments_to_merge: list["PdfSegment"]):
         text_content = " ".join([pdf_segment.text_content for pdf_segment in pdf_segments_to_merge])
         bounding_box = Rectangle.merge_rectangles([pdf_segment.bounding_box for pdf_segment in pdf_segments_to_merge])
         return PdfSegment(

@@ -1,18 +1,16 @@
-from typing import List
-
 from download_models import toc_model_path
-from src.toc.PdfFeatures.TocPdfFeatures import TocPdfFeatures
+from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
 from src.toc.Method import Method
 import lightgbm as lgb
 
-from src.toc.PdfFeatures.TagType import TAG_TYPE_DICT
+from src.toc.pdf_features.TagType import TAG_TYPE_DICT
 from src.toc.methods.two_models_v3_segments_context_2.LightgbmTwoModelsV3SegmentsContext2 import (
     LightgbmTwoModelsV3SegmentsContext2,
 )
 
 
 class TwoModelsV3SegmentsContext2(Method):
-    def train(self, pdfs_features: List[TocPdfFeatures]):
+    def train(self, pdfs_features: list[TocPdfFeatures]):
         lightgbm_stack_multilingual = LightgbmTwoModelsV3SegmentsContext2()
 
         segments = LightgbmTwoModelsV3SegmentsContext2.get_segments(pdfs_features)
@@ -20,7 +18,7 @@ class TwoModelsV3SegmentsContext2(Method):
         model = lightgbm_stack_multilingual.create_model(segments)
         model.save_model(self.model_path + ".model", num_iteration=model.best_iteration)
 
-    def predict(self, pdfs_features: List[TocPdfFeatures]) -> List[TocPdfFeatures]:
+    def predict(self, pdfs_features: list[TocPdfFeatures]) -> list[TocPdfFeatures]:
         lightgbm_stack_multilingual = LightgbmTwoModelsV3SegmentsContext2()
 
         model = lgb.Booster(model_file=toc_model_path)

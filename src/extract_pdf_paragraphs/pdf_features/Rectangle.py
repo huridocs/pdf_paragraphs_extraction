@@ -1,5 +1,4 @@
 import math
-from typing import List, Dict
 from bs4 import Tag
 
 
@@ -22,7 +21,7 @@ class Rectangle:
         return Rectangle(x_min, y_min, x_max, y_max)
 
     @staticmethod
-    def from_segment_dict(paragraph: Dict[str, any]) -> "Rectangle":
+    def from_segment_dict(paragraph: dict[str, any]) -> "Rectangle":
         return Rectangle(
             paragraph["left"],
             paragraph["top"],
@@ -31,7 +30,7 @@ class Rectangle:
         )
 
     @staticmethod
-    def merge_rectangles(rectangles: List["Rectangle"]) -> "Rectangle":
+    def merge_rectangles(rectangles: list["Rectangle"]) -> "Rectangle":
         left = min([rectangle.left for rectangle in rectangles])
         top = min([rectangle.top for rectangle in rectangles])
         right = max([rectangle.right for rectangle in rectangles])
@@ -40,7 +39,7 @@ class Rectangle:
         return Rectangle(left, top, right, bottom)
 
     @staticmethod
-    def from_tags(tags: List[Tag]) -> "Rectangle":
+    def from_tags(tags: list[Tag]) -> "Rectangle":
         return Rectangle.merge_rectangles([Rectangle.from_tag(tag) for tag in tags])
 
     @staticmethod
