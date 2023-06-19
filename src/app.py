@@ -2,7 +2,6 @@ import json
 import logging
 import os
 from contextlib import asynccontextmanager
-from typing import List
 
 import pymongo
 from fastapi import FastAPI, HTTPException, File, UploadFile
@@ -14,8 +13,8 @@ import sentry_sdk
 from starlette import status
 
 from data.SegmentBox import SegmentBox
-from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
-from extract_pdf_paragraphs.PdfFeatures.PdfSegment import PdfSegment
+from extract_pdf_paragraphs.pdf_features.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.pdf_features.PdfSegment import PdfSegment
 from extract_pdf_paragraphs.pdfalto.PdfAltoXml import get_xml_tags_from_file_content, get_xml_from_file_content
 from extract_pdf_paragraphs.segmentator.predict import predict
 from data.ExtractionData import ExtractionData
@@ -81,7 +80,7 @@ async def extract_paragraphs(file: UploadFile = File(...)):
         xml_tags = get_xml_tags_from_file_content(file.file.read())
         pdf_features = PdfFeatures.from_xml_content(xml_tags)
         pdf_segments = predict(pdf_features)
-        paragraphs = [SegmentBox.from_pdf_segment(x).dict() for x in pdf_segments]
+        paragraphs = [x.to_segment_box().dict() for x in pdf_segments]
         return json.dumps(
             {
                 "page_width": pdf_features.pages[0].page_width,
@@ -147,7 +146,7 @@ def get_toc(file: UploadFile = File(...)):
         logger.info(f"Getting TOC {filename}")
         xml_tags = get_xml_tags_from_file_content(file.file.read())
         pdf_features = PdfFeatures.from_xml_content(xml_tags)
-        pdf_segments: List[PdfSegment] = predict(pdf_features)
+        pdf_segments: list[PdfSegment] = predict(pdf_features)
 
         toc = TOC.from_pdf_tags(xml_tags, pdf_segments)
         return toc.to_dict()

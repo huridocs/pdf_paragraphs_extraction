@@ -3,7 +3,7 @@
     <Description>
         <MeasurementUnit>pixel</MeasurementUnit>
         <sourceImageInformation>
-            <fileName>/home/gabo/Desktop/test.pdf</fileName>
+            <fileName>test.pdf</fileName>
         </sourceImageInformation>
         <OCRProcessing ID="IdOcr">
             <ocrProcessingStep>
@@ -982,17 +982,17 @@
                     </TextLine>
                 </TextBlock>
                 <Illustration ID="p1_i1" HPOS="64.6630" VPOS="71.3000" WIDTH="56.1410" HEIGHT="47.0000"
-                              ROTATION="0.000000" FILEID="/home/gabo/Desktop/test.xml_data/image-1.png" TYPE="image"/>
+                              ROTATION="0.000000" FILEID="image-1.png" TYPE="image"/>
                 <Illustration ID="p1_i2" HPOS="417.150" VPOS="738.118" WIDTH="73.0400" HEIGHT="18.2000"
-                              ROTATION="0.000000" FILEID="/home/gabo/Desktop/test.xml_data/image-2.png" TYPE="image"/>
+                              ROTATION="0.000000" FILEID="image-2.png" TYPE="image"/>
                 <Illustration ID="p1_i3" HPOS="417.150" VPOS="738.118" WIDTH="73.0400" HEIGHT="18.2000"
-                              ROTATION="0.000000" FILEID="/home/gabo/Desktop/test.xml_data/image-3.png" TYPE="image"/>
+                              ROTATION="0.000000" FILEID="image-3.png" TYPE="image"/>
                 <Illustration ID="p1_i4" HPOS="495.200" VPOS="709.318" WIDTH="54.7000" HEIGHT="54.7000"
-                              ROTATION="0.000000" FILEID="/home/gabo/Desktop/test.xml_data/image-4.png" TYPE="image"/>
+                              ROTATION="0.000000" FILEID="image-4.png" TYPE="image"/>
                 <Illustration ID="p1_i5" HPOS="495.200" VPOS="709.318" WIDTH="54.7000" HEIGHT="54.7000"
-                              ROTATION="0.000000" FILEID="/home/gabo/Desktop/test.xml_data/image-5.png" TYPE="image"/>
+                              ROTATION="0.000000" FILEID="image-5.png" TYPE="image"/>
                 <Illustration ID="p1_s746" HPOS="-0.0001" VPOS="-0.0001" WIDTH="612.000" HEIGHT="792.000"
-                              ROTATION="0.000000" FILEID="/home/gabo/Desktop/test.xml_data/image-1.svg" TYPE="svg"/>
+                              ROTATION="0.000000" FILEID="image-1.svg" TYPE="svg"/>
             </PrintSpace>
         </Page>
         <Page ID="Page2" PHYSICAL_IMG_NR="2" WIDTH="612.000" HEIGHT="792.000">
@@ -1368,7 +1368,7 @@
                     </TextLine>
                 </TextBlock>
                 <Illustration ID="p2_s1014" HPOS="59.2800" VPOS="21.6000" WIDTH="492.820" HEIGHT="735.600"
-                              ROTATION="0.000000" FILEID="/home/gabo/Desktop/test.xml_data/image-2.svg" TYPE="svg"/>
+                              ROTATION="0.000000" FILEID="image-2.svg" TYPE="svg"/>
             </PrintSpace>
         </Page>
     </Layout>

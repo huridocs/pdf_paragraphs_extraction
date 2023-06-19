@@ -1,25 +1,25 @@
 from bs4 import Tag
-from typing import List
 
-from src.toc.PdfFeatures.PdfIllustration import PdfIllustration
 
-from src.toc.PdfFeatures.PdfFont import PdfFont
+from src.toc.pdf_features.PdfIllustration import PdfIllustration
 
-from src.toc.PdfFeatures.PdfTag import PdfTag
+from src.toc.pdf_features.PdfFont import PdfFont
+
+from src.toc.pdf_features.PdfTag import PdfTag
 
 
 class PdfPage:
     def __init__(
-        self, page_number: int, page_width: int, page_height: int, tags: List[PdfTag], illustrations: List[PdfIllustration]
+        self, page_number: int, page_width: int, page_height: int, tags: list[PdfTag], illustrations: list[PdfIllustration]
     ):
         self.page_number = page_number
         self.page_width = page_width
         self.page_height = page_height
         self.tags = tags
-        self.illustrations: List[PdfIllustration] = sorted(illustrations, key=lambda x: x.bounding_box.top)
+        self.illustrations: list[PdfIllustration] = sorted(illustrations, key=lambda x: x.bounding_box.top)
 
     @staticmethod
-    def from_pdfalto(xml_page: Tag, fonts: List[PdfFont]):
+    def from_pdfalto(xml_page: Tag, fonts: list[PdfFont]):
         xml_tags = [xml_tag for xml_tag in xml_page.find_all("TextLine")]
         tags = [PdfTag.from_pdfalto(xml_page["PHYSICAL_IMG_NR"], xml_tag, fonts) for xml_tag in xml_tags]
         tags = [x for x in tags if x.content != "" and x.font is not None]

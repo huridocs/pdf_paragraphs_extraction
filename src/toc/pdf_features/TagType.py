@@ -1,10 +1,8 @@
-from typing import Dict
+from src.toc.pdf_features.PdfTag import PdfTag
 
-from src.toc.PdfFeatures.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
 
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
-
-TAG_TYPE_DICT: Dict = {
+TAG_TYPE_DICT: dict = {
     "text": 6,
     "title": 5,
     "figure": 4,
@@ -15,7 +13,7 @@ TAG_TYPE_DICT: Dict = {
     "code": 3,
 }
 
-TAG_TYPE_BY_INDEX: Dict = {value: key for key, value in TAG_TYPE_DICT.items()}
+TAG_TYPE_BY_INDEX: dict = {value: key for key, value in TAG_TYPE_DICT.items()}
 
 
 class TagType:

@@ -3,17 +3,16 @@ import ast
 import lightgbm as lgb
 import string
 from collections import Counter
-from typing import List, Tuple, Dict
 
 from numpy import unique
 
 from download_models import tag_type_finding_config_path, pdf_tag_type_model_path, letter_corpus_path
-from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
-from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.pdf_features.PdfTag import PdfTag
 from extract_pdf_paragraphs.tag_type_finder.LightGBM_30Features_OneHotOneLetter import LightGBM_30Features_OneHotOneLetter
 
 
-def get_model_configs(config_path: str) -> Dict:
+def get_model_configs(config_path: str) -> dict:
     model_configs: {}
     with open(config_path, "r") as config_file:
         config_contents = config_file.read()
@@ -22,9 +21,9 @@ def get_model_configs(config_path: str) -> Dict:
 
 
 class PdfAltoXml:
-    def __init__(self, pdf_features: PdfFeatures, tag_types: Dict[str, str] = None):
+    def __init__(self, pdf_features: PdfFeatures, tag_types: dict[str, str] = None):
         self.pdf_features = pdf_features
-        self.tuples_to_check: List[Tuple[PdfTag, PdfTag]] = list()
+        self.tuples_to_check: list[tuple[PdfTag, PdfTag]] = list()
 
         self.lines_space_mode: float = 0
         self.right_space_mode: float = 0
@@ -34,12 +33,12 @@ class PdfAltoXml:
             model_configs: {} = get_model_configs(tag_type_finding_config_path)
             self.tag_type_model = lgb.Booster(model_file=pdf_tag_type_model_path)
             self.tag_type_finder = LightGBM_30Features_OneHotOneLetter([], [], model_configs, self.tag_type_model)
-            self.tag_types: Dict[str, str] = self.tag_type_finder.predict(self.pdf_features)
+            self.tag_types: dict[str, str] = self.tag_type_finder.predict(self.pdf_features)
             for tag_id, tag in [(t.id, t) for page in pdf_features.pages for t in page.tags]:
                 tag.tag_type = self.tag_types[tag_id]
         else:
-            self.tag_types: Dict[str, str] = tag_types
-        self.letter_corpus: Dict[str, int] = dict()
+            self.tag_types: dict[str, str] = tag_types
+        self.letter_corpus: dict[str, int] = dict()
 
         with open(letter_corpus_path, "r") as corpus_file:
             corpus_contents = corpus_file.read()
@@ -149,14 +148,14 @@ class PdfAltoXml:
 
         same_font = True if tag_1.font.font_id == tag_2.font.font_id else False
 
-        tag_1_first_letter: List
-        tag_1_second_letter: List
-        tag_1_last_letter: List
-        tag_1_second_last_letter: List
-        tag_2_first_letter: List
-        tag_2_second_letter: List
-        tag_2_last_letter: List
-        tag_2_second_last_letter: List
+        tag_1_first_letter: list
+        tag_1_second_letter: list
+        tag_1_last_letter: list
+        tag_1_second_last_letter: list
+        tag_2_first_letter: list
+        tag_2_second_letter: list
+        tag_2_last_letter: list
+        tag_2_second_last_letter: list
 
         if tag_1.id == "pad_tag":
             tag_1_type = "pad_type"
@@ -269,7 +268,7 @@ class PdfAltoXml:
         return features
 
     @staticmethod
-    def get_on_the_right_block(tag: PdfTag, tags: List[PdfTag]):
+    def get_on_the_right_block(tag: PdfTag, tags: list[PdfTag]):
         top = tag.bounding_box.top
         height = tag.bounding_box.height
         left = tag.bounding_box.left

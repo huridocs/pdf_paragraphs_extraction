@@ -1,16 +1,15 @@
 import numpy as np
-from typing import List, Dict
 
 
 from copy import deepcopy
 
-from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
-from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
-from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.pdf_features.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.pdf_features.PdfFont import PdfFont
+from extract_pdf_paragraphs.pdf_features.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
 from extract_pdf_paragraphs.tag_type_finder.get_features import PdfAltoXml
 
-tag_type_dict: Dict = {
+tag_type_dict: dict = {
     "text": 6,
     "title": 5,
     "figure": 4,
@@ -21,11 +20,11 @@ tag_type_dict: Dict = {
     "code": 3,
 }
 
-tag_type_by_index: Dict = {6: "text", 5: "title", 4: "figure", 3: "table", 2: "list", 1: "footnote", 0: "formula"}
+tag_type_by_index: dict = {6: "text", 5: "title", 4: "figure", 3: "table", 2: "list", 1: "footnote", 0: "formula"}
 
 
 class LightGBM_30Features_OneHotOneLetter:
-    def __init__(self, X_train, y_train, model_configs: Dict, model=None, benchmarking=False):
+    def __init__(self, X_train, y_train, model_configs: dict, model=None, benchmarking=False):
         self.X_train = X_train
         self.y_train = y_train
         self.model_configs = model_configs
@@ -35,8 +34,8 @@ class LightGBM_30Features_OneHotOneLetter:
         self.wrong_prediction_counts = {}
 
     def get_predicted_tag_types(
-        self, pdfalto_xml, page_tags: List[PdfTag], predicted_tag_types: Dict = dict
-    ) -> Dict[str, str]:
+        self, pdfalto_xml, page_tags: list[PdfTag], predicted_tag_types: dict = dict
+    ) -> dict[str, str]:
         # X = None
         context_size: int = self.model_configs["context_size"]
         data_rows = []
@@ -53,6 +52,7 @@ class LightGBM_30Features_OneHotOneLetter:
                     -i - 1,
                     Rectangle(0, 0, 0, 0),
                     "pad_type",
+                    list(),
                 ),
             )
 
@@ -67,6 +67,7 @@ class LightGBM_30Features_OneHotOneLetter:
                     -i - 1000,
                     Rectangle(0, 0, 0, 0),
                     "pad_type",
+                    list(),
                 )
             )
 
@@ -127,9 +128,9 @@ class LightGBM_30Features_OneHotOneLetter:
 
         return predicted_tag_types
 
-    def predict(self, pdf_features: PdfFeatures) -> Dict[str, str]:
+    def predict(self, pdf_features: PdfFeatures) -> dict[str, str]:
         pdfalto_xml = PdfAltoXml(pdf_features)
-        predicted_tag_types: Dict[str, str] = dict()
+        predicted_tag_types: dict[str, str] = dict()
         for page in pdf_features.pages:
             if len(page.tags) == 0:
                 continue

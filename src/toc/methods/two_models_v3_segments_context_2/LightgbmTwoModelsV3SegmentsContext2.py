@@ -1,10 +1,8 @@
-from typing import List
-
 import numpy as np
 
 import lightgbm as lgb
 
-from src.toc.PdfFeatures.TocPdfFeatures import TocPdfFeatures
+from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
 from src.toc.methods.two_models_v3_segments_context_2.SegmentTwoModelsV3SegmentsContext2 import (
     SegmentTwoModelsV3SegmentsContext2,
 )
@@ -12,11 +10,11 @@ from src.toc.methods.two_models_v3_segments_context_2.SegmentTwoModelsV3Segments
 
 class LightgbmTwoModelsV3SegmentsContext2:
     def __init__(self):
-        self.segments: List[SegmentTwoModelsV3SegmentsContext2] = list()
+        self.segments: list[SegmentTwoModelsV3SegmentsContext2] = list()
         self.model = None
         self.best_cut = 0
 
-    def create_model(self, training_segments: List[SegmentTwoModelsV3SegmentsContext2]):
+    def create_model(self, training_segments: list[SegmentTwoModelsV3SegmentsContext2]):
         self.segments = training_segments
 
         if len(self.segments) == 0:
@@ -67,14 +65,14 @@ class LightgbmTwoModelsV3SegmentsContext2:
         return X, y
 
     @staticmethod
-    def get_segments(pdfs_features: List[TocPdfFeatures]):
+    def get_segments(pdfs_features: list[TocPdfFeatures]):
         segments = list()
         for pdf_features in pdfs_features:
             segments.extend(SegmentTwoModelsV3SegmentsContext2.from_pdf_features(pdf_features))
 
         return segments
 
-    def predict(self, model, testing_segments: List[SegmentTwoModelsV3SegmentsContext2]):
+    def predict(self, model, testing_segments: list[SegmentTwoModelsV3SegmentsContext2]):
         self.segments = testing_segments
         x, y = self.get_training_data()
         x = x[:, : model.num_feature()]

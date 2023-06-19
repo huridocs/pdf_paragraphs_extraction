@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from os.path import join, dirname, realpath
-from typing import List
 
-from src.toc.PdfFeatures.TocPdfFeatures import TocPdfFeatures
+from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
 
 
 class Method(ABC):
@@ -12,11 +11,11 @@ class Method(ABC):
         self.model_path = join(self.root_path, "models", self.get_name())
 
     @abstractmethod
-    def train(self, pdfs_features: List[TocPdfFeatures]):
+    def train(self, pdfs_features: list[TocPdfFeatures]):
         pass
 
     @abstractmethod
-    def predict(self, pdfs_features: List[TocPdfFeatures]) -> List[TocPdfFeatures]:
+    def predict(self, pdfs_features: list[TocPdfFeatures]) -> list[TocPdfFeatures]:
         pass
 
     def get_name(self):

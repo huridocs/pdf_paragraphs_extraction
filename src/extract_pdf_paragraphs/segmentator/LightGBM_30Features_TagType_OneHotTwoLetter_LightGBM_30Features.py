@@ -1,25 +1,24 @@
 import numpy as np
-from typing import List, Dict
 
 from copy import deepcopy
 
-from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
-from extract_pdf_paragraphs.PdfFeatures.PdfFont import PdfFont
-from extract_pdf_paragraphs.PdfFeatures.PdfSegment import PdfSegment
-from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
-from extract_pdf_paragraphs.PdfFeatures.Rectangle import Rectangle
+from extract_pdf_paragraphs.pdf_features.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.pdf_features.PdfFont import PdfFont
+from extract_pdf_paragraphs.pdf_features.PdfSegment import PdfSegment
+from extract_pdf_paragraphs.pdf_features.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.Rectangle import Rectangle
 from extract_pdf_paragraphs.segmentator.get_features import PdfAltoXml
 
 
 class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
-    def __init__(self, X_train, y_train, model_configs: Dict, model=None):
+    def __init__(self, X_train, y_train, model_configs: dict, model=None):
         self.X_train = X_train
         self.y_train = y_train
         self.model_configs = model_configs
         self.model = model
 
     @staticmethod
-    def __get_training_data(pdf_features: PdfFeatures, model_configs: Dict):
+    def __get_training_data(pdf_features: PdfFeatures, model_configs: dict):
         X = None
         y = np.array([])
         context_size: int = model_configs["context_size"]
@@ -80,7 +79,7 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
         return X, y
 
     @staticmethod
-    def get_feature_matrix(pdf_features_list: List[PdfFeatures], model_configs: Dict):
+    def get_feature_matrix(pdf_features_list: list[PdfFeatures], model_configs: dict):
         X_train = None
         y_train = np.array([])
 
@@ -96,7 +95,7 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
 
         return LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features(X_train, y_train, model_configs)
 
-    def get_predicted_segments(self, pdfalto_xml, page_tags: List[PdfTag]) -> List[PdfSegment]:
+    def get_predicted_segments(self, pdfalto_xml, page_tags: list[PdfTag]) -> list[PdfSegment]:
         X = np.array([])
         context_size: int = self.model_configs["context_size"]
 
@@ -112,6 +111,7 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
                     -i - 1,
                     Rectangle(0, 0, 0, 0),
                     "pad_type",
+                    list(),
                 ),
             )
 
@@ -126,6 +126,7 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
                     -i - 1000,
                     Rectangle(0, 0, 0, 0),
                     "pad_type",
+                    list(),
                 )
             )
 
@@ -158,21 +159,21 @@ class LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features:
 
             segments_by_tags.append([page_tags[prediction_index + context_size + 1]])
 
-        pdf_segments_for_page: List[PdfSegment] = [PdfSegment.from_segment(pdf_tags) for pdf_tags in segments_by_tags]
+        pdf_segments_for_page: list[PdfSegment] = [PdfSegment.from_segment(pdf_tags) for pdf_tags in segments_by_tags]
 
         return pdf_segments_for_page
 
-    def predict(self, pdf_features: PdfFeatures) -> List[PdfSegment]:
+    def predict(self, pdf_features: PdfFeatures) -> list[PdfSegment]:
         pdfalto_xml = PdfAltoXml(pdf_features)
 
-        segments: List[PdfSegment] = list()
+        segments: list[PdfSegment] = list()
         for page in pdf_features.pages:
             if len(page.tags) == 0 or len(page.tags) == 1:
                 continue
-            segments_for_a_page: List[PdfSegment] = self.get_predicted_segments(pdfalto_xml, deepcopy(page.tags))
+            segments_for_a_page: list[PdfSegment] = self.get_predicted_segments(pdfalto_xml, deepcopy(page.tags))
             segments.extend(segments_for_a_page)
 
         return segments
 
-    def get_segments_for_page(self, pdfalto_xml: PdfAltoXml, page_tags: List[PdfTag]) -> List[PdfSegment]:
+    def get_segments_for_page(self, pdfalto_xml: PdfAltoXml, page_tags: list[PdfTag]) -> list[PdfSegment]:
         return self.get_predicted_segments(pdfalto_xml, deepcopy(page_tags))

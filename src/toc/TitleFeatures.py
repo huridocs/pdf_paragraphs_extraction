@@ -1,11 +1,11 @@
 import string
-from typing import List
+
 import numpy as np
 
-from src.toc.PdfFeatures.PdfSegment import PdfSegment
-from src.toc.PdfFeatures.PdfTag import PdfTag
+from src.toc.pdf_features.PdfSegment import PdfSegment
+from src.toc.pdf_features.PdfTag import PdfTag
 from src.toc.data.TOCItem import TOCItem
-from src.toc.PdfFeatures.TocPdfFeatures import TocPdfFeatures
+from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
 from src.toc.methods.two_models_v3_segments_context_2.Modes import Modes
 
 
@@ -175,7 +175,7 @@ class TitleFeatures:
         self.modes = modes
         self.pdf_segment = pdf_segment
 
-        self.segment_tags: List[PdfTag] = [
+        self.segment_tags: list[PdfTag] = [
             pdf_tag
             for pdf_tag in pdf_features.get_tags()
             if pdf_segment.page_number == pdf_tag.page_number and pdf_segment.is_selected(pdf_tag.bounding_box)
@@ -205,7 +205,7 @@ class TitleFeatures:
         self.right = self.segment_tags[0].bounding_box.right
         self.top = self.segment_tags[0].bounding_box.top
         self.bottom = self.segment_tags[-1].bounding_box.bottom
-        words: List[str] = list()
+        words: list[str] = list()
 
         font_sizes = list()
         for tag in self.segment_tags:
@@ -273,7 +273,7 @@ class TitleFeatures:
             # self.indentation
         )
 
-    def get_possible_previous_point(self) -> List[str]:
+    def get_possible_previous_point(self) -> list[str]:
         previous_characters = self.first_characters
         final_special_markers = ""
         last_part = ""
@@ -309,7 +309,7 @@ class TitleFeatures:
         return previous_items
 
     @staticmethod
-    def from_pdf_features(pdf_features: TocPdfFeatures) -> List["TitleFeatures"]:
+    def from_pdf_features(pdf_features: TocPdfFeatures) -> list["TitleFeatures"]:
         titles_types = list()
         modes = Modes(pdf_features)
         for pdf_segment in pdf_features.pdf_segments:

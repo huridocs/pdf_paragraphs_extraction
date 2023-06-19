@@ -8,7 +8,7 @@ import config
 from data.ExtractionData import ExtractionData
 from data.SegmentBox import SegmentBox
 from data.Task import Task
-from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.pdf_features.PdfFeatures import PdfFeatures
 from extract_pdf_paragraphs.segmentator.predict import predict
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
@@ -66,7 +66,8 @@ def extract_paragraphs(task: Task):
 
     pdf_features = PdfFeatures.from_pdfalto(xml_file_path)
     pdf_segments = predict(pdf_features)
-    segments = [SegmentBox.from_pdf_segment(x) for x in pdf_segments]
+
+    segments = [x.to_segment_box() for x in pdf_segments]
 
     extraction_data = ExtractionData(
         tenant=task.tenant,

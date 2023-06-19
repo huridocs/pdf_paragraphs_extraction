@@ -1,6 +1,4 @@
 from collections import Counter
-from os.path import join
-from typing import List, Tuple, Dict
 
 from numpy import unique
 import string
@@ -9,20 +7,20 @@ import ast
 
 import config
 from download_models import letter_corpus_path
-from extract_pdf_paragraphs.PdfFeatures.PdfFeatures import PdfFeatures
-from extract_pdf_paragraphs.PdfFeatures.PdfTag import PdfTag
+from extract_pdf_paragraphs.pdf_features.PdfFeatures import PdfFeatures
+from extract_pdf_paragraphs.pdf_features.PdfTag import PdfTag
 
 
 class PdfAltoXml:
     def __init__(self, pdf_features: PdfFeatures):
         self.pdf_features = pdf_features
-        self.tuples_to_check: List[Tuple[PdfTag, PdfTag]] = list()
+        self.tuples_to_check: list[tuple[PdfTag, PdfTag]] = list()
 
         self.lines_space_mode: float = 0
         self.right_space_mode: float = 0
         self.font_size_mode: float = 0
 
-        self.letter_corpus: Dict[str, int] = dict()
+        self.letter_corpus: dict[str, int] = dict()
 
         with open(letter_corpus_path, "r") as corpus_file:
             corpus_contents = corpus_file.read()
@@ -131,10 +129,10 @@ class PdfAltoXml:
 
         same_font = True if tag_1.font.font_id == tag_2.font.font_id else False
 
-        tag_1_first_letter: List
-        tag_1_last_letter: List
-        tag_2_first_letter: List
-        tag_2_last_letter: List
+        tag_1_first_letter: list
+        tag_1_last_letter: list
+        tag_2_first_letter: list
+        tag_2_last_letter: list
 
         if tag_1.id == "pad_tag":
             tag_1_first_letter = self.len_letter_corpus * [-1]
@@ -201,7 +199,7 @@ class PdfAltoXml:
         return features
 
     @staticmethod
-    def get_on_the_right_block(tag: PdfTag, tags: List[PdfTag]):
+    def get_on_the_right_block(tag: PdfTag, tags: list[PdfTag]):
         top = tag.bounding_box.top
         height = tag.bounding_box.height
         left = tag.bounding_box.left
