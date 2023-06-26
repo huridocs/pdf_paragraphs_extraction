@@ -13,7 +13,7 @@ requests==2.31.0
 pymongo==4.3.3
 PyRSMQ==0.4.5
 lightgbm==3.3.5
-redis==4.5.5
+redis==4.6.0
 huggingface_hub==0.15.1
 httpx==0.24.1
 sentry-sdk==1.25.1
