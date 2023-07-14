@@ -10,7 +10,7 @@ gunicorn==20.1.0
 nltk==3.8.1
 PyYAML==6.0
 requests==2.31.0
-pymongo==4.3.3
+pymongo==4.4.1
 PyRSMQ==0.4.5
 lightgbm==3.3.5
 redis==4.5.5
