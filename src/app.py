@@ -11,11 +11,17 @@ import sys
 from lxml import etree
 from lxml.etree import ElementBase
 from pdf_features.PdfFeatures import PdfFeatures
+from pdf_tokens_type_trainer.TokenTypeTrainer import TokenTypeTrainer
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 import sentry_sdk
 
+from data.Paragrphs import Paragraphs
+from data.SegmentBox import SegmentBox
+from download_models import paragraph_extraction_model_path
+from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
+from extract_pdf_paragraphs.extract_paragraphs import get_paths
+from extract_pdf_paragraphs.model_configuration import MODEL_CONFIGURATION
 from extract_pdf_paragraphs.pdf_to_xml import pdf_content_to_pdf_path
-from extract_pdf_paragraphs.segmentator.predict import predict
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
 import config
@@ -77,14 +83,13 @@ async def extract_paragraphs(file: UploadFile):
         filename = file.filename
         pdf_path = pdf_content_to_pdf_path(file.file.read())
         pdf_features = PdfFeatures.from_pdf_path(pdf_path)
-        pdf_segments = predict(pdf_features)
-        paragraphs = [x.to_segment_box().dict() for x in pdf_segments]
-        return json.dumps(
-            {
-                "page_width": pdf_features.pages[0].page_width,
-                "page_height": pdf_features.pages[0].page_height,
-                "paragraphs": paragraphs,
-            }
+        trainer = ParagraphExtractorTrainer(pdfs_features=[pdf_features], model_configuration=MODEL_CONFIGURATION)
+        trainer.predict(paragraph_extraction_model_path)
+        pdf_segments = trainer.get_pdf_segments(paragraph_extraction_model_path)
+        return Paragraphs(
+            page_width=pdf_features.pages[0].page_width,
+            page_height=pdf_features.pages[0].page_height,
+            paragraphs=[SegmentBox.from_pdf_segment(pdf_segment).dict() for pdf_segment in pdf_segments],
         )
     except Exception:
         logger.error(f"Error segmenting {filename}", exc_info=1)
@@ -113,7 +118,7 @@ async def get_paragraphs(tenant: str, pdf_file_name: str):
         pdf_paragraph_db.paragraphs.delete_many(suggestions_filter)
 
         extraction_data = ExtractionData(**extraction_data_dict)
-        return extraction_data.json()
+        return extraction_data.model_dump_json()
     except TypeError:
         raise HTTPException(status_code=404, detail="No paragraphs")
     except Exception:
@@ -124,14 +129,11 @@ async def get_paragraphs(tenant: str, pdf_file_name: str):
 @app.get("/get_xml/{tenant}/{pdf_file_name}", response_class=PlainTextResponse)
 async def get_xml(tenant: str, pdf_file_name: str):
     try:
-        xml_file_name = pdf_file_name.replace(".", "") + ".xml"
+        pdf_file_path, xml_file_path, failed_pdf_path = get_paths(tenant, pdf_file_name)
 
-        with open(
-            f"{config.DATA_PATH}/xml/{tenant}/{xml_file_name}",
-            mode="r",
-        ) as file:
+        with open(xml_file_path, mode="r") as file:
             content = file.read()
-            os.remove(f"{config.DATA_PATH}/xml/{tenant}/{xml_file_name}")
+            os.remove(xml_file_path)
             return content
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="No xml file")

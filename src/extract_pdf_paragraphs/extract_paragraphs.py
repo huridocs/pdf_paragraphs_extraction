@@ -3,18 +3,20 @@ import pathlib
 import shutil
 
 from pdf_features.PdfFeatures import PdfFeatures
-from pdf_tokens_type_trainer.TokenTypeTrainer import TokenTypeTrainer
 
 import config
 from data.ExtractionData import ExtractionData
+from data.SegmentBox import SegmentBox
 from data.Task import Task
-from extract_pdf_paragraphs.segmentator.predict import predict
+
+from download_models import paragraph_extraction_model_path
+from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
 
 
 def get_paths(tenant: str, pdf_file_name: str):
-    file_name = pdf_file_name.replace(".", "")
+    file_name = pdf_file_name.replace(".pdf", "").replace(".", "")
     pdf_file_path = f"{config.DATA_PATH}/to_extract/{tenant}/{pdf_file_name}"
     xml_file_path = f"{config.DATA_PATH}/xml/{tenant}/{file_name}.xml"
     failed_pdf_path = f"{config.DATA_PATH}/failed_pdf/{tenant}/{pdf_file_name}"
@@ -41,15 +43,13 @@ def extract_paragraphs(task: Task):
     if conversion_failed(xml_file_path, pdf_file_path, failed_pdf_path):
         return None
 
-    TokenTypeTrainer(pdf_features).predict()
-    pdf_segments = predict(pdf_features)
-
-    segments = [x.to_segment_box() for x in pdf_segments]
+    trainer = ParagraphExtractorTrainer([pdf_features])
+    pdf_segments = trainer.get_pdf_segments(paragraph_extraction_model_path)
 
     extraction_data = ExtractionData(
         tenant=task.tenant,
         file_name=task.params.filename,
-        paragraphs=segments,
+        paragraphs=[SegmentBox.from_pdf_segment(pdf_segment) for pdf_segment in pdf_segments],
         page_width=pdf_features.pages[0].page_width if pdf_features.pages else 0,
         page_height=pdf_features.pages[0].page_height if pdf_features.pages else 0,
     )

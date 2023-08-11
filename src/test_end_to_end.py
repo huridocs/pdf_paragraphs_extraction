@@ -26,7 +26,7 @@ class TestEndToEnd(TestCase):
 
         task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
 
-        queue.sendMessage().message(task.json()).execute()
+        queue.sendMessage().message(task.model_dump_json()).execute()
 
         extraction_message = self.get_redis_message()
 
@@ -47,7 +47,7 @@ class TestEndToEnd(TestCase):
         queue.sendMessage().message('{"message_to_avoid":"to_be_written_in_log_file"}').execute()
 
         task = Task(tenant=tenant, task="segmentation", params=Params(filename=pdf_file_name))
-        queue.sendMessage().message(str(task.json())).execute()
+        queue.sendMessage().message(str(task.model_dump_json())).execute()
 
         extraction_message = self.get_redis_message()
 

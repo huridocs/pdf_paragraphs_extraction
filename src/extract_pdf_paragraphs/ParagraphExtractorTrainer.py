@@ -1,4 +1,7 @@
+from pathlib import Path
+
 import numpy as np
+from pdf_features.PdfSegment import PdfSegment
 from pdf_features.PdfToken import PdfToken
 from pdf_token_type_labels.TokenType import TokenType
 from pdf_tokens_type_trainer.TokenFeatures import TokenFeatures
@@ -7,7 +10,6 @@ from tqdm import tqdm
 
 
 class ParagraphExtractorTrainer(TokenTypeTrainer):
-
     def loop_pages(self):
         for pdf_features in tqdm(self.pdfs_features):
             token_features = TokenFeatures(pdf_features)
@@ -32,7 +34,7 @@ class ParagraphExtractorTrainer(TokenTypeTrainer):
                 self.get_padding_token(segment_number=999999 + i, page_number=page.page_number) for i in range(contex_size)
             ]
 
-            tokens_indexes = range(contex_size, len(page_tokens) - contex_size - 1)
+            tokens_indexes = range(contex_size, len(page_tokens) - contex_size)
             page_features = [self.get_context_features(token_features, page_tokens, i) for i in tokens_indexes]
             features_rows.extend(page_features)
 
@@ -57,3 +59,42 @@ class ParagraphExtractorTrainer(TokenTypeTrainer):
         one_hot_token_type_1 = [1 if token_type == first_token.token_type else 0 for token_type in TokenType]
         one_hot_token_type_2 = [1 if token_type == second_token.token_type else 0 for token_type in TokenType]
         return one_hot_token_type_1 + one_hot_token_type_2
+
+    def loop_token_next_token(self):
+        for pdf_features in self.pdfs_features:
+            for page in pdf_features.pages:
+                if not page.tokens:
+                    continue
+
+                if len(page.tokens) == 1:
+                    yield page.tokens[0], page.tokens[0]
+
+                for token, next_token in zip(page.tokens, page.tokens[1:]):
+                    yield token, next_token
+
+    def get_pdf_segments(self, paragraph_extractor_model_path: str | Path) -> list[PdfSegment]:
+        self.predict(paragraph_extractor_model_path)
+        pdf_segments: list[PdfSegment] = list()
+        segment_tokens: list[PdfToken] = list()
+        for token, next_token in self.loop_token_next_token():
+            if token == next_token:
+                pdf_segments.append(PdfSegment.from_pdf_tokens(segment_tokens))
+                segment_tokens = []
+                continue
+
+            if not segment_tokens:
+                segment_tokens.append(token)
+
+            if not token.prediction:
+                pdf_segments.append(PdfSegment.from_pdf_tokens(segment_tokens))
+                segment_tokens = [next_token]
+                continue
+
+            segment_tokens.append(next_token)
+
+        return pdf_segments
+
+    def predict(self, model_path: str | Path = None):
+        token_type_trainer = TokenTypeTrainer(self.pdfs_features)
+        token_type_trainer.set_token_types()
+        super().predict(model_path)

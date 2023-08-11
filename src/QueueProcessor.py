@@ -1,3 +1,4 @@
+import json
 import logging
 from time import sleep
 import config
@@ -57,8 +58,8 @@ class QueueProcessor:
                     error_message="Error getting the xml from the pdf",
                 )
 
-                self.results_queue.sendMessage().message(extraction_message.dict()).execute()
-                self.logger.error(extraction_message.json())
+                self.results_queue.sendMessage().message(extraction_message.model_dump_json()).execute()
+                self.logger.error(extraction_message.model_dump_json())
                 return True
 
             service_url = f"{config.SERVICE_HOST}:{config.SERVICE_PORT}"
@@ -73,9 +74,10 @@ class QueueProcessor:
                 file_url=file_results_url,
             )
 
-            self.pdf_paragraph_db.paragraphs.insert_one(extraction_data.dict())
+            extraction_data_json = extraction_data.model_dump_json()
+            self.pdf_paragraph_db.paragraphs.insert_one(json.loads(extraction_data_json))
             self.logger.info(f"Results Redis message: {extraction_message}")
-            self.results_queue.sendMessage(delay=5).message(extraction_message.dict()).execute()
+            self.results_queue.sendMessage(delay=5).message(extraction_message.model_dump_json()).execute()
             return True
         except Exception:
             self.logger.error("error extracting the paragraphs", exc_info=1)

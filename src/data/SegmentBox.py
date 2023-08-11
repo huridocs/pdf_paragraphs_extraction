@@ -1,5 +1,3 @@
-from statistics import mode
-
 from pdf_features.PdfSegment import PdfSegment
 from pdf_token_type_labels.TokenType import TokenType
 from pydantic import BaseModel

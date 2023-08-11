@@ -1,3 +1,5 @@
+from typing import Union
+
 from pydantic import BaseModel
 
 from data.Params import Params
@@ -8,6 +10,6 @@ class ExtractionMessage(BaseModel):
     task: str
     params: Params
     success: bool
-    error_message: str = None
-    data_url: str = None
-    file_url: str = None
+    error_message: Union[str, None] = None
+    data_url: Union[str, None] = None
+    file_url: Union[str, None] = None
