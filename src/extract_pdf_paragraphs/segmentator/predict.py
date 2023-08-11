@@ -1,9 +1,10 @@
 import ast
 
 import lightgbm as lgb
+from pdf_features.PdfFeatures import PdfFeatures
+from pdf_features.PdfSegment import PdfSegment
+
 from download_models import segmentation_model_config_path, segmentation_model_path
-from extract_pdf_paragraphs.pdf_features.PdfSegment import PdfSegment
-from extract_pdf_paragraphs.reading_order.ReadingOrderFinder import ReadingOrderFinder
 from extract_pdf_paragraphs.segmentator.LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features import (
     LightGBM_30Features_TagType_OneHotTwoLetter_LightGBM_30Features,
 )
@@ -17,8 +18,7 @@ def get_model_configs(config_path: str) -> dict:
     return model_configs
 
 
-def predict(pdf_features) -> list[PdfSegment]:
-    pdf_features = ReadingOrderFinder().get_reading_order_from_pdf_features(pdf_features)
+def predict(pdf_features: PdfFeatures) -> list[PdfSegment]:
     model_configs: {} = get_model_configs(segmentation_model_config_path)
 
     lightgbm_model = lgb.Booster(model_file=segmentation_model_path)

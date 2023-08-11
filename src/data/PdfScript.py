@@ -1,5 +1,6 @@
+from enum import Enum
+
 from pydantic import BaseModel
-from pydantic.main import Enum
 
 
 class ScriptsType(Enum):
@@ -12,6 +13,3 @@ class PdfScript(BaseModel):
     start_character: int = 0
     end_character: int = 0
     type: ScriptsType
-
-    class Config:
-        use_enum_values = True

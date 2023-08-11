@@ -18,8 +18,11 @@ ENVIRONMENT = os.environ.get("ENVIRONMENT", "development")
 APP_PATH = Path(__file__).parent.absolute()
 ROOT_PATH = Path(__file__).parent.parent.absolute()
 DATA_PATH = join(ROOT_PATH, "docker_volume")
+TRAINED_MODEL_PATH = Path(join(ROOT_PATH, "model", "paragraph_extraction_model.model"))
 
 HUGGINGFACE_PATH = join(ROOT_PATH, "huggingface")
+PDF_LABELED_DATA_ROOT_PATH = Path(join(ROOT_PATH.parent, "pdf-labeled-data"))
+
 
 handlers = [logging.StreamHandler()]
 if GRAYLOG_IP:

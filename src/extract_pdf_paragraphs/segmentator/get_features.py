@@ -1,15 +1,13 @@
 import ast
 
-import lightgbm as lgb
 import string
 from collections import Counter
 
 from numpy import unique
+from pdf_features.PdfFeatures import PdfFeatures
+from pdf_features.PdfToken import PdfToken
 
-from download_models import tag_type_finding_config_path, pdf_tag_type_model_path, letter_corpus_path
-from extract_pdf_paragraphs.pdf_features.PdfFeatures import PdfFeatures
-from extract_pdf_paragraphs.pdf_features.PdfTag import PdfTag
-from extract_pdf_paragraphs.tag_type_finder.LightGBM_30Features_OneHotOneLetter import LightGBM_30Features_OneHotOneLetter
+from download_models import letter_corpus_path
 
 
 def get_model_configs(config_path: str) -> dict:
@@ -21,23 +19,13 @@ def get_model_configs(config_path: str) -> dict:
 
 
 class PdfAltoXml:
-    def __init__(self, pdf_features: PdfFeatures, tag_types: dict[str, str] = None):
+    def __init__(self, pdf_features: PdfFeatures):
         self.pdf_features = pdf_features
-        self.tuples_to_check: list[tuple[PdfTag, PdfTag]] = list()
+        self.tuples_to_check: list[tuple[PdfToken, PdfToken]] = list()
 
         self.lines_space_mode: float = 0
         self.right_space_mode: float = 0
         self.font_size_mode: float = 0
-
-        if not tag_types:
-            model_configs: {} = get_model_configs(tag_type_finding_config_path)
-            self.tag_type_model = lgb.Booster(model_file=pdf_tag_type_model_path)
-            self.tag_type_finder = LightGBM_30Features_OneHotOneLetter([], [], model_configs, self.tag_type_model)
-            self.tag_types: dict[str, str] = self.tag_type_finder.predict(self.pdf_features)
-            for tag_id, tag in [(t.id, t) for page in pdf_features.pages for t in page.tags]:
-                tag.tag_type = self.tag_types[tag_id]
-        else:
-            self.tag_types: dict[str, str] = tag_types
         self.letter_corpus: dict[str, int] = dict()
 
         with open(letter_corpus_path, "r") as corpus_file:
@@ -53,18 +41,18 @@ class PdfAltoXml:
         line_spaces, right_spaces, left_spaces = [0], [0], [0]
 
         for page in self.pdf_features.pages:
-            for tag in page.tags:
+            for tag in page.tokens:
                 top, height = tag.bounding_box.top, tag.bounding_box.height
                 left, width = tag.bounding_box.left, tag.bounding_box.width
                 bottom, right = tag.bounding_box.bottom, tag.bounding_box.right
 
-                on_the_bottom = list(filter(lambda x: bottom < x.bounding_box.top, page.tags))
+                on_the_bottom = list(filter(lambda x: bottom < x.bounding_box.top, page.tokens))
 
                 if len(on_the_bottom) > 0:
                     line_spaces.append(min(map(lambda x: int(x.bounding_box.top - bottom), on_the_bottom)))
 
                 same_line_tags = filter(
-                    lambda x: (top <= x.bounding_box.top < bottom) or (top < x.bounding_box.bottom <= bottom), page.tags
+                    lambda x: (top <= x.bounding_box.top < bottom) or (top < x.bounding_box.bottom <= bottom), page.tokens
                 )
                 on_the_right = filter(lambda x: right < x.bounding_box.left, same_line_tags)
                 on_the_left = filter(lambda x: x.bounding_box.left < left, same_line_tags)
@@ -81,7 +69,7 @@ class PdfAltoXml:
     def get_mode_font(self):
         fonts_counter: Counter = Counter()
         for page in self.pdf_features.pages:
-            for tag in page.tags:
+            for tag in page.tokens:
                 fonts_counter.update([tag.font.font_id])
 
         if len(fonts_counter.most_common()) == 0:
@@ -92,7 +80,7 @@ class PdfAltoXml:
         if len(font_mode_tag) == 1:
             self.font_size_mode: float = float(font_mode_tag[0].font_size)
 
-    def get_features_for_given_tags(self, tag_1: PdfTag, tag_2: PdfTag, tags_for_page):
+    def get_features_for_given_tags(self, tag_1: PdfToken, tag_2: PdfToken, tags_for_page):
         top_1 = tag_1.bounding_box.top
         left_1 = tag_1.bounding_box.left
         right_1 = tag_1.bounding_box.right
@@ -190,7 +178,7 @@ class PdfAltoXml:
             tag_2_last_letter = self.len_letter_corpus * [-1]
             tag_2_second_last_letter = self.len_letter_corpus * [-1]
         else:
-            tag_2_type = self.tag_types[tag_2.id]
+            tag_2_type = tag_2.token_type
             tag_2_first_letter = self.len_letter_corpus * [0]
             if tag_2.content[0] in self.letter_corpus.keys():
                 tag_2_first_letter[self.letter_corpus[tag_2.content[0]]] = 1
@@ -248,27 +236,15 @@ class PdfAltoXml:
             tag_2_type == "list",
             tag_2_type == "footnote",
             tag_2_type == "formula",
-            len(tag_1.content),
-            len(tag_2.content),
-            tag_1.content.count(" "),
-            tag_2.content.count(" "),
-            sum(character in string.punctuation for character in tag_1.content),
-            sum(character in string.punctuation for character in tag_2.content),
+
         ]
 
-        features.extend(tag_1_first_letter)
-        features.extend(tag_1_second_letter)
-        features.extend(tag_1_second_last_letter)
-        features.extend(tag_1_last_letter)
-        features.extend(tag_2_first_letter)
-        features.extend(tag_2_second_letter)
-        features.extend(tag_2_second_last_letter)
-        features.extend(tag_2_last_letter)
+
 
         return features
 
     @staticmethod
-    def get_on_the_right_block(tag: PdfTag, tags: list[PdfTag]):
+    def get_on_the_right_block(tag: PdfToken, tags: list[PdfToken]):
         top = tag.bounding_box.top
         height = tag.bounding_box.height
         left = tag.bounding_box.left
