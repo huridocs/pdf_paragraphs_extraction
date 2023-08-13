@@ -47,4 +47,4 @@ if __name__ == "__main__":
     start = time()
     print("start")
     benchmark()
-    print("finished in", time() - start, "seconds")
+    print("finished in", int(time() - start), "seconds")
