@@ -11,6 +11,7 @@ from data.Task import Task
 
 from download_models import paragraph_extraction_model_path
 from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
+from extract_pdf_paragraphs.model_configuration import MODEL_CONFIGURATION
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
 
@@ -43,7 +44,7 @@ def extract_paragraphs(task: Task):
     if conversion_failed(xml_file_path, pdf_file_path, failed_pdf_path):
         return None
 
-    trainer = ParagraphExtractorTrainer([pdf_features])
+    trainer = ParagraphExtractorTrainer([pdf_features], MODEL_CONFIGURATION)
     pdf_segments = trainer.get_pdf_segments(paragraph_extraction_model_path)
 
     extraction_data = ExtractionData(

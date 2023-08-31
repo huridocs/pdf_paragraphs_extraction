@@ -2,7 +2,7 @@ import os
 
 from pdf_token_type_labels.load_labeled_data import load_labeled_data
 
-from config import PDF_LABELED_DATA_ROOT_PATH, TRAINED_MODEL_PATH
+from config import TRAINED_MODEL_PATH, PDF_LABELED_DATA_ROOT_PATH
 from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
 from extract_pdf_paragraphs.model_configuration import MODEL_CONFIGURATION
 
