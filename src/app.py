@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -10,21 +9,17 @@ import sys
 
 from lxml import etree
 from lxml.etree import ElementBase
-from pdf_features.PdfFeatures import PdfFeatures
-from pdf_tokens_type_trainer.TokenTypeTrainer import TokenTypeTrainer
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 import sentry_sdk
 
 from data.Paragrphs import Paragraphs
 from data.SegmentBox import SegmentBox
-from download_models import paragraph_extraction_model_path
-from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
-from extract_pdf_paragraphs.extract_paragraphs import get_paths
-from extract_pdf_paragraphs.model_configuration import MODEL_CONFIGURATION
+from extract_pdf_paragraphs.extract_paragraphs import get_paths, extract_paragraphs
 from extract_pdf_paragraphs.pdf_to_xml import pdf_content_to_pdf_path
 from data.ExtractionData import ExtractionData
 from pdf_file.PdfFile import PdfFile
 import config
+from toc.TOC import TOC
 
 logger = logging.getLogger(__name__)
 
@@ -77,19 +72,16 @@ async def async_extraction(tenant, file: UploadFile = File(...)):
 
 
 @app.post("/")
-async def extract_paragraphs(file: UploadFile):
+async def post_extract_paragraphs(file: UploadFile):
     filename = '"No file name! Probably an error about the file in the request"'
     try:
         filename = file.filename
         pdf_path = pdf_content_to_pdf_path(file.file.read())
-        pdf_features = PdfFeatures.from_pdf_path(pdf_path)
-        trainer = ParagraphExtractorTrainer(pdfs_features=[pdf_features], model_configuration=MODEL_CONFIGURATION)
-        trainer.predict(paragraph_extraction_model_path)
-        pdf_segments = trainer.get_pdf_segments(paragraph_extraction_model_path)
+        pdf_segmentation = extract_paragraphs(pdf_path)
         return Paragraphs(
-            page_width=pdf_features.pages[0].page_width,
-            page_height=pdf_features.pages[0].page_height,
-            paragraphs=[SegmentBox.from_pdf_segment(pdf_segment).dict() for pdf_segment in pdf_segments],
+            page_width=pdf_segmentation.pdf_features.pages[0].page_width,
+            page_height=pdf_segmentation.pdf_features.pages[0].page_height,
+            paragraphs=[SegmentBox.from_pdf_segment(pdf_segment).dict() for pdf_segment in pdf_segmentation.pdf_segments],
         )
     except Exception:
         logger.error(f"Error segmenting {filename}", exc_info=1)
@@ -140,3 +132,17 @@ async def get_xml(tenant: str, pdf_file_name: str):
     except Exception:
         logger.error("Error", exc_info=1)
         raise HTTPException(status_code=422, detail="An error has occurred. Check graylog for more info")
+
+
+@app.post("/get_toc")
+def get_toc(file: UploadFile = File(...)):
+    filename = "No file name!"
+    try:
+        filename = file.filename
+        pdf_path = pdf_content_to_pdf_path(file.file.read())
+        pdf_segmentation = extract_paragraphs(pdf_path)
+        toc = TOC(pdf_segmentation)
+        return toc.to_dict()
+    except Exception:
+        logger.error(f"Error extracting TOC for {filename}", exc_info=1)
+        raise HTTPException(status_code=422, detail="Error extracting TOC")

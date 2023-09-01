@@ -15,7 +15,7 @@ BENCHMARK_MODEL_PATH = Path(join(ROOT_PATH, "model", "paragraph_extraction_bench
 
 
 def train_for_benchmark():
-    pdfs_features = load_labeled_data(pdf_labeled_data_project_path=PDF_LABELED_DATA_ROOT_PATH, filter_in="train")
+    pdfs_features = load_labeled_data(pdf_labeled_data_project_path=PDF_LABELED_DATA_ROOT_PATH, filter_in="publaynet_multi_column_train")
     trainer = ParagraphExtractorTrainer(pdfs_features=pdfs_features, model_configuration=MODEL_CONFIGURATION)
     os.makedirs(BENCHMARK_MODEL_PATH.parent, exist_ok=True)
     trainer.train(str(BENCHMARK_MODEL_PATH))
@@ -23,7 +23,7 @@ def train_for_benchmark():
 
 def predict_for_benchmark():
     test_pdf_features = load_labeled_data(pdf_labeled_data_project_path=PDF_LABELED_DATA_ROOT_PATH, filter_in="test")
-    trainer = ParagraphExtractorTrainer(test_pdf_features, MODEL_CONFIGURATION)
+    trainer = ParagraphExtractorTrainer(pdfs_features=test_pdf_features, model_configuration=MODEL_CONFIGURATION)
     truths = [token.segment_no == next_token.segment_no for token, next_token in trainer.loop_token_next_token()]
 
     print("predicting")

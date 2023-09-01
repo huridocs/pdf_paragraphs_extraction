@@ -12,6 +12,7 @@ from data.Task import Task
 from download_models import paragraph_extraction_model_path
 from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
 from extract_pdf_paragraphs.model_configuration import MODEL_CONFIGURATION
+from toc.PdfSegmentation import PdfSegmentation
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()
 
@@ -35,7 +36,16 @@ def conversion_failed(xml_file_path, pdf_file_path, failed_pdf_path):
     return True
 
 
-def extract_paragraphs(task: Task):
+def extract_paragraphs(pdf_path):
+    pdf_features = PdfFeatures.from_pdf_path(pdf_path)
+    trainer = ParagraphExtractorTrainer(pdfs_features=[pdf_features], model_configuration=MODEL_CONFIGURATION)
+    trainer.predict(paragraph_extraction_model_path)
+    pdf_segments = trainer.get_pdf_segments(paragraph_extraction_model_path)
+    pdf_segmentation = PdfSegmentation(pdf_features=pdf_features, pdf_segments=pdf_segments)
+    return pdf_segmentation
+
+
+def extract_paragraphs_asynchronous(task: Task):
     pdf_file_path, xml_file_path, failed_pdf_path = get_paths(task.tenant, task.params.filename)
 
     os.makedirs("/".join(xml_file_path.split("/")[:-1]), exist_ok=True)
