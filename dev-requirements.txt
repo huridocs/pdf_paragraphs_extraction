@@ -1,4 +1,4 @@
 -r requirements.txt
-pytest==7.3.2
+pytest==7.4.1
 black==23.3.0
 mongomock==4.1.2
