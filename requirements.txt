@@ -1,4 +1,4 @@
-fastapi==0.97.0
+fastapi==0.103.1
 numpy==1.25.0
 beautifulsoup4==4.12.2
 graypy==2.1.0
