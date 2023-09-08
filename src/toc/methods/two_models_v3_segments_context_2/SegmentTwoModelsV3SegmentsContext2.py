@@ -3,7 +3,7 @@ import re
 import numpy as np
 from pdf_features.PdfFeatures import PdfFeatures
 from pdf_features.PdfFont import PdfFont
-from pdf_features.PdfSegment import PdfSegment
+from extract_pdf_paragraphs.PdfSegment import PdfSegment
 from pdf_features.PdfToken import PdfToken
 from pdf_features.Rectangle import Rectangle
 from pdf_token_type_labels.TokenType import TokenType

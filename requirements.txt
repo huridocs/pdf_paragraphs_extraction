@@ -15,4 +15,4 @@ redis==5.0.0
 huggingface_hub==0.16.4
 httpx==0.24.1
 sentry-sdk==1.30.0
-git+https://github.com/huridocs/pdf-tokens-type-labeler@fced6ba9c1d125dc0a872f1d09544411bf0ccd49
+git+https://github.com/huridocs/pdf-tokens-type-labeler@45ab16db2d397f89c44402adb873c56955f8a1ce

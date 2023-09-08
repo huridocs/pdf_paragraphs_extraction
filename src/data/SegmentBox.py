@@ -1,4 +1,4 @@
-from pdf_features.PdfSegment import PdfSegment
+from extract_pdf_paragraphs.PdfSegment import PdfSegment
 from pdf_features.PdfToken import PdfToken
 from pdf_token_type_labels.TokenType import TokenType
 from pydantic import BaseModel
@@ -34,7 +34,7 @@ class SegmentBox(BaseModel):
             height=pdf_segment.bounding_box.height,
             page_number=pdf_segment.page_number,
             text=pdf_segment.text_content,
-            type=pdf_segment.token_type,
+            type=pdf_segment.segment_type,
             scripts=[],
         )
 

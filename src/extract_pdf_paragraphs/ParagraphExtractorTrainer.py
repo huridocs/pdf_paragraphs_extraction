@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import numpy as np
-from pdf_features.PdfSegment import PdfSegment
+from extract_pdf_paragraphs.PdfSegment import PdfSegment
 from pdf_features.PdfToken import PdfToken
 from pdf_token_type_labels.TokenType import TokenType
 from pdf_tokens_type_trainer.TokenFeatures import TokenFeatures

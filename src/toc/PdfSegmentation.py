@@ -1,4 +1,4 @@
-from pdf_features import PdfSegment
+from extract_pdf_paragraphs.PdfSegment import PdfSegment
 from pdf_features.PdfFeatures import PdfFeatures
 
 
