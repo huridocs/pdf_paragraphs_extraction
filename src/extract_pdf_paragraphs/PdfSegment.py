@@ -16,6 +16,4 @@ class PdfSegment:
         text: str = " ".join([pdf_token.content for pdf_token in pdf_tokens])
         bounding_boxes = [pdf_token.bounding_box for pdf_token in pdf_tokens]
         segment_type = mode([token.token_type for token in pdf_tokens])
-        return PdfSegment(
-            pdf_tokens[0].page_number, Rectangle.merge_rectangles(bounding_boxes), text, segment_type
-        )
+        return PdfSegment(pdf_tokens[0].page_number, Rectangle.merge_rectangles(bounding_boxes), text, segment_type)
