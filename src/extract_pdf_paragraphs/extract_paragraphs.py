@@ -10,8 +10,8 @@ from data.SegmentBox import SegmentBox
 from data.Task import Task
 
 from download_models import paragraph_extraction_model_path
-from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
-from extract_pdf_paragraphs.model_configuration import MODEL_CONFIGURATION
+from paragraph_extraction_trainer.ParagraphExtractorTrainer import ParagraphExtractorTrainer
+from paragraph_extraction_trainer.model_configuration import MODEL_CONFIGURATION
 from toc.PdfSegmentation import PdfSegmentation
 
 THIS_SCRIPT_PATH = pathlib.Path(__file__).parent.absolute()

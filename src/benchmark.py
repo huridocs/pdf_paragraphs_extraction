@@ -1,48 +1,16 @@
 import os
-from os.path import join, isdir
-from os import listdir
+from os.path import join
 from pathlib import Path
 from time import time
-from extract_pdf_paragraphs.PdfParagraphTokens import PdfParagraphTokens
-
+from paragraph_extraction_trainer.PdfParagraphTokens import PdfParagraphTokens
 from sklearn.metrics import f1_score, accuracy_score
-
-from config import PDF_LABELED_DATA_ROOT_PATH, ROOT_PATH, PARAGRAPH_EXTRACTION_LABELED_DATA_PATH
-from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
-from extract_pdf_paragraphs.model_configuration import MODEL_CONFIGURATION
+from config import ROOT_PATH
+from paragraph_extraction_trainer.labeled_data_config import PDF_LABELED_DATA_ROOT_PATH
+from paragraph_extraction_trainer.ParagraphExtractorTrainer import ParagraphExtractorTrainer
+from paragraph_extraction_trainer.load_labeled_data import load_labeled_data
+from paragraph_extraction_trainer.model_configuration import MODEL_CONFIGURATION
 
 BENCHMARK_MODEL_PATH = Path(join(ROOT_PATH, "model", "paragraph_extraction_benchmark.model"))
-
-
-def loop_datasets(filter_in: str):
-    for dataset_name in listdir(PARAGRAPH_EXTRACTION_LABELED_DATA_PATH):
-        if filter_in and filter_in not in dataset_name:
-            continue
-
-        dataset_path = join(PARAGRAPH_EXTRACTION_LABELED_DATA_PATH, dataset_name)
-
-        if not isdir(dataset_path):
-            continue
-
-        yield dataset_name, dataset_path
-
-
-def load_labeled_data(filter_in: str = None) -> list[PdfParagraphTokens]:
-    if filter_in:
-        print(f"Loading only datasets with the key word: {filter_in}")
-        print()
-
-    pdf_paragraph_tokens_list: list[PdfParagraphTokens] = list()
-
-    for dataset_name, dataset_path in loop_datasets(filter_in):
-        print(f"loading {dataset_name} from {dataset_path}")
-
-        dataset_pdf_name = [(dataset_name, pdf_name) for pdf_name in listdir(dataset_path)]
-        for dataset, pdf_name in dataset_pdf_name:
-            pdf_paragraph_tokens = PdfParagraphTokens.from_labeled_data(dataset, pdf_name)
-            pdf_paragraph_tokens_list.append(pdf_paragraph_tokens)
-
-    return pdf_paragraph_tokens_list
 
 
 def loop_pdf_paragraph_tokens(pdf_paragraph_tokens_list: list[PdfParagraphTokens]):
@@ -56,7 +24,7 @@ def loop_pdf_paragraph_tokens(pdf_paragraph_tokens_list: list[PdfParagraphTokens
 
 
 def train_for_benchmark():
-    pdf_paragraph_tokens_list = load_labeled_data(filter_in="train")
+    pdf_paragraph_tokens_list = load_labeled_data(PDF_LABELED_DATA_ROOT_PATH, filter_in="train")
 
     pdf_features_list = [pdf_paragraph_tokens.pdf_features for pdf_paragraph_tokens in pdf_paragraph_tokens_list]
     trainer = ParagraphExtractorTrainer(pdfs_features=pdf_features_list, model_configuration=MODEL_CONFIGURATION)
@@ -69,7 +37,7 @@ def train_for_benchmark():
 
 
 def predict_for_benchmark():
-    pdf_paragraph_tokens_list = load_labeled_data(filter_in="test")
+    pdf_paragraph_tokens_list = load_labeled_data(PDF_LABELED_DATA_ROOT_PATH, filter_in="test")
     pdf_features_list = [pdf_paragraph_tokens.pdf_features for pdf_paragraph_tokens in pdf_paragraph_tokens_list]
     trainer = ParagraphExtractorTrainer(pdfs_features=pdf_features_list, model_configuration=MODEL_CONFIGURATION)
     truths = []
@@ -85,7 +53,7 @@ def predict_for_benchmark():
 
 
 def benchmark():
-    # train_for_benchmark()
+    train_for_benchmark()
     truths, predictions = predict_for_benchmark()
 
     f1 = round(f1_score(truths, predictions, average="macro") * 100, 2)

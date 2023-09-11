@@ -3,8 +3,8 @@ import os
 from pdf_token_type_labels.load_labeled_data import load_labeled_data
 
 from config import TRAINED_MODEL_PATH, PDF_LABELED_DATA_ROOT_PATH
-from extract_pdf_paragraphs.ParagraphExtractorTrainer import ParagraphExtractorTrainer
-from extract_pdf_paragraphs.model_configuration import MODEL_CONFIGURATION
+from paragraph_extraction_trainer.ParagraphExtractorTrainer import ParagraphExtractorTrainer
+from paragraph_extraction_trainer.model_configuration import MODEL_CONFIGURATION
 
 
 def train_model():
