@@ -7,7 +7,7 @@ PROJECT_NAME = "pdf_paragraphs_extraction"
 
 setup(
     name=PROJECT_NAME,
-    packages=["extract_pdf_paragraphs"],
+    packages=["paragraph_extraction_trainer"],
     package_dir={"": "src"},
     version="0.1",
     url="https://github.com/huridocs/pdf_paragraphs_extraction/tree/use-pdftohtml",
