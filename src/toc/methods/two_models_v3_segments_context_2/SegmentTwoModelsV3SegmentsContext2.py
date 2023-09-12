@@ -1,35 +1,40 @@
 import re
 
 import numpy as np
+from pdf_features.PdfFeatures import PdfFeatures
+from pdf_features.PdfFont import PdfFont
+from paragraph_extraction_trainer.PdfSegment import PdfSegment
+from pdf_features.PdfToken import PdfToken
+from pdf_features.Rectangle import Rectangle
+from pdf_token_type_labels.TokenType import TokenType
 
-from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
-from src.toc.pdf_features.PdfSegment import PdfSegment
-from src.toc.pdf_features.PdfTag import PdfTag
-from src.toc.pdf_features.TagType import TAG_TYPE_DICT
 from src.toc.methods.two_models_v3_segments_context_2.Modes import Modes
+from toc.PdfSegmentation import PdfSegmentation
+
+valid_tag_types = [TokenType.TITLE, TokenType.TEXT, TokenType.LIST]
 
 
 class SegmentTwoModelsV3SegmentsContext2:
     def __init__(
-        self, segment_index: int, pdf_segment: PdfSegment, pdf_features: TocPdfFeatures, title_index: int, modes: Modes
+        self, segment_index: int, pdf_segment: PdfSegment, pdf_features: PdfFeatures, title_index: int, modes: Modes
     ):
         self.title_index = title_index
         self.modes = modes
         self.previous_title_segment = None
         self.context_segments: list["SegmentTwoModelsV3SegmentsContext2"] = list()
-        self.sentence_embeddings = pdf_segment.multilingual_embeddings
         self.segment_index: float = segment_index
         self.confidence: float = 0
         self.page_number = pdf_segment.page_number
         self.page_index = pdf_segment.page_number - 1
         self.pdf_segment = pdf_segment
-        self.segment_tags: list[PdfTag] = [
-            pdf_tag
-            for pdf_tag in pdf_features.get_tags()
-            if self.page_number == pdf_tag.page_number and pdf_segment.is_selected(pdf_tag.bounding_box)
+        self.segment_tokens: list[PdfToken] = [
+            pdf_token
+            for page, pdf_token in pdf_features.loop_tokens()
+            if self.page_number == pdf_token.page_number
+            and pdf_token.bounding_box.get_intersection_percentage(pdf_segment.bounding_box) > 50
         ]
 
-        self.segment_tags = self.segment_tags if self.segment_tags else [pdf_features.get_tags()[-1]]
+        self.segment_tokens = self.segment_tokens if self.segment_tokens else [self.get_one_token()]
         self.pdf_features = pdf_features
         self.page_width = self.pdf_features.pages[0].page_width
         self.page_height = self.pdf_features.pages[0].page_height
@@ -57,7 +62,7 @@ class SegmentTwoModelsV3SegmentsContext2:
         self.fourth_word_type: int = 100
         self.last_word_type: int = 100
         self.dots_percentage: float = 0
-        self.font_sizes = [x.font.font_size for x in self.pdf_features.get_tags()]
+        self.font_sizes = [token.font.font_size for page, token in self.pdf_features.loop_tokens()]
         self.first_characters_type = 0
         self.first_characters_special_markers_count = 0
         self.bullet_points_type = 0
@@ -96,17 +101,17 @@ class SegmentTwoModelsV3SegmentsContext2:
         self.last_word_type: int = 100
         self.dots_percentage: float = 0
 
-        self.font_family = self.segment_tags[0].font.font_id
-        self.font_color = self.segment_tags[0].font.color
-        self.line_height = self.segment_tags[0].font.font_size
-        self.top = self.segment_tags[0].bounding_box.top
-        self.left = self.segment_tags[0].bounding_box.left
-        self.right = self.segment_tags[0].bounding_box.right
-        self.bottom = self.segment_tags[0].bounding_box.bottom
+        self.font_family = self.segment_tokens[0].font.font_id
+        self.font_color = self.segment_tokens[0].font.color
+        self.line_height = self.segment_tokens[0].font.font_size
+        self.top = self.segment_tokens[0].bounding_box.top
+        self.left = self.segment_tokens[0].bounding_box.left
+        self.right = self.segment_tokens[0].bounding_box.right
+        self.bottom = self.segment_tokens[0].bounding_box.bottom
         words: list[str] = list()
 
         font_sizes = list()
-        for tag in self.segment_tags:
+        for tag in self.segment_tokens:
             words.extend(tag.content.split())
             self.top = min(self.top, tag.bounding_box.top)
             self.left = min(self.left, tag.bounding_box.left)
@@ -130,8 +135,8 @@ class SegmentTwoModelsV3SegmentsContext2:
         self.font_size = np.mean(font_sizes)
         self.numbers_quantity = len(list(filter(lambda x: x.isdigit(), self.text_content)))
         self.numbers_percentage = self.numbers_quantity / self.text_len if self.text_len > 0 else 0
-        self.bold = self.bold_tag_number / len(self.segment_tags)
-        self.italics = self.italics_tag_number / len(self.segment_tags)
+        self.bold = self.bold_tag_number / len(self.segment_tokens)
+        self.italics = self.italics_tag_number / len(self.segment_tokens)
         self.starts_upper = self.text_content[0].isupper()
         self.starts_number = self.text_content[0].isdigit()
         self.starts_number_bar = len(re.findall(r"^[0-9]\/", self.text_content)) == 1
@@ -220,7 +225,7 @@ class SegmentTwoModelsV3SegmentsContext2:
             + self.get_context_features()
         )
 
-    def tag_after_last_tag(self, tag: PdfTag):
+    def tag_after_last_tag(self, tag: PdfToken):
         if self.last_tag is None:
             return True
 
@@ -233,24 +238,33 @@ class SegmentTwoModelsV3SegmentsContext2:
         return False
 
     @staticmethod
-    def from_pdf_features(pdf_features: TocPdfFeatures) -> list["SegmentTwoModelsV3SegmentsContext2"]:
-        segments: list["SegmentTwoModelsV3SegmentsContext2"] = list()
+    def from_pdf_segments(pdf_segmentation: PdfSegmentation) -> list["SegmentTwoModelsV3SegmentsContext2"]:
         title_index = 0
-        modes = Modes(pdf_features)
-        for index, pdf_segment in enumerate(pdf_features.pdf_segments):
-            valid_tag_types = [TAG_TYPE_DICT["title"], TAG_TYPE_DICT["text"], TAG_TYPE_DICT["list"]]
+        modes = Modes(pdf_segmentation.pdf_features)
+        segments = SegmentTwoModelsV3SegmentsContext2.get_segments(modes, pdf_segmentation, title_index)
+        segments_sorted = sorted(segments, key=lambda x: (x.page_number, x.top))
+        SegmentTwoModelsV3SegmentsContext2.add_context_to_segments(segments_sorted)
+        return segments
 
-            if pdf_segment.segment_type not in valid_tag_types:
+    @staticmethod
+    def get_segments(modes, pdf_segmentation, title_index):
+        segments: list["SegmentTwoModelsV3SegmentsContext2"] = list()
+        for index, pdf_segment in enumerate(pdf_segmentation.pdf_segments):
+            if pdf_segment.token_type not in valid_tag_types:
                 continue
 
-            segment_landmarks = SegmentTwoModelsV3SegmentsContext2(index, pdf_segment, pdf_features, title_index, modes)
+            segment_landmarks = SegmentTwoModelsV3SegmentsContext2(
+                index, pdf_segment, pdf_segmentation.pdf_features, title_index, modes
+            )
 
-            if pdf_segment.segment_type == TAG_TYPE_DICT["title"]:
+            if pdf_segment.token_type == TokenType.TITLE:
                 title_index += 1
 
             segments.append(segment_landmarks)
+        return segments
 
-        segments_sorted = sorted(segments, key=lambda x: (x.page_number, x.top))
+    @staticmethod
+    def add_context_to_segments(segments_sorted):
         context_size = 2
         for index, segment in enumerate(segments_sorted):
             for j in range(1, context_size + 1):
@@ -265,4 +279,10 @@ class SegmentTwoModelsV3SegmentsContext2:
                     continue
                 segment.context_segments.append(segments_sorted[index + j])
 
-        return segments
+    def get_one_token(self):
+        for page, token in self.pdf_features.loop_tokens():
+            return token
+
+        font = PdfFont("font_id", False, False, 0, "#000000")
+        bounding_box = Rectangle(0, 0, 0, 0)
+        return PdfToken(0, "0", "", font, 0, 0, bounding_box, TokenType.TEXT)

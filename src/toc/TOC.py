@@ -1,21 +1,16 @@
-from copy import deepcopy
-
-
-from extract_pdf_paragraphs.pdf_features.PdfSegment import PdfSegment
 from src.toc.MergeTwoSegmentsTitles import MergeTwoSegmentsTitles
 from src.toc.TitleFeatures import TitleFeatures
 from src.toc.data.TOCItem import TOCItem
 from src.toc.methods.two_models_v3_segments_context_2.TwoModelsV3SegmentsContext2 import TwoModelsV3SegmentsContext2
-from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
+from toc.PdfSegmentation import PdfSegmentation
 
 two_models = TwoModelsV3SegmentsContext2()
 
 
 class TOC:
-    def __init__(self, pdf_features: TocPdfFeatures):
-        pdf_features_copy = deepcopy(pdf_features)
-        self.pdf_features = two_models.predict([pdf_features_copy])[0]
-        self.titles_features_sorted = MergeTwoSegmentsTitles(self.pdf_features).titles_merged
+    def __init__(self, pdf_segmentation: PdfSegmentation):
+        self.pdf_segmentation = two_models.predict([pdf_segmentation])[0]
+        self.titles_features_sorted = MergeTwoSegmentsTitles(self.pdf_segmentation).titles_merged
         self.toc: list[TOCItem] = list()
         self.set_toc()
 
@@ -45,12 +40,6 @@ class TOC:
         for toc in self.toc:
             if toc.indentation > indentation:
                 toc.point_closed = True
-
-    @staticmethod
-    def from_pdf_tags(xml_tags: str, pdf_segments: list[PdfSegment]):
-        toc_pdf_features = TocPdfFeatures.from_xml_content(xml_tags)
-        toc_pdf_features.set_segments_from_pdf_segments(pdf_segments)
-        return TOC(toc_pdf_features)
 
     @staticmethod
     def same_indentation(previous_title_features: TitleFeatures, title_features: TitleFeatures):

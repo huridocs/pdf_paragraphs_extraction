@@ -16,11 +16,6 @@ Get the paragraphs from a PDF:
 
     curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051
 
-Get table of content
-
-    curl -X POST -F 'file=@/PATH/TO/PDF/pdf_name.pdf' localhost:5051/get_toc
-
-
 To stop the server:
 
     make stop

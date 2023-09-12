@@ -1,9 +1,9 @@
+from paragraph_extraction_trainer.PdfSegment import PdfSegment
+from pdf_features.PdfToken import PdfToken
+from pdf_token_type_labels.TokenType import TokenType
 from pydantic import BaseModel
 
 from data.PdfScript import PdfScript
-from data.SegmentType import SegmentType
-
-SCALE_CONSTANT = 0.75
 
 
 class SegmentBox(BaseModel):
@@ -13,24 +13,8 @@ class SegmentBox(BaseModel):
     height: float
     page_number: int
     text: str = ""
-    type: SegmentType = SegmentType.TEXT
+    type: TokenType = TokenType.TEXT
     scripts: list[PdfScript] = list()
-
-    class Config:
-        use_enum_values = True
-
-    def correct_input_data_scale(self):
-        return self.rescaled(SCALE_CONSTANT, SCALE_CONSTANT)
-
-    def correct_output_data_scale(self):
-        return self.rescaled(1 / SCALE_CONSTANT, 1 / SCALE_CONSTANT)
-
-    def rescaled(self, factor_width: float, factor_height: float):
-        self.left = self.left * factor_width
-        self.top = self.top * factor_height
-        self.width = self.width * factor_width
-        self.height = self.height * factor_height
-        return self
 
     def to_dict(self):
         return {
@@ -40,3 +24,29 @@ class SegmentBox(BaseModel):
             "height": self.height,
             "page_number": self.page_number,
         }
+
+    @staticmethod
+    def from_pdf_segment(pdf_segment: PdfSegment):
+        return SegmentBox(
+            left=pdf_segment.bounding_box.left,
+            top=pdf_segment.bounding_box.top,
+            width=pdf_segment.bounding_box.width,
+            height=pdf_segment.bounding_box.height,
+            page_number=pdf_segment.page_number,
+            text=pdf_segment.text_content,
+            type=pdf_segment.segment_type,
+            scripts=[],
+        )
+
+    @staticmethod
+    def from_pdf_token(pdf_token: PdfToken):
+        return SegmentBox(
+            left=pdf_token.bounding_box.left,
+            top=pdf_token.bounding_box.top,
+            width=pdf_token.bounding_box.width,
+            height=pdf_token.bounding_box.height,
+            page_number=pdf_token.page_number,
+            text=pdf_token.content,
+            type=pdf_token.token_type,
+            scripts=[],
+        )

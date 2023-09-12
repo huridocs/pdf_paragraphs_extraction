@@ -37,7 +37,7 @@ start_detached:
 	docker compose up --build -d
 
 start_for_testing:
-	docker compose up --build -d
+	docker compose down; docker compose up --build -d
 
 stop:
 	docker compose stop

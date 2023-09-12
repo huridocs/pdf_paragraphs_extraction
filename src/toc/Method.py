@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from os.path import join, dirname, realpath
 
-from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
+from toc.PdfSegmentation import PdfSegmentation
 
 
 class Method(ABC):
@@ -11,11 +11,11 @@ class Method(ABC):
         self.model_path = join(self.root_path, "models", self.get_name())
 
     @abstractmethod
-    def train(self, pdfs_features: list[TocPdfFeatures]):
+    def train(self, pdfs_segmentations: list[PdfSegmentation]):
         pass
 
     @abstractmethod
-    def predict(self, pdfs_features: list[TocPdfFeatures]) -> list[TocPdfFeatures]:
+    def predict(self, pdfs_segmentations: list[PdfSegmentation]) -> list[PdfSegmentation]:
         pass
 
     def get_name(self):

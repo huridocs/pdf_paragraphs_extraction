@@ -1,18 +1,15 @@
-from copy import deepcopy
-
 from src.toc.TitleFeatures import TitleFeatures
-from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
+from toc.PdfSegmentation import PdfSegmentation
 
 
 class MergeTwoSegmentsTitles:
-    def __init__(self, pdf_features: TocPdfFeatures):
-        self.pdf_features = deepcopy(pdf_features)
-        titles_types: list[TitleFeatures] = TitleFeatures.from_pdf_features(self.pdf_features)
+    def __init__(self, pdf_segmentation: PdfSegmentation):
+        titles_types: list[TitleFeatures] = TitleFeatures.from_pdf_segmentation(pdf_segmentation)
         self.titles_types_sorted = sorted(titles_types, key=lambda x: (x.pdf_segment.page_number, x.top))
         self.titles_merged: list[TitleFeatures] = list()
-        self.run()
+        self.merge()
 
-    def run(self):
+    def merge(self):
         index = 0
         while index < len(self.titles_types_sorted):
             if index == len(self.titles_types_sorted) - 1:

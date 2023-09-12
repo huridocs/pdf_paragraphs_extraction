@@ -1,45 +1,36 @@
 from download_models import toc_model_path
-from src.toc.pdf_features.TocPdfFeatures import TocPdfFeatures
 from src.toc.Method import Method
 import lightgbm as lgb
 
-from src.toc.pdf_features.TagType import TAG_TYPE_DICT
 from src.toc.methods.two_models_v3_segments_context_2.LightgbmTwoModelsV3SegmentsContext2 import (
     LightgbmTwoModelsV3SegmentsContext2,
 )
+from toc.PdfSegmentation import PdfSegmentation
+from toc.methods.two_models_v3_segments_context_2.SegmentTwoModelsV3SegmentsContext2 import valid_tag_types
 
 
 class TwoModelsV3SegmentsContext2(Method):
-    def train(self, pdfs_features: list[TocPdfFeatures]):
-        lightgbm_stack_multilingual = LightgbmTwoModelsV3SegmentsContext2()
+    def train(self, pdfs_segmentations: list[PdfSegmentation]):
+        pass
 
-        segments = LightgbmTwoModelsV3SegmentsContext2.get_segments(pdfs_features)
-
-        model = lightgbm_stack_multilingual.create_model(segments)
-        model.save_model(self.model_path + ".model", num_iteration=model.best_iteration)
-
-    def predict(self, pdfs_features: list[TocPdfFeatures]) -> list[TocPdfFeatures]:
+    def predict(self, pdfs_segmentations: list[PdfSegmentation]) -> list[PdfSegmentation]:
         lightgbm_stack_multilingual = LightgbmTwoModelsV3SegmentsContext2()
 
         model = lgb.Booster(model_file=toc_model_path)
-        segments = LightgbmTwoModelsV3SegmentsContext2.get_segments(pdfs_features)
+        segments = LightgbmTwoModelsV3SegmentsContext2.get_segments(pdfs_segmentations)
 
         if not segments:
-            return pdfs_features
+            return pdfs_segmentations
 
-        labels = lightgbm_stack_multilingual.predict(model, segments)
+        predictions = lightgbm_stack_multilingual.predict(model, segments)
+        prediction_index = 0
 
-        valid_tag_types = [TAG_TYPE_DICT["title"], TAG_TYPE_DICT["text"], TAG_TYPE_DICT["list"]]
+        for pdf_segmentation in pdfs_segmentations:
+            for index, segment in enumerate(pdf_segmentation.pdf_segments):
+                if segment.token_type not in valid_tag_types:
+                    continue
 
-        all_segments = [
-            segment
-            for pdf_feature in pdfs_features
-            for segment in pdf_feature.pdf_segments
-            if segment.segment_type in valid_tag_types
-        ]
+                pdf_segmentation.title_predictions[index] = round(100 * predictions[prediction_index])
+                prediction_index += 1
 
-        for probability, segment in zip(labels, all_segments):
-            segment.ml_label = 0 if probability < 0.5 else 1
-            segment.ml_percentage = round(100 * probability)
-
-        return pdfs_features
+        return pdfs_segmentations
