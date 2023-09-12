@@ -9,7 +9,7 @@ setup(
     name=PROJECT_NAME,
     packages=["paragraph_extraction_trainer"],
     package_dir={"": "src"},
-    version="0.1",
+    version="0.11",
     url="https://github.com/huridocs/pdf_paragraphs_extraction/tree/use-pdftohtml",
     author="HURIDOCS",
     description="Service for extracting paragraphs from PDFs.",
