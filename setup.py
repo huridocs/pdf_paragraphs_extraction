@@ -15,7 +15,5 @@ setup(
     author="HURIDOCS",
     description="Service for extracting paragraphs from PDFs.",
     install_requires=requirements,
-    dependency_links=[
-        "git+https://github.com/huridocs/pdf-tokens-type-labeler@8376eb243f85fa389242585e6559d518ea936a3f"
-    ]
+    dependency_links=["git+https://github.com/huridocs/pdf-tokens-type-labeler@8376eb243f85fa389242585e6559d518ea936a3f"],
 )
