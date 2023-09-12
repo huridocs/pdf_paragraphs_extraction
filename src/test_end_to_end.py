@@ -70,6 +70,28 @@ class TestEndToEnd(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertTrue('<?xml version="1.0" encoding="UTF-8"?>' in str(response.content))
 
+    def test_blank_pdf(self):
+        with open(f"{config.APP_PATH}/test_files/blank.pdf", "rb") as stream:
+            files = {"file": stream}
+            response = requests.post(f"{self.service_url}", files=files)
+
+        response_json = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response_json['page_height'], 792)
+        self.assertEqual(response_json['page_width'], 612)
+        self.assertEqual(response_json['paragraphs'], [])
+
+    def test_one_token_per_page_pdf(self):
+        with open(f"{config.APP_PATH}/test_files/one_token_per_page.pdf", "rb") as stream:
+            files = {"file": stream}
+            response = requests.post(f"{self.service_url}", files=files)
+
+        response_json = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response_json['paragraphs']), 2)
+        self.assertEqual(response_json['paragraphs'][0]['page_number'], 1)
+        self.assertEqual(response_json['paragraphs'][1]['page_number'], 2)
+
     @staticmethod
     def get_redis_message() -> ExtractionMessage:
         queue = RedisSMQ(host="127.0.0.1", port="6379", qname="segmentation_results", quiet=True)
