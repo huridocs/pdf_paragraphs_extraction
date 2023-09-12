@@ -44,6 +44,3 @@ stop:
 
 delete_queues:
 	. venv/bin/activate; python scripts/delete_queues.py
-
-download_models:
-	. venv/bin/activate; command cd src; python download_models.py

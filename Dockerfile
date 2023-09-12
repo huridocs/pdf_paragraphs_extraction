@@ -21,5 +21,5 @@ COPY ./src ./src
 
 ENV PYTHONPATH "${PYTHONPATH}:/app/src"
 
-RUN cd src; python download_models.py
+RUN cd src/paragraph_extraction_trainer; python download_models.py
 

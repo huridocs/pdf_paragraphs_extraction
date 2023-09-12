@@ -9,7 +9,7 @@ from data.ExtractionData import ExtractionData
 from data.SegmentBox import SegmentBox
 from data.Task import Task
 
-from download_models import paragraph_extraction_model_path
+from paragraph_extraction_trainer.download_models import paragraph_extraction_model_path
 from paragraph_extraction_trainer.ParagraphExtractorTrainer import ParagraphExtractorTrainer
 from paragraph_extraction_trainer.model_configuration import MODEL_CONFIGURATION
 from toc.PdfSegmentation import PdfSegmentation

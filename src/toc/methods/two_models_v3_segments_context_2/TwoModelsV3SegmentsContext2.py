@@ -1,4 +1,4 @@
-from download_models import toc_model_path
+from paragraph_extraction_trainer.download_models import toc_model_path
 from src.toc.Method import Method
 import lightgbm as lgb
 

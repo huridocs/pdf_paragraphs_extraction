@@ -5,7 +5,7 @@ import config
 paragraph_extraction_model_path = hf_hub_download(
     repo_id="HURIDOCS/pdf-segmetation",
     filename="paragraph_extraction_model.model",
-    revision="f80a08c4efec5e4c61624c78e5d733d9261b9c86",
+    revision="40899b854219cd593e3f4ab834664301c3e1bd63",
     cache_dir=config.HUGGINGFACE_PATH,
 )
 
