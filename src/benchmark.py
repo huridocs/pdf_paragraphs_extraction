@@ -4,8 +4,7 @@ from pathlib import Path
 from time import time
 from paragraph_extraction_trainer.PdfParagraphTokens import PdfParagraphTokens
 from sklearn.metrics import f1_score, accuracy_score
-from config import ROOT_PATH
-from paragraph_extraction_trainer.labeled_data_config import PDF_LABELED_DATA_ROOT_PATH
+from config import ROOT_PATH, PDF_LABELED_DATA_ROOT_PATH
 from paragraph_extraction_trainer.ParagraphExtractorTrainer import ParagraphExtractorTrainer
 from paragraph_extraction_trainer.load_labeled_data import load_labeled_data
 from paragraph_extraction_trainer.model_configuration import MODEL_CONFIGURATION

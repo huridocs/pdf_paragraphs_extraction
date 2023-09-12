@@ -17,7 +17,7 @@ config_json = {
     "min_data_in_leaf": 50,
     "feature_pre_filter": True,
     "seed": 22,
-    "deterministic": True
+    "deterministic": True,
 }
 
 MODEL_CONFIGURATION = ModelConfiguration(**config_json)
