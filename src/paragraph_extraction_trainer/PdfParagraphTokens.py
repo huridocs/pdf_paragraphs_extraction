@@ -16,7 +16,7 @@ class PdfParagraphTokens:
     def loop_labels(paragraphs_extractions_labels):
         label_index = 0
         for page in paragraphs_extractions_labels.pages:
-            for label in page.labels:
+            for label in sorted(page.labels, key=lambda _label: _label.area()):
                 yield label_index, label, page.number
                 label_index += 1
 
