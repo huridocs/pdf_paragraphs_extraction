@@ -62,7 +62,7 @@ def benchmark():
 
 
 if __name__ == "__main__":
-    start = time()
     print("start")
+    start = time()
     benchmark()
     print("finished in", int(time() - start), "seconds")

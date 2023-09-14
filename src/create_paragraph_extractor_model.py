@@ -1,7 +1,8 @@
 import os
 
+
 from benchmark import loop_pdf_paragraph_tokens
-from config import PDF_LABELED_DATA_ROOT_PATH, TRAINED_MODEL_PATH
+from config import TRAINED_MODEL_PATH, PDF_LABELED_DATA_ROOT_PATH
 from paragraph_extraction_trainer.ParagraphExtractorTrainer import ParagraphExtractorTrainer
 from paragraph_extraction_trainer.load_labeled_data import load_labeled_data
 from paragraph_extraction_trainer.model_configuration import MODEL_CONFIGURATION
