@@ -10,8 +10,6 @@ nohup.out
 *_config.py
 config.yml
 docker_volume
-db/*
-!db/README.md
 service.log
 **/*.pytest_cache
 src/.pytest_cache
