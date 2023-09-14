@@ -2,11 +2,9 @@ from pdf_tokens_type_trainer.ModelConfiguration import ModelConfiguration
 
 config_json = {
     "boosting_type": "gbdt",
-    "objective": "binary",
-    "metric": "binary_logloss",
     "verbose": -1,
     "learning_rate": 0.1,
-    "num_class": 1,
+    "num_class": 2,
     "context_size": 1,
     "num_boost_round": 400,
     "num_leaves": 191,

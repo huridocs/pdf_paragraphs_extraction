@@ -1,8 +1,8 @@
 from setuptools import setup
 
 with open("requirements.txt") as f:
-    requirements = f.read().splitlines()
-    requirements = [r for r in requirements if not r.startswith("git+")]
+    dependency_links = [r for r in f.read().splitlines() if r.startswith("git+")]
+    requirements = [r for r in f.read().splitlines() if not r.startswith("git+")]
 
 PROJECT_NAME = "pdf_paragraphs_extraction"
 
@@ -15,5 +15,5 @@ setup(
     author="HURIDOCS",
     description="Service for extracting paragraphs from PDFs.",
     install_requires=requirements,
-    dependency_links=["git+https://github.com/huridocs/pdf-tokens-type-labeler@8376eb243f85fa389242585e6559d518ea936a3f"],
+    dependency_links=dependency_links,
 )
