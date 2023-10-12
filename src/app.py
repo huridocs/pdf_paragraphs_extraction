@@ -12,7 +12,7 @@ from lxml.etree import ElementBase
 from sentry_sdk.integrations.asgi import SentryAsgiMiddleware
 import sentry_sdk
 
-from data.Paragrphs import Paragraphs
+from data.Paragraphs import Paragraphs
 from data.SegmentBox import SegmentBox
 from extract_pdf_paragraphs.extract_paragraphs import get_paths, extract_paragraphs
 from extract_pdf_paragraphs.pdf_to_xml import pdf_content_to_pdf_path

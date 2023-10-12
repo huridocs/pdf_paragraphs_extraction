@@ -37,7 +37,7 @@ start_detached:
 	docker compose up --build -d
 
 start_for_testing:
-	docker compose down; docker compose up --build -d
+	docker compose down; docker compose up --attach pdf_paragraphs_extraction_worker --attach pdf_paragraphs_extraction_api --build
 
 stop:
 	docker compose stop

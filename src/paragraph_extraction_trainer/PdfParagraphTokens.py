@@ -50,10 +50,3 @@ class PdfParagraphTokens:
 
     def check_same_paragraph(self, token_1: PdfToken, token_2: PdfToken):
         return self.get_paragraph_for_token(token_1) == self.get_paragraph_for_token(token_2)
-
-
-#
-# if __name__ == "__main__":
-#     paragraph_tokens = PdfParagraphTokens.from_labeled_data("one_column_train", "cejil_staging1")
-#     for paragraph in paragraph_tokens.paragraphs:
-#         print([token.id for token in paragraph.tokens])

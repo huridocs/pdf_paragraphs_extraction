@@ -92,6 +92,19 @@ class TestEndToEnd(TestCase):
         self.assertEqual(response_json["paragraphs"][0]["page_number"], 1)
         self.assertEqual(response_json["paragraphs"][1]["page_number"], 2)
 
+    def test_toc(self):
+        with open(f"{config.APP_PATH}/test_files/toc-test.pdf", "rb") as stream:
+            files = {"file": stream}
+            response = requests.post(f"{self.service_url}/get_toc", files=files)
+
+        response_json = response.json()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response_json), 4)
+        self.assertEqual(response_json[0]["label"], "TEST")
+        self.assertEqual(response_json[0]["indentation"], 0)
+        self.assertEqual(response_json[-1]["label"], "C. TITLE LONGER")
+        self.assertEqual(response_json[-1]["indentation"], 1)
+
     @staticmethod
     def get_redis_message() -> ExtractionMessage:
         queue = RedisSMQ(host="127.0.0.1", port="6379", qname="segmentation_results", quiet=True)

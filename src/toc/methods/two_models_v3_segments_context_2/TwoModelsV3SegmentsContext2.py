@@ -27,7 +27,7 @@ class TwoModelsV3SegmentsContext2(Method):
 
         for pdf_segmentation in pdfs_segmentations:
             for index, segment in enumerate(pdf_segmentation.pdf_segments):
-                if segment.token_type not in valid_tag_types:
+                if segment.segment_type not in valid_tag_types:
                     continue
 
                 pdf_segmentation.title_predictions[index] = round(100 * predictions[prediction_index])

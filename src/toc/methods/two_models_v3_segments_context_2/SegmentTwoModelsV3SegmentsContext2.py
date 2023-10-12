@@ -250,14 +250,14 @@ class SegmentTwoModelsV3SegmentsContext2:
     def get_segments(modes, pdf_segmentation, title_index):
         segments: list["SegmentTwoModelsV3SegmentsContext2"] = list()
         for index, pdf_segment in enumerate(pdf_segmentation.pdf_segments):
-            if pdf_segment.token_type not in valid_tag_types:
+            if pdf_segment.segment_type not in valid_tag_types:
                 continue
 
             segment_landmarks = SegmentTwoModelsV3SegmentsContext2(
                 index, pdf_segment, pdf_segmentation.pdf_features, title_index, modes
             )
 
-            if pdf_segment.token_type == TokenType.TITLE:
+            if pdf_segment.segment_type == TokenType.TITLE:
                 title_index += 1
 
             segments.append(segment_landmarks)
