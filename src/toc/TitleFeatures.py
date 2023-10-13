@@ -340,7 +340,7 @@ class TitleFeatures:
         )
         aggregated_content = self.pdf_segment.text_content + other_title_features.pdf_segment.text_content
         aggregated_segment = PdfSegment(
-            self.pdf_segment.page_number, aggregated_bounding_box, aggregated_content, self.pdf_segment.token_type
+            self.pdf_segment.page_number, aggregated_bounding_box, aggregated_content, self.pdf_segment.segment_type
         )
         return TitleFeatures(pdf_segment=aggregated_segment, pdf_features=self.pdf_features, modes=self.modes)
 
