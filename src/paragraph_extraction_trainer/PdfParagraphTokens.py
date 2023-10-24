@@ -1,6 +1,6 @@
 from os.path import join
 from pdf_features.PdfToken import PdfToken
-from pdf_token_type_labels.TokenTypeLabels import TokenTypeLabels
+from pdf_token_type_labels.PdfLabels import PdfLabels
 from paragraph_extraction_trainer.Paragraph import Paragraph
 from pdf_features.PdfFeatures import PdfFeatures
 from paragraph_extraction_trainer.trainer_config import PARAGRAPH_EXTRACTION_RELATIVE_PATH
@@ -25,11 +25,11 @@ class PdfParagraphTokens:
         pdf_features = PdfFeatures.from_labeled_data(pdf_labeled_data_root_path, dataset, pdf_name)
         paragraph_extraction_labeled_data_path = join(pdf_labeled_data_root_path, PARAGRAPH_EXTRACTION_RELATIVE_PATH)
         paragraph_extraction_labels_path = join(paragraph_extraction_labeled_data_path, dataset, pdf_name, LABELS_FILE_NAME)
-        paragraphs_extractions_labels = PdfFeatures.load_token_type_labels(paragraph_extraction_labels_path)
+        paragraphs_extractions_labels = PdfFeatures.load_labels(paragraph_extraction_labels_path)
         return PdfParagraphTokens.set_paragraphs(pdf_features, paragraphs_extractions_labels)
 
     @staticmethod
-    def set_paragraphs(pdf_features: PdfFeatures, paragraphs_extractions_labels: TokenTypeLabels):
+    def set_paragraphs(pdf_features: PdfFeatures, paragraphs_extractions_labels: PdfLabels):
         tokens_by_labels: dict[int, Paragraph] = {
             -token_index - 1: Paragraph([token]) for token_index, (page, token) in enumerate(pdf_features.loop_tokens())
         }
