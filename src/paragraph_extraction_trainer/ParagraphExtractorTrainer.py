@@ -37,6 +37,12 @@ class ParagraphExtractorTrainer(TokenTypeTrainer):
                     yield page, token, next_token
 
     def get_pdf_segments(self, paragraph_extractor_model_path: str | Path) -> list[PdfSegment]:
+        paragraphs = self.get_paragraphs(paragraph_extractor_model_path)
+        pdf_segments = [PdfSegment.from_pdf_tokens(paragraph.tokens) for paragraph in paragraphs]
+
+        return pdf_segments
+
+    def get_paragraphs(self, paragraph_extractor_model_path):
         self.predict(paragraph_extractor_model_path)
         paragraphs: list[Paragraph] = []
         last_page = None
@@ -50,10 +56,7 @@ class ParagraphExtractorTrainer(TokenTypeTrainer):
                 paragraphs[-1].add_token(next_token)
                 continue
             paragraphs.append(Paragraph([next_token]))
-
-        pdf_segments = [PdfSegment.from_pdf_tokens(paragraph.tokens) for paragraph in paragraphs]
-
-        return pdf_segments
+        return paragraphs
 
     def predict(self, model_path: str | Path = None):
         token_type_trainer = TokenTypeTrainer(self.pdfs_features)
