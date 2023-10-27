@@ -1,6 +1,7 @@
 from os.path import join
 from pdf_features.PdfToken import PdfToken
 from pdf_token_type_labels.PdfLabels import PdfLabels
+
 from paragraph_extraction_trainer.Paragraph import Paragraph
 from pdf_features.PdfFeatures import PdfFeatures
 from paragraph_extraction_trainer.trainer_config import PARAGRAPH_EXTRACTION_RELATIVE_PATH

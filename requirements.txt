@@ -11,4 +11,4 @@ PyRSMQ==0.4.5
 redis==5.0.0
 httpx==0.25.0
 sentry-sdk==1.30.0
-git+https://github.com/huridocs/pdf-tokens-type-labeler@1d88b4fdea438bf417a1de3dff230468deea7d14
+git+https://github.com/huridocs/pdf-tokens-type-labeler@576a06128ba653562f008fa7177c64a6b43fabe9
