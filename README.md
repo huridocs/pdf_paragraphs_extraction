@@ -171,6 +171,10 @@ Create the paragraph extraction model
 
       python src/create_paragraph_extractor_model.py
 
+The trained model is in the following path
+
+      model/paragraph_extraction_model.model
+
 ## Execute tests
 
     make test
