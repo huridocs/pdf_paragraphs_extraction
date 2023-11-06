@@ -30,21 +30,13 @@ To stop the server:
 - [Queue processor](#queue-processor)
 - [Service configuration](#service-configuration)
 - [Set up environment for development](#set-up-environment-for-development)
+- [Train the paragraph extraction model](#train-the-paragraph-extraction-model)
 - [Execute tests](#execute-tests)
 - [Troubleshooting](#troubleshooting)
 
 
 ## Dependencies
-* Docker 20.10.14 [install link](https://runnable.com/docker/getting-started/)
-* Docker-compose 2.4.1 
-
-    Note: On mac Docker-compose is installed with Docker
-
-    [install link](https://docs.docker.com/compose/install/) 
-
-    [install on Ubuntu link](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
-
-    
+* Docker Desktop 4.25.0 [install link](https://www.docker.com/products/docker-desktop/)
 
 ## Requirements
 * 2Gb RAM memory
@@ -154,6 +146,30 @@ Default parameters:
 It works with Python 3.9 [install] (https://runnable.com/docker/getting-started/)
 
     make install_venv
+
+## Train the paragraph extraction model
+
+NOTE: The model training was only tested using Python 3.11
+
+
+Get the labeled data
+
+      git clone https://github.com/huridocs/pdf-labeled-data.git
+
+Place the pdf-labeled-data project in the same folder as this repository
+
+    .
+    ├── pdf_paragraphs_extraction       
+    ├── pdf-labeled-data                 
+   
+Install the virtual environment and initialize it
+
+      make install_venv
+      source venv/bin/activate
+
+Create the paragraph extraction model 
+
+      python src/create_paragraph_extractor_model.py
 
 ## Execute tests
 
