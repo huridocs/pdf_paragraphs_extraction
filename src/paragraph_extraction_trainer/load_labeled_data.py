@@ -1,7 +1,7 @@
 from paragraph_extraction_trainer.PdfParagraphTokens import PdfParagraphTokens
 from os import listdir
 from os.path import join, isdir
-from paragraph_extraction_trainer.trainer_config import PARAGRAPH_EXTRACTION_RELATIVE_PATH
+from paragraph_extraction_trainer.trainer_paths import PARAGRAPH_EXTRACTION_RELATIVE_PATH
 
 
 def loop_datasets(paragraph_extraction_labeled_data_path: str, filter_in: str):

@@ -4,7 +4,7 @@ from pdf_token_type_labels.PdfLabels import PdfLabels
 
 from paragraph_extraction_trainer.Paragraph import Paragraph
 from pdf_features.PdfFeatures import PdfFeatures
-from paragraph_extraction_trainer.trainer_config import PARAGRAPH_EXTRACTION_RELATIVE_PATH
+from paragraph_extraction_trainer.trainer_paths import PARAGRAPH_EXTRACTION_RELATIVE_PATH
 from pdf_tokens_type_trainer.config import LABELS_FILE_NAME
 
 
