@@ -69,5 +69,5 @@ def benchmark(get_granular_scores: bool):
 if __name__ == "__main__":
     print("start")
     start = time()
-    benchmark(True)
+    benchmark(get_granular_scores=True)
     print("finished in", int(time() - start), "seconds")

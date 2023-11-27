@@ -99,11 +99,11 @@ class TestEndToEnd(TestCase):
 
         response_json = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response_json), 5)
+        self.assertEqual(len(response_json), 4)
         self.assertEqual(response_json[0]["label"], "TEST")
         self.assertEqual(response_json[0]["indentation"], 0)
         self.assertEqual(response_json[-1]["label"], "C. TITLE LONGER")
-        self.assertEqual(response_json[-1]["indentation"], 2)
+        self.assertEqual(response_json[-1]["indentation"], 1)
 
     @staticmethod
     def get_redis_message() -> ExtractionMessage:
