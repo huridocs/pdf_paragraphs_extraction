@@ -56,9 +56,5 @@ class ParagraphExtractorTrainer(TokenTypeTrainer):
                 paragraphs[-1].add_token(next_token)
                 continue
             paragraphs.append(Paragraph([next_token]))
-        return paragraphs
 
-    def predict(self, model_path: str | Path = None):
-        token_type_trainer = TokenTypeTrainer(self.pdfs_features)
-        token_type_trainer.set_token_types()
-        super().predict(model_path)
+        return paragraphs

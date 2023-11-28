@@ -3,6 +3,7 @@ import pathlib
 import shutil
 
 from pdf_features.PdfFeatures import PdfFeatures
+from pdf_tokens_type_trainer.TokenTypeTrainer import TokenTypeTrainer
 
 import config
 from data.ExtractionData import ExtractionData
@@ -38,6 +39,10 @@ def conversion_failed(xml_file_path, pdf_file_path, failed_pdf_path):
 
 def extract_paragraphs(pdf_path):
     pdf_features = PdfFeatures.from_pdf_path(pdf_path)
+
+    token_type_trainer = TokenTypeTrainer([pdf_features])
+    token_type_trainer.set_token_types()
+
     trainer = ParagraphExtractorTrainer(pdfs_features=[pdf_features], model_configuration=MODEL_CONFIGURATION)
     trainer.predict(paragraph_extraction_model_path)
     pdf_segments = trainer.get_pdf_segments(paragraph_extraction_model_path)
@@ -53,6 +58,9 @@ def extract_paragraphs_asynchronous(task: Task):
 
     if conversion_failed(xml_file_path, pdf_file_path, failed_pdf_path):
         return None
+
+    token_type_trainer = TokenTypeTrainer([pdf_features])
+    token_type_trainer.set_token_types()
 
     trainer = ParagraphExtractorTrainer([pdf_features], MODEL_CONFIGURATION)
     pdf_segments = trainer.get_pdf_segments(paragraph_extraction_model_path)
