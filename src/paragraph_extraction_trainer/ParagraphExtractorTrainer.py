@@ -38,23 +38,23 @@ class ParagraphExtractorTrainer(TokenTypeTrainer):
 
     def get_pdf_segments(self, paragraph_extractor_model_path: str | Path) -> list[PdfSegment]:
         paragraphs = self.get_paragraphs(paragraph_extractor_model_path)
-        pdf_segments = [PdfSegment.from_pdf_tokens(paragraph.tokens) for paragraph in paragraphs]
+        pdf_segments = [PdfSegment.from_pdf_tokens(paragraph.tokens, paragraph.pdf_name) for paragraph in paragraphs]
 
         return pdf_segments
 
-    def get_paragraphs(self, paragraph_extractor_model_path):
+    def get_paragraphs(self, paragraph_extractor_model_path) -> list[Paragraph]:
         self.predict(paragraph_extractor_model_path)
         paragraphs: list[Paragraph] = []
         last_page = None
         for page, token, next_token in self.loop_token_next_token():
             if last_page != page:
                 last_page = page
-                paragraphs.append(Paragraph([token]))
+                paragraphs.append(Paragraph([token], page.pdf_name))
             if token == next_token:
                 continue
             if token.prediction:
                 paragraphs[-1].add_token(next_token)
                 continue
-            paragraphs.append(Paragraph([next_token]))
+            paragraphs.append(Paragraph([next_token], page.pdf_name))
 
         return paragraphs
