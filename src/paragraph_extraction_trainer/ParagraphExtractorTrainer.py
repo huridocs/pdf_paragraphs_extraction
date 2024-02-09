@@ -5,7 +5,6 @@ from pdf_features.PdfToken import PdfToken
 from pdf_token_type_labels.TokenType import TokenType
 from pdf_tokens_type_trainer.TokenFeatures import TokenFeatures
 from pdf_tokens_type_trainer.TokenTypeTrainer import TokenTypeTrainer
-from pdf_tokens_type_trainer.config import CHARACTER_TYPE
 
 
 class ParagraphExtractorTrainer(TokenTypeTrainer):
