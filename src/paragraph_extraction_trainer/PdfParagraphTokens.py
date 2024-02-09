@@ -1,4 +1,6 @@
 from os.path import join
+from tkinter import Label
+
 from pdf_features.PdfToken import PdfToken
 from pdf_token_type_labels.PdfLabels import PdfLabels
 
@@ -14,17 +16,13 @@ class PdfParagraphTokens:
         self.paragraphs = paragraphs
 
     @staticmethod
-    def get_page_labels(paragraphs_extractions_labels: PdfLabels, page_number: int):
-        page_labels = []
+    def get_page_number_labels(paragraphs_extractions_labels: PdfLabels):
+        page_number_labels = {}
 
         for page in paragraphs_extractions_labels.pages:
-            if page.number != page_number:
-                continue
+            page_number_labels[page.number] = list(sorted(page.labels, key=lambda _label: (_label.area(), _label.top)))
 
-            for label_index, label in enumerate(sorted(page.labels, key=lambda _label: _label.area())):
-                page_labels.append((label_index, label, page.number))
-
-        return page_labels
+        return page_number_labels
 
     @staticmethod
     def from_labeled_data(pdf_labeled_data_root_path, dataset, pdf_name):
@@ -36,29 +34,32 @@ class PdfParagraphTokens:
 
     @staticmethod
     def set_paragraphs(pdf_features: PdfFeatures, paragraphs_extractions_labels: PdfLabels):
-        tokens_by_labels: dict[int, Paragraph] = dict()
+        tokens_by_labels: dict[tuple[int, int], Paragraph] = dict()
+
+        page_number_labels = PdfParagraphTokens.get_page_number_labels(paragraphs_extractions_labels)
 
         for token_index, (page, token) in enumerate(pdf_features.loop_tokens()):
-            page_labels = PdfParagraphTokens.get_page_labels(paragraphs_extractions_labels, page.page_number)
+            page_labels = page_number_labels[page.page_number]
             intersection, best_label = PdfParagraphTokens.get_intersected_label(page_labels, token)
 
             if intersection:
-                tokens_by_labels.setdefault(best_label, Paragraph([])).add_token(token)
+                label_index = page_labels.index(best_label)
+                tokens_by_labels.setdefault((page.page_number, label_index), Paragraph([])).add_token(token)
             else:
-                tokens_by_labels[-token_index - 1] = Paragraph(tokens=[token])
+                tokens_by_labels[(page.page_number, -token_index - 1)] = Paragraph(tokens=[token])
 
         return PdfParagraphTokens(pdf_features, list(tokens_by_labels.values()))
 
     @staticmethod
-    def get_intersected_label(page_labels, token):
+    def get_intersected_label(page_labels: list[Label], token: PdfToken):
         max_intersection = 0
-        best_label = -1
-        for label_index, label, label_page_number in page_labels:
+        best_label = None
+        for label in page_labels:
             intersection = token.get_label_intersection_percentage(label)
 
             if intersection > max_intersection:
                 max_intersection = intersection
-                best_label = label_index
+                best_label = label
 
             if max_intersection > 99:
                 break

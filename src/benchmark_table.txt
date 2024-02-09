@@ -1,0 +1,7 @@
+File Type          Mistakes
+-----------------  ----------------
+multi_column_test  55/81 (32.1%)
+one_column_test    162/213 (23.94%)
+
+Average Accuracy: 217/294 (26.19%)
+Total Time: 0.8

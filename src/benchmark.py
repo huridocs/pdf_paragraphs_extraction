@@ -10,7 +10,7 @@ from paragraph_extraction_trainer.ParagraphExtractorTrainer import ParagraphExtr
 from paragraph_extraction_trainer.load_labeled_data import load_labeled_data
 from paragraph_extraction_trainer.model_configuration import MODEL_CONFIGURATION
 
-BENCHMARK_MODEL_PATH = Path(join(ROOT_PATH, "model", "paragraph_extraction_benchmark.model"))
+BENCHMARK_MODEL_PATH = Path(join(ROOT_PATH, "model", "benchmark.model"))
 
 
 def loop_pdf_paragraph_tokens(pdf_paragraph_tokens_list: list[PdfParagraphTokens]):
@@ -25,7 +25,7 @@ def loop_pdf_paragraph_tokens(pdf_paragraph_tokens_list: list[PdfParagraphTokens
 
 def train_for_benchmark():
     pdf_paragraph_tokens_list = load_labeled_data(PDF_LABELED_DATA_ROOT_PATH, filter_in="train")
-
+    print('length of pdf paragraphs for training', len(pdf_paragraph_tokens_list))
     pdf_features_list = [pdf_paragraph_tokens.pdf_features for pdf_paragraph_tokens in pdf_paragraph_tokens_list]
     trainer = ParagraphExtractorTrainer(pdfs_features=pdf_features_list, model_configuration=MODEL_CONFIGURATION)
 
