@@ -1,4 +1,7 @@
 from pathlib import Path
+
+from pdf_tokens_type_trainer.config import CHARACTER_TYPE
+
 from paragraph_extraction_trainer.Paragraph import Paragraph
 from paragraph_extraction_trainer.PdfSegment import PdfSegment
 from pdf_features.PdfToken import PdfToken
