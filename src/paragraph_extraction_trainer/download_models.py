@@ -3,11 +3,7 @@ from huggingface_hub import hf_hub_download
 paragraph_extraction_model_path = hf_hub_download(
     repo_id="HURIDOCS/pdf-segmentation",
     filename="paragraph_extraction_model.model",
-    revision="ffc4f1753ac1ca55981be06c29f1e73787e611b5",
-)
-
-letter_corpus_path = hf_hub_download(
-    repo_id="HURIDOCS/pdf-segmentation", filename="letter_corpus.txt", revision="da00a69c8d6a84493712e819580c0148757f466c"
+    revision="3dc98aa51e073066a78edde745d8882121c4891f",
 )
 
 toc_model_path = hf_hub_download(

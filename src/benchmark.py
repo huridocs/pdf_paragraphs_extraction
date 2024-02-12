@@ -36,7 +36,20 @@ def train_for_benchmark():
     trainer.train(str(BENCHMARK_MODEL_PATH), labels)
 
 
-def predict_for_benchmark(pdf_paragraph_tokens_list: list[PdfParagraphTokens], get_granular_scores: bool):
+def train():
+    pdf_paragraph_tokens_list = load_labeled_data(PDF_LABELED_DATA_ROOT_PATH)
+    print("length of pdf paragraphs for training", len(pdf_paragraph_tokens_list))
+    pdf_features_list = [pdf_paragraph_tokens.pdf_features for pdf_paragraph_tokens in pdf_paragraph_tokens_list]
+    trainer = ParagraphExtractorTrainer(pdfs_features=pdf_features_list, model_configuration=MODEL_CONFIGURATION)
+
+    labels = []
+    for pdf_paragraph_tokens, token, next_token in loop_pdf_paragraph_tokens(pdf_paragraph_tokens_list):
+        labels.append(pdf_paragraph_tokens.check_same_paragraph(token, next_token))
+    model_path = Path(join(ROOT_PATH, "model", "all_data.model"))
+    trainer.train(str(model_path), labels)
+
+
+def predict_for_benchmark(pdf_paragraph_tokens_list: list[PdfParagraphTokens], model_path: str = ""):
     pdf_features_list = [pdf_paragraph_tokens.pdf_features for pdf_paragraph_tokens in pdf_paragraph_tokens_list]
     trainer = ParagraphExtractorTrainer(pdfs_features=pdf_features_list, model_configuration=MODEL_CONFIGURATION)
     truths = []
@@ -45,20 +58,34 @@ def predict_for_benchmark(pdf_paragraph_tokens_list: list[PdfParagraphTokens], g
 
     print("predicting")
     start_time = time()
-    trainer.predict(BENCHMARK_MODEL_PATH)
+    if model_path:
+        trainer.predict(model_path)
+    else:
+        trainer.predict(BENCHMARK_MODEL_PATH)
     predictions = [token.prediction for token in trainer.loop_tokens()]
     total_time = time() - start_time
-    if get_granular_scores:
-        benchmark_table = BenchmarkTable(pdf_paragraph_tokens_list, total_time)
-        benchmark_table.prepare_benchmark_table()
+    benchmark_table = BenchmarkTable(pdf_paragraph_tokens_list, total_time)
+    benchmark_table.prepare_benchmark_table()
 
     return truths, predictions
 
 
-def benchmark(get_granular_scores: bool):
+def benchmark():
     train_for_benchmark()
     pdf_paragraph_tokens_list = load_labeled_data(PDF_LABELED_DATA_ROOT_PATH, filter_in="test")
-    truths, predictions = predict_for_benchmark(pdf_paragraph_tokens_list, get_granular_scores)
+    truths, predictions = predict_for_benchmark(pdf_paragraph_tokens_list)
+
+    f1 = round(f1_score(truths, predictions, average="macro") * 100, 2)
+    accuracy = round(accuracy_score(truths, predictions) * 100, 2)
+    print(f"F1 score {f1}%")
+    print(f"Accuracy score {accuracy}%")
+
+
+def benchmark_all():
+    train_for_benchmark()
+    pdf_paragraph_tokens_list = load_labeled_data(PDF_LABELED_DATA_ROOT_PATH, filter_in="test")
+    model_path = str(Path(join(ROOT_PATH, "model", "all_data.model")))
+    truths, predictions = predict_for_benchmark(pdf_paragraph_tokens_list, model_path)
 
     f1 = round(f1_score(truths, predictions, average="macro") * 100, 2)
     accuracy = round(accuracy_score(truths, predictions) * 100, 2)
@@ -69,5 +96,5 @@ def benchmark(get_granular_scores: bool):
 if __name__ == "__main__":
     print("start")
     start = time()
-    benchmark(get_granular_scores=True)
+    benchmark_all()
     print("finished in", int(time() - start), "seconds")
