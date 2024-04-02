@@ -2,9 +2,9 @@ from pathlib import Path
 
 from setuptools import setup
 
-path = Path("requirements.txt")
-dependency_links = [r for r in path.read_text().splitlines() if r.startswith("git+")]
-requirements = [r for r in path.read_text().splitlines() if not r.startswith("git+")]
+requirements_path = Path("requirements.txt")
+dependency_links = [r for r in requirements_path.read_text().splitlines() if r.startswith("git+")]
+requirements = [r for r in requirements_path.read_text().splitlines() if not r.startswith("git+")]
 
 PROJECT_NAME = "pdf_paragraphs_extraction"
 
