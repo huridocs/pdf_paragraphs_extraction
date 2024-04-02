@@ -12,11 +12,11 @@ setup(
     name=PROJECT_NAME,
     packages=["paragraph_extraction_trainer"],
     package_dir={"": "src"},
-    version="0.30",
+    version="0.31",
     url="https://github.com/huridocs/pdf_paragraphs_extraction",
     author="HURIDOCS",
     description="Service for extracting paragraphs from PDFs.",
     install_requires=requirements,
-    setup_requieres=requirements,
+    setup_requires=requirements,
     dependency_links=dependency_links,
 )
