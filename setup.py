@@ -1,8 +1,10 @@
+from pathlib import Path
+
 from setuptools import setup
 
-with open("requirements.txt") as f:
-    dependency_links = [r for r in f.read().splitlines() if r.startswith("git+")]
-    requirements = [r for r in f.read().splitlines() if not r.startswith("git+")]
+path = Path("requirements.txt")
+dependency_links = [r for r in path.read_text().splitlines() if r.startswith("git+")]
+requirements = [r for r in path.read_text().splitlines() if not r.startswith("git+")]
 
 PROJECT_NAME = "pdf_paragraphs_extraction"
 
@@ -10,7 +12,7 @@ setup(
     name=PROJECT_NAME,
     packages=["paragraph_extraction_trainer"],
     package_dir={"": "src"},
-    version="0.29",
+    version="0.30",
     url="https://github.com/huridocs/pdf_paragraphs_extraction",
     author="HURIDOCS",
     description="Service for extracting paragraphs from PDFs.",
