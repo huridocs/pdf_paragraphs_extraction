@@ -1,5 +1,5 @@
 from os.path import join
-from tkinter import Label
+from pdf_token_type_labels.Label import Label
 
 from pdf_features.PdfToken import PdfToken
 from pdf_token_type_labels.PdfLabels import PdfLabels
