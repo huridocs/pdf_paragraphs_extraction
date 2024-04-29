@@ -273,7 +273,7 @@ class TitleFeatures:
             1 if self.italics else 0,
             self.first_characters_type,
             self.first_characters_special_markers_count,
-            self.bullet_points_type
+            self.bullet_points_type,
             # self.text_centered,
             # self.is_left,
             # self.indentation

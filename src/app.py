@@ -135,7 +135,7 @@ async def get_xml(tenant: str, pdf_file_name: str):
 
 
 @app.post("/get_toc")
-def get_toc(file: UploadFile = File(...)):
+async def get_toc(file: UploadFile = File(...)):
     filename = "No file name!"
     try:
         filename = file.filename
