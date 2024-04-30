@@ -142,6 +142,7 @@ async def get_toc(file: UploadFile = File(...)):
         pdf_path = pdf_content_to_pdf_path(file.file.read())
         pdf_segmentation = extract_paragraphs(pdf_path)
         toc = TOC(pdf_segmentation)
+        logger.info(f'Calculated TOC for {file.filename}')
         return toc.to_dict()
     except Exception:
         logger.error(f"Error extracting TOC for {filename}", exc_info=1)

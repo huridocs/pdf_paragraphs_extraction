@@ -165,7 +165,7 @@ Place the pdf-labeled-data project in the same folder as this repository
 Install the virtual environment and initialize it
 
       make install_venv
-      source venv/bin/activate
+      source .venv/bin/activate
 
 Create the paragraph extraction model 
 
