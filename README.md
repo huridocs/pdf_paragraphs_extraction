@@ -1,7 +1,17 @@
-<h3 align="center">PDF Paragraphs Extraction</h3>
-<p align="center">A Docker-powered service for extracting paragraphs from PDFs</p>
+# Project Status: Archived
 
----
+This project is no longer actively maintained. We are focusing our efforts on developing a new and improved version, which can be found in the following repository:
+
+https://github.com/huridocs/pdf-document-layout-analysis
+
+We encourage you to check out the new project, as it offers enhanced features, better performance, and an updated codebase.
+
+Thank you for your understanding and continued support!
+
+
+
+## DEPRECATED README
+PDF Paragraphs Extraction
 
 This service provides one endpoint to get paragraphs from PDFs. The paragraphs
 contain the page number, the position in the page, the size, and the text. Furthermore, there is 
